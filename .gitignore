@@ -1,0 +1,15 @@
+/mod/*
+!/mod/modulsmink
+/config.php
+/.htaccess
+/lib/*
+!/lib/alap.class.php
+!/lib/config.class.php
+!/lib/class.phpmailer.php
+!/lib/createtables.php
+!/lib/belepve.php
+!/lib/menu.php
+!/lib/sh.css
+!/lib/jquery-1.12.4.min.js
+!/lib/Laravel10/
+/lib/Laravel10/vendor
