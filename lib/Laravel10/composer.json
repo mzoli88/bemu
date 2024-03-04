@@ -12,14 +12,12 @@
         "doctrine/dbal": "^3.5",
         "intervention/image": "^2.7",
         "laravel/framework": "^10.0",
+        "mpdf/mpdf": "*",
         "phpmailer/phpmailer": "^6.8"
     },
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
