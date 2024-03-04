@@ -106,19 +106,7 @@ window.onload = function() {
     <title>Menü</title>
 	</head>
   <body>
-	<div class="box" style="background-color:yellow;" tabindex='0'>
-		<div class="box_title"><h3>Hasznos Linkek</h3></div>
-		<div class="box_content">
-			<ul>
-				<li><a tabindex='-1' href="http://10.255.11.40/devborder" target="_blank">10.255.11.40/devborder</a></li>
-				<li><a href="http://10.255.11.40/tesztborder2" target="_blank">10.255.11.40/tesztborder2</a></li>
-				<li><a href="http://10.93.163.107/tesztborder" target="_blank">10.93.163.107/tesztborder</a></li>
-				<li><a href="http://10.93.164.18/t1border" target="_blank">10.93.164.18/t1border</a></li>
-				<li><a href="http://10.93.164.19/t1border" target="_blank">10.93.164.19/t1border</a></li>
-				<li><a href="http://10.255.11.40/git" target="_blank">Git</a></li>
-			</ul>
-		</div>
-	</div>
+	
 	<?php
 		
 		if(isset($_SERVER['REQUEST_URI'])){
@@ -145,18 +133,8 @@ window.onload = function() {
 				$result = to_utf8($result);
 				if (is_dir($path . DIRECTORY_SEPARATOR . $result)) {
 	
-					echo '<div class="box" tabindex="0"><div class="box_title"><h3>'.$result.'</h3>'.
+					echo '<div class="box" tabindex="0"><div class="box_title"><h3><a target="_BLANK" href="'. BORDER_PATH_URL .'mod/' . $result.'/index.php">'.$result.'</a></h3></div></div>';
 					
-					(is_dir($path. DIRECTORY_SEPARATOR . $result. DIRECTORY_SEPARATOR . 'dev') ? '<a class="helplink" href="'. BORDER_PATH_URL .'mod/' . $result.'/dev">dev</a>' : '') .
-					
-					'</div><div class="box_content"><ul>';
-					$modulfolders = scandir(BORDER_PATH_BORDER."mod/".$result);
-					foreach ($modulfolders as $mresult) {
-						if ($mresult === '.' or $mresult === '..' or $mresult === '.git'  or $mresult === '.gitignore') continue;
-						$mresult = to_utf8($mresult);
-						echo '<li><a href="'.BORDER_PATH_URL.'mod/'.$result.'/'.$mresult."\">".$mresult."</a></li>";
-					}
-					echo '</ul></div></div>';
 				}else{
 					$files[] = '<a href="'.BORDER_PATH_URL.'mod/'.$result."\">".$result.'</a>';
 				}
