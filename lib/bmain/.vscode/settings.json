@@ -1,0 +1,6 @@
+{
+    "intelephense.environment.includePaths": [
+        "../Laravel10",
+        "../naplo"
+    ]
+}
