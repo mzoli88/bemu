@@ -13,6 +13,7 @@ function emu_user_init(){
 	
 	if (PHP_SAPI === 'cli')return;
 
+	
 	if(isset($_COOKIE['SESS_'.BORDER_PREFIX.'ID'])){
 		if(file_exists(session_save_path().'\sess_'.$_COOKIE['SESS_'.BORDER_PREFIX.'ID'])){
 			if(!empty(file_get_contents(session_save_path().'\sess_'.$_COOKIE['SESS_'.BORDER_PREFIX.'ID'])))return;
@@ -60,5 +61,3 @@ function emu_user_init(){
 	session_commit();
 	
 }
-
-emu_user_init();

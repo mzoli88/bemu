@@ -1,6 +1,6 @@
 <?php
 require_once('../lib/config.class.php');
-
+emu_user_init();
 class MZ_adminer
 {
 

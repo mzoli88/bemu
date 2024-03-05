@@ -116,6 +116,7 @@ window.onload = function() {
 		}
 
 		require_once('config.class.php');
+		emu_user_init();
 	
 		$path = BORDER_PATH_BORDER."mod" .DIRECTORY_SEPARATOR;
 		

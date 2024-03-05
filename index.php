@@ -9,7 +9,8 @@ if(!is_file( __DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.hta
 	die;
 }
 
-require_once('lib/belepve.php');
+require_once('lib/config.class.php');
+emu_user_init();
 
 if(isset($_SERVER['REQUEST_URI'])){
 	$tmp = preg_split('/(lib\/)|(mod\/)/',$_SERVER['REQUEST_URI']);
