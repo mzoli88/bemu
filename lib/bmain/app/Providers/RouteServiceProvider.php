@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\AuthController;
-use App\MenuController;
 use App\Routers\ApiRouter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;

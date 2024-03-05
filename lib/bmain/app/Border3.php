@@ -145,11 +145,57 @@ class Border3
         return $_SESSION['permissions'][config('modul_azon')];
     }
 
+    static function refreshModulData(){
+        $badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
+        if(!$badmin) {
+            DB::table('nevek_csoport')->insert([
+                'csoport_id' => 2,
+                'nev' => 'Rendszer - Admin',
+                'modul_azon' => 'admin',
+            ]);
+        }
+        collect(config('mods'))->each(function($modul,$modul_azon){
+
+            
+            $modulData = DB::table('b_modulok')->where('azon', $modul_azon)->first();
+            if(!$modulData){
+                    DB::table('b_modulok')->insert([
+                        'azon' => $modul_azon,
+                        'modulnev' => $modul['name'],
+                        'verzio' => 'v' . $modul['version'],
+                    ]);
+            }
+
+            // $modul = config('mods')[getModulAzon()];
+            $perms = [];
+
+            if(array_key_exists('perms',$modul)){
+                foreach($modul['perms'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value;
+            }
+
+            if(array_key_exists('menu',$modul)){
+                foreach($modul['menu'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
+            }
+
+            collect($perms)->each(function($jog){
+                $ellenorzendo = conv($jog);
+                $equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
+                $result = $equery->first();
+                if (!$result) {
+                    DB::table('nevek_csoport')->insert([
+                        'nev' => $ellenorzendo,
+                        'modul_azon' => $_GET['modul'],
+                    ]);
+                }
+            });
+        });
+    }
+
     static function getUserData()
     {
+        if (defined('BORDER_EMU')) self::refreshModulData();
         $jogok = self::setJogok();
         $modul_data = self::getModulData()->first();
-        // dd (1234);
         
         // $entity_data = null;
         // if (config('use_entity')) {
@@ -191,18 +237,8 @@ class Border3
         //     ];
         // }
 
-        if (!$modul_data) {
-            if (defined('BORDER_EMU')) {
-                DB::table('b_modulok')->insert([
-                    'azon' => config('modul_azon'),
-                    'modulnev' => config('modul_azon'),
-                    'verzio' => 'v1.0.0',
-                ]);
-                $modul_data = self::getModulData()->first();
-            } else {
-                return self::send_error("Modul verziója nincs telepítve!", 404);
-            }
-        }
+        if (!$modul_data) return self::send_error("Modul verziója nincs telepítve!", 404);
+
         $menu = [];
 
         $mods = config('mods');
@@ -283,27 +319,6 @@ class Border3
     static function queryJog($ellenorzendo, $user_id = false)
     {
         if ($user_id === false && isset($_SESSION)) $user_id = $_SESSION['id'];
-
-        // if (defined('BORDER_EMU')) {
-        //     $badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
-        //     if(!$badmin) {
-        //         DB::table('nevek_csoport')->insert([
-        //             'csoport_id' => 2,
-        //             'nev' => 'Rendszer - Admin',
-        //             'modul_azon' => 'admin',
-        //         ]);
-        //     }
-
-        //     $ellenorzendo = conv($ellenorzendo);
-        //     $equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
-        //     $result = $equery->first();
-        //     if (!$result) {
-        //         DB::table('nevek_csoport')->insert([
-        //             'nev' => $ellenorzendo,
-        //             'modul_azon' => $_GET['modul'],
-        //         ]);
-        //     }
-        // }
 
         $query = DB::table('nevek_csoportosit');
         $query->join('nevek_csoport', 'nevek_csoport.csoport_id', '=', 'nevek_csoportosit.csoport_id');
