@@ -2,8 +2,6 @@
 
 namespace App;
 
-use hws\naplo\CustomLogger;
-use hws\naplo\CustomLoggerHandler;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -37,8 +35,11 @@ class Border3
         //     Config::set('use_entity', $use_entity);
         // }
 
-        // Config::set('modul_azon', $modul_azon);
-        // Config::set('permissions', $permissions);
+        Config::set('modul_azon', getModulAzon());
+        // dd (getModulAzon());
+
+        Config::set('permissions', config('mods')[getModulAzon()]['perms']);
+
         Config::set('BORDER_PREFIX', BORDER_PREFIX);
         Config::set('BORDER_PATH_BORDER', BORDER_PATH_BORDER);
         Config::set('BORDER_PATH_BORDERDOC', BORDER_PATH_BORDERDOC);
@@ -126,6 +127,7 @@ class Border3
         $_SESSION['permissions'][config('modul_azon')] = [];
         $jogok = config('permissions');
         $count = 0;
+        
         if ($jogok) foreach ($jogok as $key => $value) {
             if ($value === true) {
                 $_SESSION['permissions'][config('modul_azon')][$key] = true;
@@ -140,6 +142,7 @@ class Border3
             $_SESSION['permissions'][config('modul_azon')][$key] = $val ? true : false;
             if ($val) $count++;
         }
+
         if ($count < 1) self::send_error("Nincs Jogosultság!", 403);
 
         return $_SESSION['permissions'][config('modul_azon')];
@@ -149,47 +152,47 @@ class Border3
     {
         $jogok = self::setJogok();
         $modul_data = self::getModulData()->first();
+        // dd (1234);
+        
+        // $entity_data = null;
+        // if (config('use_entity')) {
 
-        $entity_data = null;
+        //     $user_csop = DB::table('b_nagycsoport')->select('b_nagycsoport_id as value', 'nev as name')
+        //         ->where('b_nagycsoport_tipus_id', config('entity_type_id'))
+        //         ->whereExists(function ($query) {
+        //             $query->select()
+        //                 ->from('b_nagycsoport_nevek')
+        //                 ->where('b_nagycsoport_nevek.nevek_id', $_SESSION['id'])
+        //                 ->whereColumn('b_nagycsoport_nevek.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
+        //         })
+        //         ->whereExists(function ($query) {
+        //             $query->select()
+        //                 ->from('b_nagycsoport_modul')
+        //                 ->where('b_nagycsoport_modul.modul_azon', config('modul_azon'))
+        //                 ->whereColumn('b_nagycsoport_modul.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
+        //         })
+        //         ->get();
 
-        if (config('use_entity')) {
+        //     self::setUserEntity($user_csop->pluck('value')->toArray());
 
-            $user_csop = DB::table('b_nagycsoport')->select('b_nagycsoport_id as value', 'nev as name')
-                ->where('b_nagycsoport_tipus_id', config('entity_type_id'))
-                ->whereExists(function ($query) {
-                    $query->select()
-                        ->from('b_nagycsoport_nevek')
-                        ->where('b_nagycsoport_nevek.nevek_id', $_SESSION['id'])
-                        ->whereColumn('b_nagycsoport_nevek.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
-                })
-                ->whereExists(function ($query) {
-                    $query->select()
-                        ->from('b_nagycsoport_modul')
-                        ->where('b_nagycsoport_modul.modul_azon', config('modul_azon'))
-                        ->whereColumn('b_nagycsoport_modul.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
-                })
-                ->get();
-
-            self::setUserEntity($user_csop->pluck('value')->toArray());
-
-            if (isset($_GET['active_entity_id'])) {
-                if (in_array($_GET['active_entity_id'], $user_csop->pluck('value')->toArray())) {
-                    self::setActiveEntity($_GET['active_entity_id']);
-                }
-            }
-            //Ha csak egy entitáshoz vagyunk állítva, akkor az legyen az aktív
-            if ($user_csop->count() == 1) {
-                self::setActiveEntity($user_csop->first()->value);
-            }
-            $entity_list = $user_csop->toArray();
-            foreach ($entity_list as $key => $entity) {
-                $entity_list[$key]->name = toUtf($entity_list[$key]->name);
-            }
-            $entity_data = [
-                'active' => self::getActiveEntity(),
-                'list' => $entity_list,
-            ];
-        }
+        //     if (isset($_GET['active_entity_id'])) {
+        //         if (in_array($_GET['active_entity_id'], $user_csop->pluck('value')->toArray())) {
+        //             self::setActiveEntity($_GET['active_entity_id']);
+        //         }
+        //     }
+        //     //Ha csak egy entitáshoz vagyunk állítva, akkor az legyen az aktív
+        //     if ($user_csop->count() == 1) {
+        //         self::setActiveEntity($user_csop->first()->value);
+        //     }
+        //     $entity_list = $user_csop->toArray();
+        //     foreach ($entity_list as $key => $entity) {
+        //         $entity_list[$key]->name = toUtf($entity_list[$key]->name);
+        //     }
+        //     $entity_data = [
+        //         'active' => self::getActiveEntity(),
+        //         'list' => $entity_list,
+        //     ];
+        // }
 
         if (!$modul_data) {
             if (defined('BORDER_EMU')) {
@@ -211,8 +214,8 @@ class Border3
             'modul_nev' => toUtf($modul_data->modulnev),
             'modul_verzio' => toUtf($modul_data->verzio),
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
-            'entity_data' => $entity_data,
-            'CacheQueue' => CacheQueue::isReady(),
+            // 'entity_data' => $entity_data,
+            // 'CacheQueue' => CacheQueue::isReady(),
         ];
     }
 
@@ -273,6 +276,14 @@ class Border3
         if ($user_id === false && isset($_SESSION)) $user_id = $_SESSION['id'];
 
         if (defined('BORDER_EMU')) {
+            $badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
+            if(!$badmin) {
+                DB::table('nevek_csoport')->insert([
+                    'csoport_id' => 2,
+                    'nev' => 'Border admin',
+                ]);
+            }
+
             $ellenorzendo = conv($ellenorzendo);
             $equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
             $result = $equery->first();
@@ -337,7 +348,7 @@ class Border3
 
     static function checkJog($jog)
     {
-        if ($jog === false || !call_user_func_array([Border::class, 'getJog'], func_get_args())) {
+        if ($jog === false || !call_user_func_array([Border3::class, 'getJog'], func_get_args())) {
             self::send_error("Nincs Jogosultság!", 403);
         }
     }
@@ -376,256 +387,4 @@ class Border3
         });
     }
 
-    static function nyk2($sablon_id, $adatTmb = [], $save = false)
-    {
-        // nyomtatvány sablon beállítása id alapján
-        $fejparam = (array)DB::table('nyk2_fej')
-            ->from('nyk2_fej')
-            ->where(['nyk2_fej_id' => $sablon_id])
-            ->first();
-        if (empty($fejparam)) {
-            logger()->error('Nyomtatvány nem hozható létre, mert nyomtatvány nem létezik! nyk_id=' . $sablon_id);
-            return false;
-        }
-        $defult_param = (array) DB::table('nyk2_pdf_parameterek')->where(['id' => 1])->first();
-
-        // alapértelmezett margók beállítása, ha nincs margó a sablonhoz
-        if (!isset($fejparam['margo_fent'])) $fejparam['margo_fent'] = 10;
-        if (!isset($fejparam['margo_jobb'])) $fejparam['margo_jobb'] = 10;
-        if (!isset($fejparam['margo_lent'])) $fejparam['margo_lent'] = 10;
-        if (!isset($fejparam['margo_bal'])) $fejparam['margo_bal'] = 10;
-        if (!isset($fejparam['allo'])) $fejparam['allo'] = 1;
-        //PDF-hez fejlec es lablec tagok definialasa
-        if ($fejparam['egyedi_fejlec_aktiv'] === '1') {
-            if (array_key_exists('egyedi_fejlec_tartalom', $fejparam)) $adatTmb['fejlec'] = $fejparam['egyedi_fejlec_tartalom'];
-            if (array_key_exists('egyedi_lablec_tartalom', $fejparam)) $adatTmb['lablec'] = $fejparam['egyedi_lablec_tartalom'];
-        } else {
-            if (array_key_exists('fejlec_tartalom', $defult_param)) $adatTmb['fejlec'] = $defult_param['fejlec_tartalom'];
-            if (array_key_exists('lablec_tartalom', $defult_param)) $adatTmb['lablec'] = $defult_param['lablec_tartalom'];
-        }
-        $fejparam['allo'] = $fejparam['allo'] == 0 ? 'LANDSCAPE' : 'PORTRAIT';
-        $fejparam['papir_meret'] = $fejparam['papir_meret']  ?: 'A4';
-
-        // html tartalom létrehozása, saját adatok betöltése
-        $tartalom = '<div>' . invertConv($fejparam['doc_tpl'] ?: '') . '</div>';
-        if (array_key_exists('egyedi_fejlec_aktiv', $fejparam) && $fejparam['egyedi_fejlec_aktiv'] == 1) {
-            //fejléc			
-            $tartalom = '<div><pd4ml:page.header>' . $fejparam['egyedi_fejlec_tartalom'] . '<br /></pd4ml:page.header></div>' . $tartalom;
-            $tartalom .= '<div><pd4ml:page.footer>' . $fejparam['egyedi_lablec_tartalom'] . '</pd4ml:page.footer></div>';
-        }
-
-        //nyk2 kép url helyre tétele
-        // $tartalom = str_replace('<img src="', '<img src="../../mod/nyk2/', $tartalom);
-        $tartalom = str_replace('<img src="', '<img src="' . str_replace('\\', '/', preg_replace('/.*\:/', '', BORDER_PATH_BORDER)) . 'mod/nyk2/', $tartalom);
-        collect($adatTmb)->each(function ($v, $k) use (&$adatTmb) {
-            $adatTmb['$' . $k] = $v;
-        });
-        $tartalom = helyettesit($tartalom, $adatTmb);
-        // dd($tartalom);
-        $tartalom = '<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<style type="text/css">
-body,td {
-	font-size: 10pt;
-	font-family: Arial, Helvetica, sans-serif;
-	margin: 0;
-}
-.hint_hide {display: none}
-.alap{
-	padding-top: 5.5cm;
-	padding-right: 2cm;
-	padding-bottom: 4.5cm;
-	padding-left: 3cm;
-}
-.gomb{
-	font:9pt Arial, Helvetica, sans-serif;
-	margin:0;
-}
-.style1 {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10pt;
-}
-.style12 {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11pt;
-}
-.style3 {
-	font-size: 10pt;
-	font-weight: bold;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.style32 {
-	font-size: 11pt;
-	font-weight: bold;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.stylem {
-	font-size: 12pt;
-	font-weight: bold;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.style5 {font-size: 11pt; font-family: Arial, Helvetica, sans-serif; }
-.bal-keret{
-	border-left:1px solid #000000;
-    border-collapse:collapse;
-}
-.jobb-keret{
-	border-right:1px solid #000000;
-    border-collapse:collapse;
-}
-.also-keret{
-	border-bottom:1px solid #000000;
-    border-collapse:collapse;
-}
-.felso-keret{
-	border-top:1px solid #000000;
-    border-collapse:collapse;
-}
-.bal-also-keret{
-	border-bottom:1px solid #000000;
-	border-left:1px solid #000000;
-    border-collapse:collapse;
-}
-.bal-felso-keret{
-	border-left:1px solid #000000;
-	border-top:1px solid #000000;
-    border-collapse:collapse;
-}
-.jobb-also-keret{
-	border-right:1px solid #000000;
-	border-bottom:1px solid #000000;
-    border-collapse:collapse;
-}
-.jobb-felso-keret{
-	border-right:1px solid #000000;
-	border-top:1px solid #000000;
-    border-collapse:collapse;
-}
-.bal-also-jobb-keret{
-	border-bottom:1px solid #000000;
-	border-left:1px solid #000000;
-	border-right:1px solid #000000;
-    border-collapse:collapse;
-}
-.bal-also-felso-keret{
-	border-bottom:1px solid #000000;
-	border-left:1px solid #000000;
-	border-top:1px solid #000000;
-    border-collapse:collapse;
-}
-.bal-jobb-felso-keret{
-	border-left:1px solid #000000;
-	border-top:1px solid #000000;
-	border-right:1px solid #000000;
-    border-collapse:collapse;
-}
-.jobb-also-felso-keret{
-	border-right:1px solid #000000;
-	border-bottom:1px solid #000000;
-	border-top:1px solid #000000;
-    border-collapse:collapse;
-}
-.also-felso-keret{
-	border-bottom:1px solid #000000;
-	border-top:1px solid #000000;
-    border-collapse:collapse;
-}
-.bal-jobb-keret{
-	border-left:1px solid #000000;
-	border-right:1px solid #000000;
-    border-collapse:collapse;
-}
-.keret {
-	border: 1px solid #000;
-    border-collapse:collapse;
-}
-.szamlaszam{
-	font-size:13pt;
-	font-weight:bold;
-	margin:0.5em;
-	letter-spacing:2pt;
-}
-.bankkartyaszam{
-	font-size:13pt;
-	font-weight:bold;
-	margin:0.5em;
-	letter-spacing:2pt;
-}
-h1{
-	text-align:center;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 18pt;
-	font-weight: bold;
-}
-.kicsi8pt{
-	font-size:8pt;
-}
-.kicsi9pt{
-	font-size:9pt;
-}
-.szellos{
-	line-height:18pt;
-	text-align:left;
-}
-.szellos_kicsi{
-	line-height:15pt;
-}
-.vekony_keret {
-    border:1px solid #000000;
-    border-collapse:collapse;
-}
-</style>
-</head>
-<body>' . $tartalom . '</body>
-</html>';
-
-        if (!is_dir(BORDER_PATH_BORDER . 'mod/pd4ml')) mkdir(BORDER_PATH_BORDER . 'mod/pd4ml');
-        $htmlfile = BORDER_PATH_BORDER . 'mod/pd4ml/pre' . session_id() . config('user_id') . uniqid() . '.html';
-        @unlink($htmlfile);
-        if (!$fhtml = fopen($htmlfile, 'w')) die('Error open file: ' . $htmlfile);
-        if (!fwrite($fhtml, $tartalom)) die('Error write file: ' . $htmlfile);
-        fclose($fhtml);
-
-        if ($fejparam['papir_meret'] == 'A4') {
-            // A4
-            $width = $fejparam['allo'] == 'PORTRAIT' ? 794 : 1123;
-        } else {
-            //A5
-            $width = $fejparam['allo'] == 'PORTRAIT' ? 559 : 794;
-        }
-
-        $parancs = (defined('BORDER_PATH_JAVA') ? BORDER_PATH_JAVA : '/opt/jdk8/bin/java') .
-            ' -Xmx512m -Djava.awt.headless=true -Dfile.encoding=UTF-8 -cp ' .
-            BORDER_PATH_BORDERLIB . 'pd4ml/pd4ml.jar Pd4Cmd "file:' . $htmlfile . '" ' .
-            $width . ' ' . $fejparam['papir_meret'] . ' -orientation ' .
-            $fejparam['allo'] . ' -insets ' .
-            $fejparam['margo_fent'] . ',' .
-            $fejparam['margo_bal'] . ',' .
-            $fejparam['margo_lent'] . ',' .
-            $fejparam['margo_jobb'] . ',mm ' .
-            '-smarttablesplit ' . '-ttf ' . BORDER_PATH_BORDERLIB . 'pd4ml/fonts';
-
-        // if ($defult_param['vizjel_aktiv'] == 1 && !empty($defult_param['vizjel_path'])) {
-        //     $parancs .= ' -bgimage \'file:' . $defult_param['vizjel_path'] . '\'';
-        // }
-
-
-        if (substr(php_uname(), 0, 7) == "Windows") {
-            //windows alatt levágja a bináris állományt, ezért fájlba mentjük
-            shell_exec($parancs . ' > \tmp.pdf');
-            $pdfkimenet = file_get_contents('\tmp.pdf');
-            unlink('\tmp.pdf');
-            // exec($parancs, $pdfkimenet);
-            // $pdfkimenet = implode("\n", $pdfkimenet);
-        } else {
-            $pdfkimenet = shell_exec($parancs);
-        }
-
-        if (!unlink($htmlfile)) die('Error delete file: ' . $htmlfile);
-
-        // dd($pdfkimenet, $parancs);
-        return $pdfkimenet;
-    }
 }

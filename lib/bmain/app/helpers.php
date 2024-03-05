@@ -1,5 +1,6 @@
 <?php
 
+use App\Border3;
 use hws\Sablon;
 use hws\rmc\Model;
 use mod\admin\models\Users;
@@ -49,16 +50,15 @@ function getModulAzon()
 
 function isSysAdmin()
 {
-    if (!getUser()) return false;
-    return getUser()->sys_admin == 'I';
+    return Border3::rendszergazda_e();
 }
 
-function getMenu()
-{
-    $route = explode('/', request()->route()->getPrefix());
-    if (count($route) < 2) return false;
-    return $route[1];
-}
+// function getMenu()
+// {
+//     $route = explode('/', request()->route()->getPrefix());
+//     if (count($route) < 2) return false;
+//     return $route[1];
+// }
 
 function getEntity()
 {
@@ -66,146 +66,131 @@ function getEntity()
     return intval($request->header('Active-Entity') ?: $request->header('Entity-Id') ?: $request->get('entity_id'));
 }
 
-function getEntityName($entity_id = null)
+// function getEntityName($entity_id = null)
+// {
+//     $entity_id = $entity_id ?: getEntity();
+//     if (!$entity_id) return;
+//     $entities = entities();
+//     return array_key_exists($entity_id, $entities) ? $entities[$entity_id]['name'] : null;
+// }
+
+// function entities()
+// {
+//     return Cache::remember('entities', now()->addMinutes(10), function () {
+//         return Entities::status()->get()->keyBy('id')->toArray();
+//     });
+// }
+
+// function hasJustOneEntity()
+// {
+//     return count(entities()) == 1;
+// }
+
+// function getUserPerms($user_id = null)
+// {
+//     $user_id = $user_id ?: getUserId();
+//     return Cache::remember('user_perms_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
+//         $modul_azons = array_keys(config('mods'));
+//         $entities = getUserEntities($user_id);
+//         $UserPerms = UserPerms::where('user_id', $user_id)->whereIn('modul_azon', $modul_azons)->whereIn('entity_id', $entities)->get()->toArray();
+//         $GroupPerms = GroupPerms::whereIn('group_id', UserGroups::where('user_id', $user_id)->join('Rel_group')->where('Rel_group.status', 'I')->get()->pluck('group_id'))->whereIn('entity_id', $entities)->get()->toArray();
+//         // $isSysAdmin = Users::findOne($user_id)->sys_admin == 'I';
+//         $mods = config('mods');
+//         return collect($UserPerms)->merge($GroupPerms)->groupBy(['entity_id', 'modul_azon', 'perm'])->map(function ($r) use ($mods) {
+//             return $r->map(function ($r, $modul_azon) use ($mods) {
+//                 return $r->map(function () {
+//                     return true;
+//                 })->filter(function ($b, $jog) use ($modul_azon, $mods) {
+//                     if (!array_key_exists($modul_azon, $mods)) return false;
+//                     if (array_key_exists('menu', $mods[$modul_azon]) && array_key_exists($jog, $mods[$modul_azon]['menu'])) return true;
+//                     if (array_key_exists('perms', $mods[$modul_azon]) && array_key_exists($jog, $mods[$modul_azon]['perms'])) return true;
+//                     return false;
+//                 });
+//             })->filter(function ($jogok, $modul_azon) use ($mods) {
+//                 //ellenőrizzük, hogy ha csak elemi joga van akkor ne legyen joga, mert nem láthatja a menüpontokat
+//                 if (!array_key_exists($modul_azon, $mods)) return false;
+//                 if (!array_key_exists('menu', $mods[$modul_azon])) return false;
+//                 $menus = collect($mods[$modul_azon]['menu'])->keys()->toArray();
+//                 $hasJogs = $jogok->filter(function ($v) {
+//                     return $v;
+//                 })->filter(function ($v, $k) use ($menus) {
+//                     return in_array($k, $menus);
+//                 })->keys()->toArray();
+//                 return !empty($hasJogs);
+//             });
+//         })->toArray();
+//     });
+// }
+
+// function getUserEntities($user_id = null)
+// {
+//     $user_id = $user_id ?: getUserId();
+//     return Cache::remember('user_entities_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
+//         return UserEntities::where('user_id', $user_id)->pluck('entity_id')->toArray();
+//     });
+// }
+
+// function getUserPermsByEntity($user_id = null, $entity_id = null)
+// {
+//     $user_id = $user_id ?: getUserId();
+//     $entity_id = $entity_id ?: getEntity();
+//     $perms = getUserPerms($user_id);
+//     if (array_key_exists($entity_id, $perms)) return $perms[$entity_id];
+//     return false;
+// }
+
+// function hasEntity($user_id = null, $entity_id = null)
+// {
+//     $user_id = $user_id ?: getUserId();
+//     $entity_id = $entity_id ?: getEntity();
+//     $entities = getUserEntities($user_id);
+//     return in_array($entity_id, $entities);
+// }
+
+function hasPerm($jog)
 {
-    $entity_id = $entity_id ?: getEntity();
-    if (!$entity_id) return;
-    $entities = entities();
-    return array_key_exists($entity_id, $entities) ? $entities[$entity_id]['name'] : null;
+    if ($jog === false || !call_user_func_array([Border3::class, 'getJog'], func_get_args())) return false;
+    return true;
 }
 
-function entities()
-{
-    return Cache::remember('entities', now()->addMinutes(10), function () {
-        return Entities::status()->get()->keyBy('id')->toArray();
-    });
-}
+// function setParams(array $params, $modul_azon = null)
+// {
+//     $modul_azon = $modul_azon ?: getModulAzon();
+//     collect($params)->each(function ($value, $key) use ($modul_azon) {
+//         $rec = Params::where('modul_azon', $modul_azon)->where('key', $key)->one();
 
-function hasJustOneEntity()
-{
-    return count(entities()) == 1;
-}
+//         if ($rec) {
+//             $rec->value = $value;
+//             $rec->save();
+//         } else {
+//             Params::create([
+//                 'modul_azon' => $modul_azon,
+//                 'key' => $key,
+//                 'value' => $value,
+//             ]);
+//         }
+//     });
+//     Params::cache();
+// }
 
-function getUserPerms($user_id = null)
-{
-    $user_id = $user_id ?: getUserId();
-    return Cache::remember('user_perms_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
-        $modul_azons = array_keys(config('mods'));
-        $entities = getUserEntities($user_id);
-        $UserPerms = UserPerms::where('user_id', $user_id)->whereIn('modul_azon', $modul_azons)->whereIn('entity_id', $entities)->get()->toArray();
-        $GroupPerms = GroupPerms::whereIn('group_id', UserGroups::where('user_id', $user_id)->join('Rel_group')->where('Rel_group.status', 'I')->get()->pluck('group_id'))->whereIn('entity_id', $entities)->get()->toArray();
-        // $isSysAdmin = Users::findOne($user_id)->sys_admin == 'I';
-        $mods = config('mods');
-        return collect($UserPerms)->merge($GroupPerms)->groupBy(['entity_id', 'modul_azon', 'perm'])->map(function ($r) use ($mods) {
-            return $r->map(function ($r, $modul_azon) use ($mods) {
-                return $r->map(function () {
-                    return true;
-                })->filter(function ($b, $jog) use ($modul_azon, $mods) {
-                    if (!array_key_exists($modul_azon, $mods)) return false;
-                    if (array_key_exists('menu', $mods[$modul_azon]) && array_key_exists($jog, $mods[$modul_azon]['menu'])) return true;
-                    if (array_key_exists('perms', $mods[$modul_azon]) && array_key_exists($jog, $mods[$modul_azon]['perms'])) return true;
-                    return false;
-                });
-            })->filter(function ($jogok, $modul_azon) use ($mods) {
-                //ellenőrizzük, hogy ha csak elemi joga van akkor ne legyen joga, mert nem láthatja a menüpontokat
-                if (!array_key_exists($modul_azon, $mods)) return false;
-                if (!array_key_exists('menu', $mods[$modul_azon])) return false;
-                $menus = collect($mods[$modul_azon]['menu'])->keys()->toArray();
-                $hasJogs = $jogok->filter(function ($v) {
-                    return $v;
-                })->filter(function ($v, $k) use ($menus) {
-                    return in_array($k, $menus);
-                })->keys()->toArray();
-                return !empty($hasJogs);
-            });
-        })->toArray();
-    });
-}
+// function getParams($modul_azon = null)
+// {
+//     $modul_azon = $modul_azon ?: getModulAzon();
+//     return collect(Params::getCache())
+//         ->filter(function ($v, $k) use ($modul_azon) {
+//             return preg_match('/^' . $modul_azon . '\//', $k);
+//         })
+//         ->mapWithKeys(function ($v, $k) {
+//             return [preg_replace('/^.*\//', '', $k) => $v];
+//         })
+//         ->toArray();
+// }
 
-function getUserEntities($user_id = null)
-{
-    $user_id = $user_id ?: getUserId();
-    return Cache::remember('user_entities_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
-        return UserEntities::where('user_id', $user_id)->pluck('entity_id')->toArray();
-    });
-}
-
-function getUserPermsByEntity($user_id = null, $entity_id = null)
-{
-    $user_id = $user_id ?: getUserId();
-    $entity_id = $entity_id ?: getEntity();
-    $perms = getUserPerms($user_id);
-    if (array_key_exists($entity_id, $perms)) return $perms[$entity_id];
-    return false;
-}
-
-function hasEntity($user_id = null, $entity_id = null)
-{
-    $user_id = $user_id ?: getUserId();
-    $entity_id = $entity_id ?: getEntity();
-    $entities = getUserEntities($user_id);
-    return in_array($entity_id, $entities);
-}
-
-function hasPerm($tmp)
-{
-    if ($tmp === true) return true;
-    if (!is_array($tmp)) $tmp = func_get_args();
-    if (in_array('SysAdmin', $tmp) && isSysAdmin()) return true;
-
-    $perms = getUserPerms();
-    $entity_id = getEntity();
-    $modul_azon = getModulAzon();
-
-    if (!array_key_exists($entity_id, $perms)) return false;
-    if (!array_key_exists($modul_azon, $perms[$entity_id])) return false;
-
-    foreach ($tmp as $perm) {
-        if (array_key_exists($perm, $perms[$entity_id][$modul_azon])) {
-            if ($perms[$entity_id][$modul_azon][$perm] == true) return true;
-        }
-    }
-    return false;
-}
-
-function setParams(array $params, $modul_azon = null)
-{
-    $modul_azon = $modul_azon ?: getModulAzon();
-    collect($params)->each(function ($value, $key) use ($modul_azon) {
-        $rec = Params::where('modul_azon', $modul_azon)->where('key', $key)->one();
-
-        if ($rec) {
-            $rec->value = $value;
-            $rec->save();
-        } else {
-            Params::create([
-                'modul_azon' => $modul_azon,
-                'key' => $key,
-                'value' => $value,
-            ]);
-        }
-    });
-    Params::cache();
-}
-
-function getParams($modul_azon = null)
-{
-    $modul_azon = $modul_azon ?: getModulAzon();
-    return collect(Params::getCache())
-        ->filter(function ($v, $k) use ($modul_azon) {
-            return preg_match('/^' . $modul_azon . '\//', $k);
-        })
-        ->mapWithKeys(function ($v, $k) {
-            return [preg_replace('/^.*\//', '', $k) => $v];
-        })
-        ->toArray();
-}
-
-function getParam($key, $modul_azon = null)
-{
-    $params = getParams($modul_azon);
-    return array_key_exists($key, $params) ? $params[$key] : null;
-}
+// function getParam($key, $modul_azon = null)
+// {
+//     $params = getParams($modul_azon);
+//     return array_key_exists($key, $params) ? $params[$key] : null;
+// }
 
 function toHtml($text)
 {
@@ -215,176 +200,6 @@ function toHtml($text)
 function sendError($text, $code = 400, $title = null)
 {
     throw new SendErrorException($text, $code, $title);
-}
-
-function hasTemplate(String $type, $entity_id = null, $modul_azon = null)
-{
-    $entity_id = $entity_id ?: getEntity();
-    $modul_azon = $modul_azon ?: getModulAzon();
-    $template = Messages::where('type', $type)
-        ->where('entity_id', $entity_id)
-        ->where('modul_azon', $modul_azon)
-        ->one();
-    return $template;
-}
-
-function sendMessage(
-    String $type,
-    $to = null,
-    array $data = [],
-    $entity_id = null,
-    $modul_azon = null,
-    $noUser = false,
-    $attachements = [],
-    $priority = 2,
-    $modulRecordId = null,
-    $deviceToken = null,
-    $callback = null,
-    $sender = [],
-    $cc_emails = null,
-    $bcc_emails = null
-) {
-    $entity_id = $entity_id ?: getEntity();
-    $modul_azon = $modul_azon ?: getModulAzon();
-
-    $data['#date'] = date('Y.m.d.');
-    $data['#time'] = date('H:i:s');
-    if (!$noUser) {
-        $data['#currient_user'] = getUser()->toArray();
-        $data['#entity'] = getEntityName();
-    }
-    $user_id = false;
-    $email = false;
-    if (!empty($to)) {
-        if (is_object($to)) {
-            $data['#to_user'] = $to->toArray();
-            $user_id = $to->id;
-            $email = $to->email;
-        } else {
-
-            if (is_numeric($to)) {
-                $user_id = $to;
-                $user = Users::findOne($to);
-                if (!$user) return;
-                $email = $user->email;
-            } else {
-                $email = $to;
-            }
-        }
-    }
-
-    if ($user_id && !hasEntity($user_id, $entity_id)) return;
-
-    //típus keresés
-    $messageTypes = config('messageTypes');
-    if (
-        !array_key_exists($modul_azon, $messageTypes) ||
-        !array_key_exists($type, $messageTypes[$modul_azon])
-    ) {
-        hwslog(event: 'Üzenet küldés', message: 'Nem létező sablon! Modul: ' . $modul_azon . ', Sablon: ' . $type, err: 'Üzenetküldés hiba', entity_id: $entity_id);
-        logger()->error('Nem létező sablon! Modul: ' . $modul_azon . ', Sablon: ' . $type);
-        return false;
-    }
-
-    //template lekérdezés:
-    $template = Messages::getTemplate($type, $entity_id, $modul_azon);
-    if (!$template) {
-        hwslog(event: 'Üzenet küldés', message: 'Sablon nincs paraméterezve! Modul: ' . $modul_azon . ', Entitás azonosító: ' . $entity_id . ', Sablon: ' . $type, err: 'Üzenetküldés hiba', entity_id: $entity_id);
-        logger()->error('Sablon nincs paraméterezve! Modul: ' . $modul_azon . ', Entitás azonosító: ' . $entity_id . ', Sablon: ' . $type);
-        return;
-    };
-    //Rendszer üzenet küldés
-    if ($user_id && in_array('notification', $messageTypes[$modul_azon][$type]['chanels'])) {
-
-        $text = $template->notification_text;
-
-        $text = Sablon::create($text, $data, false);
-
-        if (!empty($text)) {
-
-            Cache::forget('userNotifications_' . $user_id);
-
-            $message_search = strip_tags($text);
-            $user = Users::find($user_id);
-            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' rendszerüzenet generálása', "Címzett: \n" . $user->name . " (" . $user->login . ")", null, $entity_id);
-            Notifications::addNotification(
-                $type,
-                $user_id,
-                $text,
-                $entity_id,
-                $modul_azon,
-                $message_search
-            );
-        }
-    }
-
-    //E-mail üzenet küldés
-    if ($email && in_array('email', $messageTypes[$modul_azon][$type]['chanels'])) {
-
-        $text = Sablon::create($template->email_ct, $data, false);
-        $subj = Sablon::create($template->email_subj, $data, false);
-
-        if (!empty($text) && !empty($subj)) {
-            $logMessage = "Címzett: " . $email . "\n";
-            if ($cc_emails) {
-                $logMessage .= "Másolat: " . $cc_emails . "\n";
-            }
-            if ($bcc_emails) {
-                $logMessage .= "Titkos másolat: " . $bcc_emails . "\n";
-            }
-            $logMessage .= "\nE-mail tárgya:\n" . $subj;
-
-            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' e-mail generálása', $logMessage, null, $entity_id);
-
-            if (empty($sender) && !empty(trim($template->email_from))) {
-                $sender = [
-                    'name' => null,
-                    'email' => $template->email_from,
-                ];
-            }
-            return EmailReception::Email(
-                $subj,
-                $text,
-                $email,
-                $modul_azon,
-                $modulRecordId,
-                $priority,
-                $entity_id,
-                $attachements,
-                true,
-                $sender,
-                $callback,
-                $cc_emails,
-                $bcc_emails
-            );
-        } else {
-            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' e-mail generálása', 'E-mail generálása nem történt meg, mert nincs tárgy és/vagy szöveg beállítva a sablonhoz', 'E-mail generálás hiba', $entity_id);
-        }
-    }
-
-    //PUSH üzenet küldés
-    if (!empty($deviceToken) && in_array('push', $messageTypes[$modul_azon][$type]['chanels'])) {
-
-        $text = Sablon::create($template->push_text, $data, false);
-        $subj = Sablon::create($template->push_subj, $data, false);
-
-        if (!empty($text)) {
-
-            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' push üzenet generálása', "Címzett token: \n" . $deviceToken . "\n\Push tárgya:\n" . $subj, null, $entity_id);
-            return PushReception::Push(
-                $deviceToken,
-                $subj,
-                $text,
-                $entity_id,
-                $modul_azon,
-                $modulRecordId,
-                $priority,
-                $callback
-            );
-        } else {
-            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' push üzenet generálása', 'Push üzenet generálása nem történt meg, mert nincs szöveg beállítva a sablonhoz', 'Push üzenet generálása hiba', $entity_id);
-        }
-    }
 }
 
 function hwslog($log_chanels = null, String $event = null, String $message = null, String $err = null, $entity_id = null, $modul_azon = null)
@@ -509,41 +324,12 @@ function toUtf($str)
     return str_replace(['õ', 'Õ', 'û', 'Û'], ['ő', 'Ő', 'ű', 'Ű'], $str);
 }
 
-function getModulName($modul_azon = null)
+function conv($str)
 {
-    $modul_azon = $modul_azon ?: getModulAzon();
-    $mods = config('mods');
-    if (!array_key_exists($modul_azon, $mods)) return '';
-    if (!array_key_exists('name', $mods[$modul_azon])) return '';
-    return $mods[$modul_azon]['name'];
+    return str_replace(['ő', 'Ő', 'ű', 'Ű'], ['õ', 'Õ', 'û', 'Û'], $str);
 }
 
-function getModulVersion($modul_azon = null)
+function invertConv($str)
 {
-    $modul_azon = $modul_azon ?: getModulAzon();
-    $mods = config('mods');
-    if(!array_key_exists($modul_azon,$mods))return 'v100';
-    return $mods[$modul_azon]['version'];
-}
-
-function getPermissionName($perm, $modul_azon = null)
-{
-    $modul_azon = $modul_azon ?: getModulAzon();
-    $mods = config('mods');
-    if (!array_key_exists($modul_azon, $mods)) return '';
-    if (!array_key_exists('perms', $mods[$modul_azon])) return '';
-    return array_key_exists('perms', $mods[$modul_azon]) && array_key_exists($perm, $mods[$modul_azon]['perms'])
-        ?
-        $mods[$modul_azon]['perms'][$perm]
-        :
-        $mods[$modul_azon]['menu'][$perm]['name'];
-}
-
-function getPermissionType($perm, $modul_azon = null)
-{
-    $modul_azon = $modul_azon ?: getModulAzon();
-    $mods = config('mods');
-    if (!array_key_exists($modul_azon, $mods)) return '';
-    if (!array_key_exists('perms', $mods[$modul_azon])) return '';
-    return array_key_exists('perms', $mods[$modul_azon]) && array_key_exists($perm, $mods[$modul_azon]['perms']) ? 'Elemi jog' : 'Menüpont';
+    return str_replace(['õ', 'Õ', 'û', 'Û'], ['ő', 'Ő', 'ű', 'Ű'], $str);
 }

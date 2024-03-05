@@ -49,6 +49,9 @@ CREATE TABLE IF NOT EXISTS `nevek_csoport` (
 	KEY `ugyfeladmin` (`ugyfeladmin`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 PACK_KEYS=0;");
 
+$ct = $conn->query("select count(*) from nevek_csoport")->fetch_row()[0];
+if($ct == 0)$conn->execute_query("INSERT INTO `nevek_csoport` (`csoport_id`, `nev`)VALUES (2, 'Border admin');");
+
 //ha nincs b_nagycsoport tábla akkor létrehzza
 $conn->execute_query("
 CREATE TABLE IF NOT EXISTS `b_nagycsoport` (
@@ -118,7 +121,6 @@ if($ct == 0)$conn->execute_query("
 INSERT INTO `nevek` (`id`, `nev`, `teljesnev`, `email`, `telefon`)
 VALUES ('2', 'admin', 'Border Admin', 'Border@Admin.hu', '1234');");
 
-
 $conn->execute_query("
 	CREATE TABLE IF NOT EXISTS `nevek_csoportosit` (
 	  `nevek_csoportosit_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -128,6 +130,9 @@ $conn->execute_query("
 	  KEY `csoport_id` (`csoport_id`),
 	  KEY `nevek_id` (`nevek_id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=latin1 PACK_KEYS=0;");
+
+$ct = $conn->query("select count(*) from nevek_csoportosit")->fetch_row()[0];
+if($ct == 0)$conn->execute_query("INSERT INTO `nevek_csoportosit` (`csoport_id`, `nevek_id`) VALUES (2, 2);");
 
 //ha nincs b_modulok tábla akkor létrehzza
 $conn->execute_query("
