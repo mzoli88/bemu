@@ -38,7 +38,18 @@ class Border3
         Config::set('modul_azon', getModulAzon());
         // dd (getModulAzon());
 
-        Config::set('permissions', config('mods')[getModulAzon()]['perms']);
+        $modul = config('mods')[getModulAzon()];
+        $perms = [];
+
+        if(array_key_exists('perms',$modul)){
+            foreach($modul['perms'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value;
+        }
+
+        if(array_key_exists('menu',$modul)){
+            foreach($modul['menu'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
+        }
+
+        Config::set('permissions', $perms);
 
         Config::set('BORDER_PREFIX', BORDER_PREFIX);
         Config::set('BORDER_PATH_BORDER', BORDER_PATH_BORDER);
@@ -103,15 +114,6 @@ class Border3
         }
     }
 
-    static function belepve()
-    {
-        if (empty(session_id())) {
-            session_name('SESS_' . config('BORDER_PREFIX') . 'ID');
-            session_start();
-        }
-        if (empty($_SESSION['id'])) self::send_error("Nincs belépve!", 401);
-    }
-
     static function send_error($txt, $code = 500, $title = false)
     {
         $out = ["message" => $txt];
@@ -122,28 +124,23 @@ class Border3
 
     static function setJogok()
     {
-        self::belepve();
         if (!key_exists('permissions', $_SESSION)) $_SESSION['permissions'] = [];
         $_SESSION['permissions'][config('modul_azon')] = [];
         $jogok = config('permissions');
-        $count = 0;
         
         if ($jogok) foreach ($jogok as $key => $value) {
             if ($value === true) {
                 $_SESSION['permissions'][config('modul_azon')][$key] = true;
-                $count++;
                 continue;
             }
-            if ($value === 'borderadmin') {
+
+            if ($key === 'badmin') {
                 $val = self::rendszergazda_e();
             } else {
                 $val = self::queryJog($value);
             }
             $_SESSION['permissions'][config('modul_azon')][$key] = $val ? true : false;
-            if ($val) $count++;
         }
-
-        if ($count < 1) self::send_error("Nincs Jogosultság!", 403);
 
         return $_SESSION['permissions'][config('modul_azon')];
     }
@@ -206,14 +203,26 @@ class Border3
                 return self::send_error("Modul verziója nincs telepítve!", 404);
             }
         }
+        $menu = [];
+
+        $mods = config('mods');
+
+        if(isset($_GET['modul']) && array_key_exists($_GET['modul'],$mods)){
+            $menu = collect($mods[$_GET['modul']]['menu'])->filter(function($menu,$key){
+                return hasPerm($key);
+            });
+        }
+        if (count($menu) < 1) self::send_error("Nincs jogosultság menüpont eléréséhez!", 403);
+
         return [
-            'id' => $_SESSION['id'],
+            'id' => (int)$_SESSION['id'],
             'nev' => toUtf($_SESSION['nev']),
             'teljesnev' => toUtf($_SESSION['teljesnev']),
             'permissions' => $jogok,
             'modul_nev' => toUtf($modul_data->modulnev),
             'modul_verzio' => toUtf($modul_data->verzio),
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
+            'menu' => $menu,
             // 'entity_data' => $entity_data,
             // 'CacheQueue' => CacheQueue::isReady(),
         ];
@@ -275,24 +284,26 @@ class Border3
     {
         if ($user_id === false && isset($_SESSION)) $user_id = $_SESSION['id'];
 
-        if (defined('BORDER_EMU')) {
-            $badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
-            if(!$badmin) {
-                DB::table('nevek_csoport')->insert([
-                    'csoport_id' => 2,
-                    'nev' => 'Border admin',
-                ]);
-            }
+        // if (defined('BORDER_EMU')) {
+        //     $badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
+        //     if(!$badmin) {
+        //         DB::table('nevek_csoport')->insert([
+        //             'csoport_id' => 2,
+        //             'nev' => 'Rendszer - Admin',
+        //             'modul_azon' => 'admin',
+        //         ]);
+        //     }
 
-            $ellenorzendo = conv($ellenorzendo);
-            $equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
-            $result = $equery->first();
-            if (!$result) {
-                DB::table('nevek_csoport')->insert([
-                    'nev' => $ellenorzendo
-                ]);
-            }
-        }
+        //     $ellenorzendo = conv($ellenorzendo);
+        //     $equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
+        //     $result = $equery->first();
+        //     if (!$result) {
+        //         DB::table('nevek_csoport')->insert([
+        //             'nev' => $ellenorzendo,
+        //             'modul_azon' => $_GET['modul'],
+        //         ]);
+        //     }
+        // }
 
         $query = DB::table('nevek_csoportosit');
         $query->join('nevek_csoport', 'nevek_csoport.csoport_id', '=', 'nevek_csoportosit.csoport_id');
@@ -326,18 +337,21 @@ class Border3
 
     static function getJog($tmp)
     {
-        self::belepve();
         if (!is_array($tmp)) {
             $tmp = func_get_args();
         }
         $has_jog = false;
 
         //Biztonsági okokból kérve lett, hogy mindig le legyen kérdezve a jogosultság
-        // if (!array_key_exists('permissions', $_SESSION) || !array_key_exists(config('modul_azon'), $_SESSION['permissions'])) {
-        self::setJogok();
-        // }
+        if (!array_key_exists('permissions', $_SESSION) || !array_key_exists(config('modul_azon'), $_SESSION['permissions'])) {
+            self::setJogok();
+        }
 
         foreach ($tmp as $value) {
+            if($value == true){
+                $has_jog = true;
+                break;
+            }
             if ($_SESSION['permissions'][config('modul_azon')][$value] === true) {
                 $has_jog = true;
                 break;

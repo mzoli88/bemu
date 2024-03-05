@@ -73,8 +73,6 @@ CREATE TABLE IF NOT EXISTS `b_nagycsoport_modul` (
 	KEY `modul_azon` (`modul_azon`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
 
-
-
 //ha nincs nevek tábla létrehzza
 $conn->execute_query("
 CREATE TABLE IF NOT EXISTS `nevek` (
@@ -119,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `nevek` (
 $ct = $conn->query("select count(*) from nevek")->fetch_row()[0];
 if($ct == 0)$conn->execute_query("
 INSERT INTO `nevek` (`id`, `nev`, `teljesnev`, `email`, `telefon`)
-VALUES ('2', 'admin', 'Border Admin', 'Border@Admin.hu', '1234');");
+VALUES ('2', 'admin', 'Rendszer - Admin', 'Border@Admin.hu', '1234');");
 
 $conn->execute_query("
 	CREATE TABLE IF NOT EXISTS `nevek_csoportosit` (

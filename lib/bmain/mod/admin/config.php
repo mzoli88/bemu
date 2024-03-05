@@ -10,7 +10,7 @@ return [
     'db_prefix' => ['admin_'],
 
     'perms' => [
-        'badmin' => 'Border admin',
+        'badmin' => 'Admin',
     ],
 
     // 'permsInfo' => [

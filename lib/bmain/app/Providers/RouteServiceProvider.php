@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\AuthController;
+use App\MenuController;
 use App\Routers\ApiRouter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -30,10 +31,11 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
+        
         $this->routes(function () {
             //controllers
             collect(config('mods'))->each(function ($data, $modul_azon) {
-                Route::middleware(['api'])->prefix($modul_azon)->group(function () use ($data) {
+                Route::middleware(['api','auth'])->prefix($modul_azon)->group(function () use ($data) {
                     ApiRouter::route($data['dir'] . '/controllers');
                 });
                 Route::prefix($modul_azon . '/interfaces')->group(function () use ($data) {

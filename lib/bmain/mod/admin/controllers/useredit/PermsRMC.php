@@ -2,70 +2,63 @@
 
 namespace mod\admin\controllers\useredit;
 
-use hws\rmc\Controller3;
+use hws\rmc\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use mod\admin\models\UserPerms;
-use mod\admin\models\Users;
-use mod\templates\models\ModulUsers;
+use mod\admin\models\Csoport;
+use mod\admin\models\NevekCsoportosit;
+use Illuminate\Support\Facades\DB;
 
-class PermsRMC extends Controller3
+
+class PermsRMC extends Controller
 {
 
-    public $model = Users::class;
+    public $model = Csoport::class;
 
-    public $log_event_id = 'Jogosultságok';
-
-    public $use_tarnsaction = [];
-
-    public $permissons = [
-        'list' => true,
-        'update' => ['SysAdmin','users_admin','user_perms'],
-    ];
-
-    public function list(Request $request)
-    {
-        $mods = collect(config('mods'));
-        unset($mods['start']);
-        return [
-            'data' => $mods->map(function ($r) {
-                unset($r['dir']);
-                unset($r['db_prefix']);
-                unset($r['sort']);
-                return $r;
-            })->toArray(),
-            'perms' => UserPerms::where('user_id', $request->user_id)
-                ->entity()
-                ->all()
-                ->mapWithKeys(function ($v, $k) {
-                    return [$v->modul_azon . '#' . $v->perm => true];
-                }),
-            'templates' => ModulUsers::entity()->where('user_id',$request->user_id)->pluck('modul_azon'),
-            'hastemplates' => collect(config('messageTypes'))->filter(function($v){return !empty($v);})->keys(),
-        ];
+    public function list(Request $request){
+        return $this->model::query()->select([
+            '*',
+            "user_has" => DB::raw('SELECT count(*) FROM nevek_csoportosit WHERE nevek_csoportosit.csoport_id = nevek_csoport.csoport_id AND nevek_csoportosit.nevek_id = '.$request->user_id),
+        ])->search()->sort()->page();
     }
 
-    public $metaNoUpdate = true;
+    public function view(Request $request,$id){
+        $query = $this->model::query();
+        $query->where($query->getModel()->getKeyName(),$id)->select($this->select);
+        $model = $query->first();
+        // $model = $this->model::find($id);
+        if(!$model) throw new \Exception('A rekord nem található!');
+        return $model;
+    }
 
-    public function update(Request $request, $id)
-    {
-        if($id == getUserId() && !isSysAdmin()) sendError('Nem lehet a saját felhaszálónkhoz tartozó adatokat módosítani!');
-        
-        $model = UserPerms::where('user_id', $id)
-            ->where('modul_azon', $request->modul_azon)
-            ->where('perm', $request->perm)
-            ->entity()->one();
-        if ($model) {
-            $model->delete();
-        } else {
-            UserPerms::create([
-                'entity_id' => getEntity(),
-                'user_id' => $id,
-                'modul_azon' => $request->modul_azon,
-                'perm' => $request->perm,
-            ]);
+    public function create(Request $request){
+        if($request->csoport_id){
+            $model = NevekCsoportosit::make();
+            $model->csoport_id = $request->csoport_id;
+            $model->nevek_id = $request->user_id;
+            $model->save();
+        }else{
+            foreach(Csoport::get() as $jog){
+                $model = NevekCsoportosit::where('nevek_id',$request->user_id)->where('csoport_id',$jog->getKey())->one();
+                if(!$model) $model = new NevekCsoportosit;
+                $model->csoport_id = $jog->getKey();
+                $model->nevek_id = $request->user_id;
+                $model->save();
+            }
         }
-        Cache::forget('user_perms_' . $id);
-        return [];
+        return ["success" => true];
     }
+
+    public function delete(Request $request,$id = null){
+        if($id){
+            $model = NevekCsoportosit::where('nevek_id',$request->user_id)->where('csoport_id',$id)->one();
+            if(!$model) throw new \Exception('A rekord nem található!');
+            $model->delete();
+        }else{
+            foreach( NevekCsoportosit::where('nevek_id',$request->user_id)->get() as $jog){
+                $jog->delete();
+            }
+        }
+        return ["success" => true];
+    }
+
 }

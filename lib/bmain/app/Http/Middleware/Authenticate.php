@@ -2,34 +2,21 @@
 
 namespace App\Http\Middleware;
 
-use App\AuthController;
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
-// use Illuminate\Support\Facades\Cache;
-// use Illuminate\Support\Str;
-
-class Authenticate extends Middleware
+use Illuminate\Http\Request;
+use Closure;
+use Symfony\Component\HttpFoundation\Response;
+class Authenticate
 {
 
-    protected function authenticate($request, array $guards)
+    public function handle(Request $request, Closure $next): Response
     {
-
-        $out = parent::authenticate($request, $guards);
-
-
-
-        if (getParam('maintenance_mode','admin') == 'I' && !isSysAdmin()) {
-            sendError(getParam('maintance_text','admin'),503,getParam('maintance_header','admin'));
+        if (empty(session_id())) {
+            session_name('SESS_' . config('BORDER_PREFIX') . 'ID');
+            session_start();
         }
-
-        return $out;
-    }
-
-    protected function redirectTo($request)
-    {
-        if (!$request->expectsJson()) {
-            // return route('auth/logout');
-            // return response()->json([]);
-            return null;
-        }
+        
+        if (empty($_SESSION['id'])) sendError("Nincs belépve!", 401);
+ 
+        return $next($request);
     }
 }

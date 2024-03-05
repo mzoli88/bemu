@@ -1,22 +1,8 @@
 <?php
 
 use App\Border3;
-use hws\Sablon;
 use hws\rmc\Model;
-use mod\admin\models\Users;
-use mod\admin\models\Params;
-use mod\admin\models\Entities;
-use mod\admin\models\UserPerms;
-use mod\admin\models\GroupPerms;
-use mod\admin\models\UserGroups;
-use mod\admin\models\UserEntities;
-use mod\templates\models\Messages;
-use Illuminate\Support\Facades\Cache;
 use App\Exceptions\SendErrorException;
-use App\Logging\CustomLoggerHandler;
-use mod\notificationcenter\models\Notifications;
-use mod\notificationcenter\classes\PushReception;
-use mod\notificationcenter\classes\EmailReception;
 
 function getUser()
 {
@@ -81,10 +67,11 @@ function getEntity()
 //     });
 // }
 
-// function hasJustOneEntity()
-// {
-//     return count(entities()) == 1;
-// }
+function hasJustOneEntity()
+{
+    // return count(entities()) == 1;
+    return true;
+}
 
 // function getUserPerms($user_id = null)
 // {
@@ -332,4 +319,9 @@ function conv($str)
 function invertConv($str)
 {
     return str_replace(['õ', 'Õ', 'û', 'Û'], ['ő', 'Ő', 'ű', 'Ű'], $str);
+}
+
+function toLatin($str)
+{
+    return conv(invertConv($str));
 }
