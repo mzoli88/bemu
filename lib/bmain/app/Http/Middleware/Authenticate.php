@@ -10,13 +10,7 @@ class Authenticate
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (empty(session_id())) {
-            session_name('SESS_' . config('BORDER_PREFIX') . 'ID');
-            session_start();
-        }
-        
-        if (empty($_SESSION['id'])) sendError("Nincs belépve!", 401);
- 
+        if (!getUser()) sendError("Nincs belépve!", 401); 
         return $next($request);
     }
 }

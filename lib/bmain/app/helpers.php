@@ -6,13 +6,30 @@ use App\Exceptions\SendErrorException;
 
 function getUser()
 {
-    if (config('user_cached', 'nono') == 'nono') config(['user_cached' => request()->user()]);
+
+    if(config('user_cached','nono') == 'nono') {
+        if (empty(session_id())) {
+            session_name('SESS_' . config('BORDER_PREFIX') . 'ID');
+            session_start();
+        }
+    
+        if (empty($_SESSION['id'])){
+            config(['user_cached' => false]);
+        }else{
+            config(['user_cached' => (object)[
+                'id' => (int)$_SESSION['id'],
+                'login' => toUtf($_SESSION['nev']),
+                'name' => toUtf($_SESSION['teljesnev']),
+            ]]);
+        }
+    }
     return config('user_cached');
 }
 
 function getUserId()
 {
-    return config('user_id');
+    $user = getUser();
+    return $user ? $user->id : null;
 }
 
 function getModulAzon()

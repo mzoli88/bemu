@@ -51,6 +51,9 @@ class Border3
 
         Config::set('permissions', $perms);
 
+
+
+
         Config::set('BORDER_PREFIX', BORDER_PREFIX);
         Config::set('BORDER_PATH_BORDER', BORDER_PATH_BORDER);
         Config::set('BORDER_PATH_BORDERDOC', BORDER_PATH_BORDERDOC);
@@ -66,52 +69,54 @@ class Border3
         // if (!is_dir($log_dir)) mkdir($log_dir);
 
 
-        if (@$_SESSION && isset($_SESSION['id'])) {
-            Config::set('user_id', (int)$_SESSION['id']);
+        // if (@$_SESSION && isset($_SESSION['id'])) {
 
-            Config::set('user_login', toUtf($_SESSION['nev']));
-            Config::set('user_name', toUtf($_SESSION['teljesnev']));
+            // Config::set('user_id', (int)$_SESSION['id']);
 
-            if (isset($_SESSION['uuid'])) {
-                Config::set('uuid', $_SESSION['uuid']);
-            } else {
-                $_SESSION['uuid'] = (string) Str::uuid();
-                Config::set('uuid', $_SESSION['uuid']);
-            }
+            // Config::set('user_login', toUtf($_SESSION['nev']));
+            // Config::set('user_name', toUtf($_SESSION['teljesnev']));
 
-            if (config('use_entity')) {
+            // if (isset($_SESSION['uuid'])) {
+            //     Config::set('uuid', $_SESSION['uuid']);
+            // } else {
+            //     $_SESSION['uuid'] = (string) Str::uuid();
+            //     Config::set('uuid', $_SESSION['uuid']);
+            // }
 
-                if (!isset($_SESSION['entity_type_id'])) {
-                    $tmp = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first();
-                    if ($tmp) {
-                        $_SESSION['entity_type_id'] = $tmp->b_nagycsoport_tipus_id;
-                    } else {
-                        sendError('Entitás típus nem található!');
-                    }
-                }
-                Config::set('entity_type_id', $_SESSION['entity_type_id']);
-                Config::set('active_entity', self::getActiveEntity());
-                Config::set('user_entity', self::getUserEntity());
-            }
+            // if (config('use_entity')) {
 
-            if (!isset($_SESSION['szervezeti_egyseg_id'])) {
-                $tmp = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Szervezeti egység')->first();
-                if ($tmp) {
-                    $_SESSION['szervezeti_egyseg_id'] = $tmp->b_nagycsoport_tipus_id;
-                } else {
-                    sendError('Szervezeti egység típus nem található!');
-                }
-            }
-            Config::set('szervezeti_egyseg_id', $_SESSION['szervezeti_egyseg_id']);
-        } else {
-            if (app()->runningInConsole() && !config('user_id')) {
-                Config::set('user_id', '-');
+            //     if (!isset($_SESSION['entity_type_id'])) {
+            //         $tmp = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first();
+            //         if ($tmp) {
+            //             $_SESSION['entity_type_id'] = $tmp->b_nagycsoport_tipus_id;
+            //         } else {
+            //             sendError('Entitás típus nem található!');
+            //         }
+            //     }
+            //     Config::set('entity_type_id', $_SESSION['entity_type_id']);
+            //     Config::set('active_entity', self::getActiveEntity());
+            //     Config::set('user_entity', self::getUserEntity());
+            // }
 
-                Config::set('user_login', '-');
-                Config::set('user_name', 'Technikai felhasználó');
-                Config::set('uuid', (string) Str::uuid());
-            }
-        }
+            // if (!isset($_SESSION['szervezeti_egyseg_id'])) {
+            //     $tmp = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Szervezeti egység')->first();
+            //     if ($tmp) {
+            //         $_SESSION['szervezeti_egyseg_id'] = $tmp->b_nagycsoport_tipus_id;
+            //     } else {
+            //         sendError('Szervezeti egység típus nem található!');
+            //     }
+            // }
+            // Config::set('szervezeti_egyseg_id', $_SESSION['szervezeti_egyseg_id']);
+        // } 
+        // else {
+            // if (app()->runningInConsole() && !config('user_id')) {
+            //     Config::set('user_id', '-');
+
+            //     Config::set('user_login', '-');
+            //     Config::set('user_name', 'Technikai felhasználó');
+            //     Config::set('uuid', (string) Str::uuid());
+            // }
+        // }
     }
 
     static function send_error($txt, $code = 500, $title = false)
