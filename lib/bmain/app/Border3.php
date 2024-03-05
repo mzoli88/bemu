@@ -41,12 +41,12 @@ class Border3
         $modul = config('mods')[getModulAzon()];
         $perms = [];
 
-        if(array_key_exists('perms',$modul)){
-            foreach($modul['perms'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value;
+        if (array_key_exists('perms', $modul)) {
+            foreach ($modul['perms'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value;
         }
 
-        if(array_key_exists('menu',$modul)){
-            foreach($modul['menu'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
+        if (array_key_exists('menu', $modul)) {
+            foreach ($modul['menu'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
         }
 
         Config::set('permissions', $perms);
@@ -127,7 +127,7 @@ class Border3
         if (!key_exists('permissions', $_SESSION)) $_SESSION['permissions'] = [];
         $_SESSION['permissions'][config('modul_azon')] = [];
         $jogok = config('permissions');
-        
+
         if ($jogok) foreach ($jogok as $key => $value) {
             if ($value === true) {
                 $_SESSION['permissions'][config('modul_azon')][$key] = true;
@@ -145,58 +145,11 @@ class Border3
         return $_SESSION['permissions'][config('modul_azon')];
     }
 
-    static function refreshModulData(){
-        $badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
-        if(!$badmin) {
-            DB::table('nevek_csoport')->insert([
-                'csoport_id' => 2,
-                'nev' => 'Rendszer - Admin',
-                'modul_azon' => 'admin',
-            ]);
-        }
-        collect(config('mods'))->each(function($modul,$modul_azon){
-
-            
-            $modulData = DB::table('b_modulok')->where('azon', $modul_azon)->first();
-            if(!$modulData){
-                    DB::table('b_modulok')->insert([
-                        'azon' => $modul_azon,
-                        'modulnev' => $modul['name'],
-                        'verzio' => 'v' . $modul['version'],
-                    ]);
-            }
-
-            // $modul = config('mods')[getModulAzon()];
-            $perms = [];
-
-            if(array_key_exists('perms',$modul)){
-                foreach($modul['perms'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value;
-            }
-
-            if(array_key_exists('menu',$modul)){
-                foreach($modul['menu'] as $key => $value) $perms [$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
-            }
-
-            collect($perms)->each(function($jog){
-                $ellenorzendo = conv($jog);
-                $equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
-                $result = $equery->first();
-                if (!$result) {
-                    DB::table('nevek_csoport')->insert([
-                        'nev' => $ellenorzendo,
-                        'modul_azon' => $_GET['modul'],
-                    ]);
-                }
-            });
-        });
-    }
-
     static function getUserData()
     {
-        if (defined('BORDER_EMU')) self::refreshModulData();
         $jogok = self::setJogok();
         $modul_data = self::getModulData()->first();
-        
+
         // $entity_data = null;
         // if (config('use_entity')) {
 
@@ -243,8 +196,8 @@ class Border3
 
         $mods = config('mods');
 
-        if(isset($_GET['modul']) && array_key_exists($_GET['modul'],$mods)){
-            $menu = collect($mods[$_GET['modul']]['menu'])->filter(function($menu,$key){
+        if (isset($_GET['modul']) && array_key_exists($_GET['modul'], $mods)) {
+            $menu = collect($mods[$_GET['modul']]['menu'])->filter(function ($menu, $key) {
                 return hasPerm($key);
             });
         }
@@ -363,7 +316,7 @@ class Border3
         }
 
         foreach ($tmp as $value) {
-            if($value == true){
+            if ($value == true) {
                 $has_jog = true;
                 break;
             }
@@ -415,5 +368,4 @@ class Border3
             ]);
         });
     }
-
 }
