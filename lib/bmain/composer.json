@@ -8,12 +8,16 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "doctrine/dbal": "^3.5",
+        "intervention/image": "^2.7",
+        "laravel/framework": "^10.0",
+        "mpdf/mpdf": "*",
+        "phpmailer/phpmailer": "^6.8"
     },
     "autoload": {
         "files": [
-            "app/helpers.php",
-            "../Laravel10/include.php"
+            "app/helpers.php"
         ],
         "psr-4": {
             "App\\": "app/",

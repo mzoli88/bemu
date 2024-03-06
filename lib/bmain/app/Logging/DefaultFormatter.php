@@ -27,7 +27,7 @@ class DefaultFormatter extends BaseJsonFormatter
             if (request()->headers->get('request-id')) {
                 config(['request_id' => request()->headers->get('request-id')]);
             } else {
-                config(['request_id' => Str::uuid()->toString()]);
+                config(['request_id' => uniqid()]);
             }
         }
         $user = getUser();
@@ -55,7 +55,7 @@ class DefaultFormatter extends BaseJsonFormatter
             'request_id' => config('request_id'),
             'user_login' => $user ? $user->login : '-',
             'user_name' => $userName,
-            'uuid' => $user ? $user->uuid : '-',
+            'uuid' => $user ? config('request_id') : '-',
             'uri' => urldecode(isset($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : implode(' ', $_SERVER['argv'])),
             'method' => (isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'CMD'),
             'event' => '-',
@@ -117,7 +117,7 @@ class DefaultFormatter extends BaseJsonFormatter
             'user_id' => $user ? '' . $user->id : '-',
             'user_login' => $user ? $user->login : '-',
             'user_name' => $user ? $user->name : (app()->runningInConsole() ? 'Technikai felhasználó' : 'Nem bejelentkezett felhasználó'),
-            'uuid' => $user ? $user->uuid : '-',
+            'uuid' => $user ? config('request_id') : '-',
             'entity_id' => getEntity(),
             'entity_name' => getEntityName(),
             // 'modul_azon' => getModulAzon(),

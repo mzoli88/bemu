@@ -59,6 +59,22 @@ function isSysAdmin()
     return Border3::rendszergazda_e();
 }
 
+function getModulName($modul_azon = null)
+{
+    $modul_azon = $modul_azon ?: getModulAzon();
+    $mods = config('mods');
+    if (!array_key_exists($modul_azon, $mods)) return '';
+    if (!array_key_exists('name', $mods[$modul_azon])) return '';
+    return $mods[$modul_azon]['name'];
+}
+
+function getModulVersion($modul_azon = null)
+{
+    $modul_azon = $modul_azon ?: getModulAzon();
+    $mods = config('mods');
+    return $mods[$modul_azon]['version'];
+}
+
 // function getMenu()
 // {
 //     $route = explode('/', request()->route()->getPrefix());
@@ -72,13 +88,14 @@ function getEntity()
     return intval($request->header('Active-Entity') ?: $request->header('Entity-Id') ?: $request->get('entity_id'));
 }
 
-// function getEntityName($entity_id = null)
-// {
+function getEntityName($entity_id = null)
+{
+    return '-';
 //     $entity_id = $entity_id ?: getEntity();
 //     if (!$entity_id) return;
 //     $entities = entities();
 //     return array_key_exists($entity_id, $entities) ? $entities[$entity_id]['name'] : null;
-// }
+}
 
 // function entities()
 // {
