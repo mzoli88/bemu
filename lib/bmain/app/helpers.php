@@ -6,24 +6,30 @@ use App\Exceptions\SendErrorException;
 
 function getUser()
 {
-
-    if(config('user_cached','nono') == 'nono') {
-        if (empty(session_id())) {
-            session_name('SESS_' . config('BORDER_PREFIX') . 'ID');
-            session_start();
-        }
     
-        if (empty($_SESSION['id'])){
-            config(['user_cached' => false]);
-        }else{
-            config(['user_cached' => (object)[
-                'id' => (int)$_SESSION['id'],
-                'login' => toUtf($_SESSION['nev']),
-                'name' => toUtf($_SESSION['teljesnev']),
-            ]]);
-        }
-    }
-    return config('user_cached');
+    // if(config('user_cached','nono') == 'nono') {
+        // if (empty(session_id())) {
+        //     session_name('SESS_' . BORDER_PREFIX . 'ID');
+        //     session_start();
+        // }
+    
+        // if (empty($_SESSION['id'])){
+            // config(['user_cached' => false]);
+            // session_destroy();
+        // }else{
+            // config(['user_cached' => (object)[
+            //     'id' => (int)$_SESSION['id'],
+            //     'login' => toUtf($_SESSION['nev']),
+            //     'name' => toUtf($_SESSION['teljesnev']),
+            // ]]);
+        // }
+    // }
+    // return config('user_cached');
+    return (object)[
+        'id' => 2,
+        'login' => 'a',
+        'name' => 'b',
+    ];
 }
 
 function getUserId()
@@ -34,8 +40,6 @@ function getUserId()
 
 function getModulAzon()
 {
-    $modul_azon = null;
-    if (request()->route()) $modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
     if (app()->runningInConsole()) {
         $trace = collect(debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS, 10))->slice(1)->pluck('class');
         $find = $trace->filter(function ($v) {
@@ -43,12 +47,17 @@ function getModulAzon()
         })->first();
         if ($find) {
             $tmp = explode('\\', $find);
-            $modul_azon = $tmp[1];
+            return $tmp[1];
         }
     }
-    if ($modul_azon == 'auth' || $modul_azon == 'start' || empty($modul_azon)) $modul_azon = 'admin';
 
-    return $modul_azon;
+    if(config('modul_aon_cached','nono') == 'nono') {
+        $modul_azon = null;
+        if (request()->route()) $modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
+        if ($modul_azon == 'auth' || $modul_azon == 'start' || empty($modul_azon)) $modul_azon = 'admin';
+        config(['modul_aon_cached' => $modul_azon]);
+    }
+    return config('modul_aon_cached');
 }
 
 function isSysAdmin()
