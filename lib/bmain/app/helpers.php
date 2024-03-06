@@ -6,6 +6,7 @@ use App\Exceptions\SendErrorException;
 
 function getUser()
 {
+    if (app()->runningInConsole()) return false;
     if(config('user_cached','nono') == 'nono') {
         if (empty(session_id())) {
             session_name('SESS_' . BORDER_PREFIX . 'ID');

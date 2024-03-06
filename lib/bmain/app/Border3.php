@@ -155,11 +155,11 @@ class Border3
         $jogok = self::getJogok();
 
         foreach ($tmp as $value) {
-            if ($value == true) {
+            if ($value === true) {
                 $has_jog = true;
                 break;
             }
-            if ($jogok[$value] === true) {
+            if (array_key_exists($value,$jogok) && $jogok[$value] === true) {
                 $has_jog = true;
                 break;
             }

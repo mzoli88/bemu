@@ -8,7 +8,7 @@ return [
     'version' => '2.0.0',
 
     'perms' => [
-        'badmin' => 'Admin',
+        // 'badmin' => 'Admin',
     ],
 
     'menu' => [

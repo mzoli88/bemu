@@ -70,6 +70,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <body>
 	<?php
 
+	use App\Border3;
 	use Illuminate\Support\Facades\DB;
 
 	function refreshModulData()
@@ -82,6 +83,10 @@ header('Content-Type: text/html; charset=UTF-8');
 				'modul_azon' => 'admin',
 			]);
 		}
+
+
+
+
 		collect(config('mods'))->each(function ($modul, $modul_azon) {
 			$modulData = DB::table('b_modulok')->where('azon', $modul_azon)->first();
 			if (!$modulData) {
@@ -103,7 +108,7 @@ header('Content-Type: text/html; charset=UTF-8');
 				foreach ($modul['menu'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
 			}
 
-			collect($perms)->each(function ($jog) use ($modul_azon){
+			collect($perms)->each(function ($jog) use ($modul_azon) {
 				$ellenorzendo = conv($jog);
 				$equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
 				$result = $equery->first();
@@ -115,6 +120,16 @@ header('Content-Type: text/html; charset=UTF-8');
 				}
 			});
 		});
+
+
+		$jog_id = Border3::getJogId('Rendszer - Felhasználó kezelés (menüpont)');
+		$result = DB::table('nevek_csoportosit')->where('nevek_id', getUserId())->where('csoport_id', $jog_id)->first();
+		if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => getUserId(), 'csoport_id' => $jog_id,]);
+
+		$jog_id = Border3::getJogId('Rendszer - Szerepkör kezelés (menüpont)');
+		$result = DB::table('nevek_csoportosit')->where('nevek_id', getUserId())->where('csoport_id', $jog_id)->first();
+		if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => getUserId(), 'csoport_id' => $jog_id,]);
+
 	}
 
 	if (isset($_SERVER['REQUEST_URI'])) {

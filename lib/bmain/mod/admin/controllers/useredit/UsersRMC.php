@@ -9,6 +9,10 @@ class UsersRMC extends Controller3
 {
     public $model = Nevek::class;
 
+    // public $permissons = [
+    //     'list' => ['badmin']
+    // ];
+
     public $select = [
         '*'
     ];
