@@ -1,0 +1,876 @@
+@font-face {
+	font-family: "Font Awesome 5 Free";
+	src: url(fontawesome/fa-solid-900.woff);
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: #f9f9fc;
+}
+
+.border {
+	border-radius: 4px;
+	border: 1px solid #ddd;
+	background-color: #fff;
+}
+
+.titleBorder {
+	padding: 0 10px;
+	font-size: 18px;
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 1px solid #ddd;
+}
+
+.spinningMask {
+	color: #1d428a;
+}
+
+.loadmask {
+	color: #1d428a;
+	background-color: #f9f9fc;
+}
+
+.Panel.notCollapsible.border,
+.Tab.border,
+.Grid.border {
+	border-color: transparent;
+	background-color: transparent;
+}
+
+.Panel.notCollapsible>.titleBorder,
+.Tabmenu {
+	margin-bottom: 4px;
+}
+
+.Panel.collapsible.collapsed>.titleBorder {
+	height: auto;
+	line-height: initial;
+	padding: 10px 0;
+}
+
+.collapsedIcon {
+	color: #1d428a;
+}
+
+.Panel.collapsible.collapsed>.titleBorder>.titletext {
+	line-height: 40px;
+}
+
+/* Button */
+.Button {
+	font-size: 15px;
+	font-weight: bold;
+	color: #1d428a;
+	/* paddingot lentebb kell állítani*/
+}
+
+.Button:active {
+	font-size: 14px;
+}
+
+.ButtonText {
+	vertical-align: middle;
+}
+
+.Button.highlight {
+	background-color: #ff8200;
+	color: #fff;
+	border-color: transparent;
+}
+
+/* Menu */
+
+#app .Panel.Menu {
+	margin: 0;
+	margin-right: 10px;
+	border: none;
+	background-color: #1d428a;
+	border-radius: 0;
+	border-top-right-radius: 1rem;
+}
+
+.Panel.Menu .collapsedIcon {
+	color: #fff;
+}
+
+.Panel.Menu>.Body {
+	background-color: initial;
+	border: none;
+}
+
+#app .Panel.Menu>.Title {
+	color: #fff;
+	border: none;
+	background-color: #1d428a;
+	border-top-right-radius: 1rem;
+}
+
+.Panel.Menu .Title .titletext {
+	background-color: inherit;
+	color: transparent;
+}
+
+.Panel.Menu.collapsed .Title .titletext {
+	background-color: inherit;
+	color: #fff;
+}
+
+.Panel.Menu.collapsed .titletext {
+	display: block;
+}
+
+.Panel.Menu .Body {
+	padding: 0;
+	border-radius: 0;
+}
+
+.Panel.Menu .Button {
+	border: none;
+	margin: 0;
+	color: #657ba9;
+	background-color: inherit;
+	text-align: left;
+	border-left: 2px solid transparent;
+	border-radius: initial;
+	height: 50px;
+	/* font-size: 18px; */
+}
+
+.Menu .Button.active {
+	background-color: #3866c1;
+	color: #fff;
+	border-left: 2px solid #fff;
+}
+
+.Nevjegy {
+	text-align: center;
+	font-size: 14px;
+	margin-bottom: 50px;
+}
+
+.nevjegy-version,
+.nevjegy-name {
+	font-size: 1.2rem;
+	color: #fff;
+}
+
+.nevjegy-owner {
+	margin-top: 5px;
+	color: #ff8200;
+	font-size: .8rem;
+}
+
+/* ButtonIcon a régebbi modulokhoz kell, a menüszerkezet ikonok igazítása miatt. Idővel törölni lehet */
+.MenuButton>.ButtonIcon {
+	display: inline-block;
+}
+
+.MenuButton>.ButtonIcon,
+.MenuButton>.icon {
+	margin: 0 8px;
+}
+
+.pictoMenu {
+	margin-top: 20px;
+	cursor: initial;
+}
+
+.collapsedMenuButton>.ButtonIcon,
+.collapsedMenuButton>.icon {
+	margin-left: 8px;
+	color: #fff;
+}
+
+/*Tab*/
+.Tabmenu {
+	padding: 0;
+}
+
+.Tabmenu>.tabbtn {
+	padding: 0 10px;
+}
+
+.Tabmenu div.active {
+	border-bottom: 4px solid #1d428a;
+	height: 36px;
+	color: #1d428a;
+}
+
+/* Grid */
+
+.GridBody {
+	margin: 0 4px;
+}
+
+.GridBody>table {
+	border-spacing: 0 4px;
+	border-collapse: separate;
+}
+
+.GridBody>table>thead th {
+	background-color: #f9f9fc;
+}
+
+.GridBody>table>thead th {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 4px;
+	padding: 0;
+	z-index: 10;
+}
+
+.GridHeader {
+	background-color: #f9f9fc;
+	color: #bbb;
+}
+
+th::after {
+	content: '';
+	position: absolute;
+	height: 4px;
+	top: -4px;
+	left: 0;
+	width: 100%;
+	background-color: #f9f9fc;
+}
+
+th.sorted>.GridHeader {
+	color: #1d428a;
+}
+
+.GridBody td {
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	background-color: #fff;
+	font-size: 13px;
+}
+
+.GridBody .GridCelContent {
+	padding: 4px 8px;
+}
+
+.GridBody .GridTools {
+	padding: 2px;
+}
+
+.GridBody td:first-child {
+	border-left: 1px solid #ddd;
+	border-top-left-radius: .3rem;
+	border-bottom-left-radius: .3rem;
+}
+
+.GridBody td:last-child {
+	border-right: 1px solid #ddd;
+	border-top-right-radius: .3rem;
+	border-bottom-right-radius: .3rem;
+}
+
+.Grid .GridBody tr.GridRow:hover td,
+.Grid .GridBody tr td.selected {
+	background-image: linear-gradient(#D1E1FF, #fff, #D1E1FF);
+}
+
+.GridTools .DetaileDownButton {
+	background-color: transparent;
+	border-color: transparent;
+	color: initial;
+}
+
+.GridBodyPanel>.Pager {
+	border: 1px solid #ddd;
+	background-color: #fff;
+	border-radius: 4px;
+	margin: 0 4px;
+}
+
+.Detail {
+	background-color: #f9f9fc;
+}
+
+.DetailToolbar {
+	padding: 6px 2px;
+}
+
+
+/*előre definiált sor színezések*/
+.RED td {
+	background-color: #ff797924;
+}
+
+.Grid .GridBody tr.GridRow.RED:hover td {
+	background-image: linear-gradient(#ff797973, #fff, #ff797973);
+}
+
+.GREEN td {
+	background-color: #97e79724;
+}
+
+.Grid .GridBody tr.GridRow.GREEN:hover td {
+	background-image: linear-gradient(#97e79769, #fff, #97e79769);
+}
+
+.YELLOW td {
+	background-color: #ffffbf;
+}
+
+.Grid .GridBody tr.GridRow.YELLOW:hover td {
+	background-image: linear-gradient(#f5f582, #fff, #f5f582);
+}
+
+.INACTIVE td {
+	color: #999;
+}
+
+
+/*  Fields */
+
+.fieldBorder,
+.dropdown,
+.fieldButtonFront,
+.fieldButton {
+	border: 1px solid #d5d7db;
+	background-color: #f9f9fc;
+	border-radius: 4px;
+	padding: 5px;
+	outline: none;
+}
+
+.Button {
+	padding: 3px;
+}
+
+.GridTools .Button {
+	padding: 1px;
+}
+
+.fieldbody {
+	font-size: 15px;
+	color: #333;
+	margin: 2px;
+}
+
+.fieldButtonFront,
+.fieldButton {
+	position: relative;
+	color: #646874;
+	font-size: 14px;
+	padding: 0;
+	width: 35px;
+	flex: 1 0 35px;
+}
+
+.fieldButton {
+	border-radius: 0;
+	border-left: none;
+}
+
+.fieldButton:last-child {
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+.fieldButtonFront {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: none;
+}
+
+.MultiFileBody .fieldBorder,
+.multicomboselectedrow .fieldBorder,
+.Datefield .fieldBorder,
+.Searchnumber .fieldBorder,
+.FileField .fieldBorder,
+.Numberfield .fieldBorder,
+.Combobox .fieldBorder {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.Searchnumber .fieldBorder,
+.Searchdate .fieldBorder {
+	border-radius: 0;
+}
+
+.datepickericontext {
+	width: 22px;
+	text-align: center;
+}
+
+.fieldLabel {
+	margin: 2px;
+	font-size: 13px;
+}
+
+textarea {
+	resize: none;
+	overflow: auto;
+	height: 60px;
+}
+
+.fieldBorder.required {
+	background-color: #ffffbf;
+}
+
+.entityCombo * {
+	font-weight: bold;
+	color: #1d428a;
+	font-size: 15px;
+}
+
+/* Date */
+
+.datepicker {
+	font-size: 14px;
+	background-color: white;
+}
+
+.datepicker .pbtn {
+	border-color: #aaa;
+}
+
+.datepicker .daybutton {
+	background-color: #f9f9fc;
+}
+
+.datepicker .daybutton.inactive {
+	background-color: #fff;
+}
+
+.datepickericontext {
+	margin-right: 4px;
+}
+
+.datepicker .daybutton.wrongDate {
+	border-color: red;
+	color: red;
+}
+
+/* combobox */
+
+.comboDropdown {
+	padding: 0;
+	background-color: #fff;
+}
+
+.comboDropdown .ComboOption {
+	font-size: 14px;
+	padding: 4px;
+	min-height: 18px;
+}
+
+.comboDropdown .ComboOption:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+.comboDropdown .Pager {
+	border-top: 1px solid #d5d7db;
+}
+
+.ComboOption:nth-child(even) {
+	background: #eee;
+}
+
+.comboDropdown:focus .comboDropdownBody .focus,
+.comboDropdown .ComboOption:hover {
+	background-color: #c6d9fb;
+}
+
+.multicomboselectedrow>.Button {
+	width: 25px;
+	height: 25px;
+	flex: 0 0 25px;
+	font-size: 14px;
+	padding: 0;
+	margin: 2px;
+}
+
+/* displaxfield */
+.displayBody>.fieldBorder {
+	background-color: #fff;
+}
+
+/* Error */
+.hasError .fieldBorder,
+.hasError .fieldButtonFront,
+.hasError .fieldButton {
+	border-color: #ff7979;
+}
+
+.FieldInner>.Err,
+.InnerErrScreen,
+.hasError .fieldButton,
+.hasError .fieldButtonFront {
+	color: #ff7979;
+}
+
+.FieldInner>.Err {
+	font-weight: bold;
+	border-radius: 4px;
+	background-color: #ff797924;
+}
+
+.FieldInner>.Err>ul {
+	margin-block-start: 4px;
+	margin-block-end: 4px;
+	margin-inline-start: 4px;
+	margin-inline-end: 4px;
+	padding-inline-start: 20px;
+}
+
+.FieldInner>.Err>ul>li {
+	padding: 4px 0;
+}
+
+/* Details form */
+.DetailForm .formBody .fieldBorder,
+.DetailForm .formBody .fieldbody {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+.DetailForm .formBody .fieldLabel,
+.DetailForm .formBody .FieldInner {
+	border-bottom: 1px solid #ddd;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	color: #333;
+}
+
+.DetailForm .formBody .FieldInner {
+	font-weight: bold;
+}
+
+
+/* Popup */
+.PopupMain .titleBorder {
+	text-align: center;
+}
+
+.PopupMain.error .Button,
+.PopupMain.error .border,
+.PopupMain.error .titleBorder {
+	color: #a94442;
+	border-color: #ebccd1;
+	border-width: 1px;
+}
+
+.PopupMain.error .Button,
+.PopupMain.error .titleBorder {
+	background-color: #f2dede;
+}
+
+.PopupMain.error .Button:focus {
+	border: 1px solid #ebccd1;
+}
+
+.PopupMain.info .Button,
+.PopupMain.info .border,
+.PopupMain.info .titleBorder {
+	color: #3c763d;
+	border-color: #d6e9c6;
+	border-width: 1px;
+}
+
+.PopupMain.info .Button,
+.PopupMain.info .titleBorder {
+	background-color: #dff0d8;
+}
+
+.PopupMain.info .Button:focus {
+	border: 1px solid #d6e9c6;
+}
+
+/* Pager */
+.Pager.titleBorder {
+	line-height: normal;
+	font-weight: initial;
+	padding: 0 5px 0 3px;
+}
+
+.Button.pbtn {
+	background-color: transparent;
+	font-size: 16px;
+	border-color: transparent;
+	color: initial;
+	padding: 0;
+}
+
+.perPageCombo .fieldbody {
+	width: 72px !important;
+}
+
+/* Fókusz */
+
+.dropdown:focus,
+.fieldBorder:focus,
+.fieldButton:focus,
+.dummyFocus,
+.datepicker div.pbtn.selected,
+.fieldButtonFront:focus {
+	border: 1px solid rgba(56, 102, 193, .8);
+}
+
+.dummyFocus {
+	border-radius: 4px;
+}
+
+.disabled {
+	opacity: 0.4;
+}
+
+.disabled * {
+	/*csak a legfelső elem legyen halvány és ne recurzivan*/
+	opacity: 1;
+}
+
+.disabled * {
+	cursor: not-allowed !important;
+}
+
+/* placeholder */
+input:placeholder-shown {
+	user-select: none;
+}
+
+/* Scrollbar Chrome */
+::-webkit-scrollbar {
+	width: 5px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 5px #ddd;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #bbb;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #1d428a;
+}
+
+/*IKONOK*/
+.icon {
+	font-family: "Font Awesome 5 Free";
+
+	font-size: 18px;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+
+	text-align: center;
+	vertical-align: middle;
+	position: relative;
+}
+
+.loadmask .icon {
+	font-size: 60px;
+}
+
+.icon:before,
+.icon:after {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.icon.close:before {
+	content: "\f00d";
+}
+
+.icon.not:before {
+	content: "\f05e";
+}
+
+.icon.delete:before {
+	content: "\f1f8";
+}
+
+.icon.save:before {
+	content: "\f0c7";
+}
+
+.icon.edit:before {
+	content: "\f303";
+}
+
+.icon.add:before {
+	content: "\f055";
+}
+
+.icon.search:before {
+	content: "\f002";
+}
+
+.icon.clear:before {
+	content: "\f12d";
+}
+
+.icon.view:before {
+	content: "\f06e";
+}
+
+.icon.details:before {
+	content: "\f06E";
+}
+
+.icon.publish:before {
+	content: "\f0a1";
+}
+
+.icon.export:before {
+	content: "\f1c3";
+}
+
+.icon.import:before {
+	content: "\f093";
+}
+
+.icon.karbantart:before {
+	content: "\f0ad";
+}
+
+.icon.print:before {
+	content: "\f02f";
+}
+
+.icon.archive:before {
+	content: "\f187";
+}
+
+.icon.pageLeftBig:before {
+	content: "\f100";
+}
+
+.icon.pageLeft:before {
+	content: "\f104";
+}
+
+.icon.pageRight:before {
+	content: "\f105";
+}
+
+.icon.pageRightBig:before {
+	content: "\f101";
+}
+
+.icon.pageRefresh:before {
+	content: "\f0E2";
+}
+
+.icon.spinningMask:before {
+	content: "\f013";
+}
+
+.icon.sort.asc::after {
+	content: "\f30c";
+}
+
+.icon.sort.desc::after {
+	content: "\f309";
+}
+
+.icon.datepickicon:before {
+	content: "\f073";
+}
+
+.icon.intervalOn:before {
+	content: "\f204";
+}
+
+.icon.intervalOff:before {
+	content: "\f205";
+	color: #1d428a;
+}
+
+.icon.sDetailDown:before {
+	content: "\f078";
+}
+
+.icon.comboBox:before {
+	content: "\f107";
+}
+
+.icon.upload:before {
+	content: "\f093";
+}
+
+.icon.download:before {
+	content: "\f019";
+}
+
+.icon.process:before {
+	content: "\f013";
+}
+
+.icon.numberfieldAdd:before {
+	content: "\f067";
+}
+
+.icon.numberfieldSub:before {
+	content: "\f068";
+}
+
+.icon.checked:before {
+	content: "\f00c";
+	color: #1d428a;
+}
+
+.icon.pinnedIcon:before {
+	content: "\f08d";
+	margin-right: 2px;
+	font-size: 15px;
+}
+
+.left .collapsedIcon:before,
+.collapsed .right .collapsedIcon:before {
+	content: "\f137";
+}
+
+.right .collapsedIcon:before,
+.collapsed .left .collapsedIcon:before {
+	content: "\f138";
+}
+
+.up .collapsedIcon:before,
+.collapsed .down .collapsedIcon:before {
+	content: "\f139";
+}
+
+.down .collapsedIcon:before,
+.collapsed .up .collapsedIcon:before {
+	content: "\f13a";
+}
+
+/* Animációk */
+
+.spin {
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite
+}
+
+@keyframes spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg)
+	}
+
+	to {
+		-webkit-transform: rotate(1turn);
+		transform: rotate(1turn)
+	}
+}
+
+
+.dropdown:focus,
+.fieldBorder:focus {
+	transition: border .5s ease;
+}

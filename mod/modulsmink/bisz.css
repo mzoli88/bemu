@@ -1,0 +1,908 @@
+@font-face {
+	font-family: "Font Awesome 5 Free";
+	src: url(fontawesome/fa-solid-900.woff);
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: #ffffff;
+	font-size: 15px;
+}
+
+.MainPanel {
+	margin-left: 5px;
+}
+
+.Panel.PanelBorder>.titleBorder,
+.Panel.collapsible>.titleBorder {
+	font-size: 16px;
+	font-weight: bold;
+	background-color: #1b0c83;
+	color: #fff;
+	padding: 15px;
+}
+
+.Tabmenu {
+	margin-bottom: 5px;
+}
+
+.DetailPanel {
+	margin-right: 5px;
+}
+
+.DetailPanel>.Body {
+	border-right: 1px solid #ddd;
+}
+
+.GridSearchPanel.notCollapsed>.Body {
+	border-left: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+
+.Tabmenu>.tabbtn {
+	padding: 13px;
+	font-weight: bold;
+}
+
+.Panel.notCollapsible.notPanelBorder>.titleBorder {
+	padding: 10px;
+	font-weight: bold;
+}
+
+.spinningMask {
+	color: #444;
+}
+
+.loadmask {
+	background-color: #f9f9fc;
+}
+
+.Tabmenu>.tabbtn {
+	border-bottom: 4px solid transparent;
+}
+
+.Tabmenu .tabbtn.active {
+	border-bottom: 4px solid #444;
+	color: #444;
+}
+
+.Panel.collapsed {
+	flex: 0 0 51px !important;
+}
+
+/* Button */
+.Button {
+	font-size: 15px;
+	font-weight: bold;
+	color: #444;
+	padding: 3px;
+	border: 1px solid #d5d7db;
+	background-color: #f9f9fc;
+	border-radius: 4px;
+}
+
+.ButtonText {
+	vertical-align: middle;
+}
+
+.Button.highlight {
+	background-color: #1b0c83;
+	color: #fff;
+	border-color: transparent;
+}
+
+.Button:active {
+	color: #fff;
+	background-color: #b3b5e9;
+	border-color: transparent;
+}
+
+.Accordion > .Panel > .Body{
+	background-color: #fff;
+	background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 10px;
+}
+
+
+/* Menu */
+
+.Panel.Menu>.Body {
+	background-color: #1b0c83;
+}
+
+.Panel.Menu .Button {
+	border: none;
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	background-color: inherit;
+	text-align: left;
+	border-radius: initial;
+	min-height: 50px;
+}
+
+.Menu .Button.active {
+	background-color: #b3b5e9;
+	color: #000;
+}
+
+.Nevjegy {
+	text-align: center;
+	font-size: 14px;
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+.nevjegy-version,
+.nevjegy-name {
+	font-size: 1.2rem;
+	color: #fff;
+}
+
+.nevjegy-owner {
+	margin-top: 5px;
+	color: #1b0c83;
+	font-size: .8rem;
+}
+
+.MenuButton>.icon {
+	margin-left: 8px;
+}
+
+.MenuButton>.ButtonText {
+	position: absolute;
+	top: 50%;
+	left: 40px;
+	transform: translate(0, -50%);
+}
+
+.Menu.Panel .titlecollapsed {
+	position: absolute;
+	top: 50px;
+	right: 0;
+	width: 100%;
+}
+
+.Menu.Panel.collapsible.notCollapsed>.titleBorder {
+	background-color: #170b6a;
+}
+
+.Menu.Panel.collapsible.collapsed .left .titletoolbar,
+.Menu.Panel.collapsible.collapsed .right .titletoolbar {
+	width: 50px;
+	background-color: #170b6a;
+	height: 50px;
+	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.Menu.Panel.collapsible.notCollapsed .left .titletoolbar,
+.Menu.Panel.collapsible.notCollapsed .right .titletoolbar {
+	position: absolute;
+	right: 50%;
+	top: 50%;
+	transform: translate(50%, -50%);
+}
+
+/* Grid */
+
+.GridBodyPanel {
+	margin-right: 15px;
+	margin-bottom: 15px;
+	margin-left: 10px;
+	background-color: #fff;
+	padding-bottom: 10px;
+
+	box-shadow: 0px 0px 4px 4px #ddd;
+}
+
+.GridBody {
+	padding: 0 10px;
+}
+
+.GridBody>table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.fastFilter {
+	margin: 0 10px 10px 10px;
+}
+
+.GridBody>table>thead th {
+	font-weight: initial;
+	font-size: 16px;
+	background-color: #b3b5e9;
+	color: #444;
+	padding: 12px 12px 8px 12px;
+}
+
+.GridBody>table>thead th {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.GridHeader {
+	font-weight: bold;
+}
+
+th.sorted>.GridHeader {
+	color: #1b0c83;
+}
+
+.headerRow>tr>th {
+	border-bottom: 4px solid #b3b5e9;
+}
+
+.headerRow>tr>th.sorted {
+	border-bottom: 4px solid #1b0c83;
+}
+
+.GridSmallDetail>td,
+.GridRow>td {
+	border-bottom: 1px solid #ddd;
+}
+
+tr.GridRow:last-child td {
+	border-bottom: none;
+}
+
+.GridCelContent {
+	padding: 10px;
+}
+
+/* .Grid .GridBody tr.GridRow:hover td, */
+.Grid .GridBody tr td.selected {
+	background-color: #fff;
+}
+
+.GridTools .DetaileDownButton {
+	background-color: transparent;
+	color: #1b0c83;
+	border: none;
+}
+
+.GridTools.toolbar {
+	padding: 0 10px;
+}
+
+.GridBodyPanel>.Pager {
+	background-color: #1b0c83;
+	color: #fff;
+	padding: 9px;
+	margin-bottom: 10px;
+}
+
+.GridBodyPanel>.Pager>.pagingBody>.Button {
+	color: #fff;
+}
+
+.Detail {
+	background-color: #f1f2f6;
+}
+
+tr.GridRow:nth-child(1n) td {
+	background-color: #eee;
+}
+
+tr.GridRow:nth-child(2n) td {
+	background-color: #ddd;
+}
+
+.DetailPanel .titletext .Button.highlight {
+	background-color: #f9f9fc;
+	color: red;
+}
+
+
+/*előre definiált sor színezések*/
+tr.GridRow.RED td {
+	background-color: #ff2d2d;
+}
+
+tr.GridRow.Grid .GridBody tr.GridRow.RED:hover td {
+	background-color: #ff2d2d;
+}
+
+tr.GridRow.GREEN td {
+	background-color: #2bf72b;
+}
+
+tr.GridRow.Grid .GridBody tr.GridRow.GREEN:hover td {
+	background-color: #2bf72b;
+}
+
+tr.GridRow.YELLOW td {
+	background-color: #ffff20;
+}
+
+tr.GridRow.Grid .GridBody tr.GridRow.YELLOW:hover td {
+	background-color: #ffff20;
+}
+
+tr.GridRow.INACTIVE td {
+	color: #999;
+}
+
+
+/*  Fields */
+
+.fieldBorder,
+.dropdown,
+.fieldButtonFront,
+.fieldButton {
+	border: 1px solid #d5d7db;
+	background-color: #EEEEEE;
+	border-radius: 4px;
+	padding: 5px;
+	outline: none;
+}
+
+.fieldbody {
+	font-size: 15px;
+	color: #333;
+	margin: 2px;
+}
+
+.fieldButtonFront,
+.fieldButton {
+	position: relative;
+	color: #646874;
+	font-size: 14px;
+	padding: 0;
+	width: 35px;
+	flex: 1 0 35px;
+}
+
+.fieldButton {
+	border-radius: 0;
+	border-left: none;
+}
+
+.fieldButton:last-child {
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+.fieldButtonFront {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: none;
+}
+
+.MultiFileBody .fieldBorder,
+.multicomboselectedrow .fieldBorder,
+.Datefield .fieldBorder,
+.Searchnumber .fieldBorder,
+.FileField .fieldBorder,
+.Numberfield .fieldBorder,
+.Combobox .fieldBorder {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.Searchnumber .fieldBorder,
+.Searchdate .fieldBorder {
+	border-radius: 0;
+}
+
+.datepickericontext {
+	width: 22px;
+	text-align: center;
+}
+
+.fieldLabel span {
+	margin: 2px;
+	font-size: 13px;
+}
+
+textarea {
+	resize: none;
+	overflow: auto;
+	height: 60px;
+}
+
+.fieldBorder.required {
+	background-color: #ffffbf;
+}
+
+.entityCombo * {
+	font-weight: bold;
+	color: #444;
+	font-size: 15px;
+}
+
+.checkboxgroup .chboxtext {
+	overflow: auto;
+	white-space: -moz-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	-ms-word-break: break-all;
+	word-break: break-word;
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+}
+
+/* Date */
+
+.datepicker {
+	font-size: 14px;
+	background-color: white;
+}
+
+.datepicker .pbtn {
+	border-color: #aaa;
+}
+
+.datepicker .daybutton {
+	background-color: #EEEEEE;
+}
+
+.datepicker .daybutton.inactive {
+	background-color: #fff;
+}
+
+.datepickericontext {
+	margin-right: 4px;
+}
+
+.datepicker .daybutton.wrongDate {
+	border-color: red;
+	color: red;
+}
+
+/* combobox */
+
+.comboDropdown {
+	padding: 0;
+	background-color: #fff;
+}
+
+.comboDropdown .ComboOption {
+	font-size: 14px;
+	padding: 4px;
+	min-height: 18px;
+}
+
+.comboDropdown .ComboOption:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+.comboDropdown .ComboOption:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+.comboDropdown .Pager {
+	border-top: 1px solid #d5d7db;
+	color: #444;
+}
+
+.comboDropdown .Pager .Button {
+	color: #444;
+}
+
+.ComboOption:nth-child(even) {
+	background: #eee;
+}
+
+.comboDropdown:focus .comboDropdownBody .focus,
+.comboDropdown .ComboOption:hover {
+	background-color: #c6d9fb;
+}
+
+.multicomboselectedrow>.Button {
+	width: 25px;
+	height: 25px;
+	flex: 0 0 25px;
+	font-size: 14px;
+	padding: 0;
+	margin: 2px;
+}
+
+/* displaxfield */
+.displayBody .fieldBorder {
+	border: none;
+	background-color: transparent;
+	font-weight: bold;
+}
+
+/* Error */
+.hasError .fieldBorder,
+.hasError .fieldButtonFront,
+.hasError .fieldButton {
+	border-color: #ff7979;
+}
+
+.FieldInner>.Err,
+.InnerErrScreen,
+.hasError .fieldButton,
+.hasError .fieldButtonFront {
+	color: #ff7979;
+}
+
+.FieldInner>.Err {
+	font-weight: bold;
+	border-radius: 4px;
+	background-color: #ff797924;
+}
+
+.FieldInner>.Err>ul {
+	margin-block-start: 4px;
+	margin-block-end: 4px;
+	margin-inline-start: 4px;
+	margin-inline-end: 4px;
+	padding-inline-start: 20px;
+}
+
+.FieldInner>.Err>ul>li {
+	padding: 4px 0;
+}
+
+/* Details form */
+.DetailForm .formBody .fieldBorder,
+.DetailForm .formBody .fieldbody {
+	background-color: transparent;
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+.DetailForm .formBody .fieldLabel,
+.DetailForm .formBody .FieldInner {
+	border-bottom: 1px solid #ddd;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	color: #333;
+}
+
+.DetailForm .formBody .FieldInner {
+	font-weight: bold;
+}
+
+
+/* Popup */
+
+.PopupMain .PopupBody {
+	box-shadow: 0px 0px 4px 4px #ddd;
+}
+
+.PopupMain .titleBorder {
+	text-align: center;
+	font-size: 16px;
+	font-weight: bold;
+	background-color: #1b0c83;
+	color: #fff;
+	padding: 15px;
+}
+
+.PopupMain.error .PopupBody {
+	box-shadow: 0px 0px 8px 2px #a94442;
+}
+
+.PopupMain.error .Button,
+.PopupMain.error .border,
+.PopupMain.error .titleBorder {
+	color: #a94442;
+	border-color: #ebccd1;
+	border-width: 1px;
+}
+
+.PopupMain.error .Button,
+.PopupMain.error .titleBorder {
+	background-color: #f2dede;
+}
+
+.PopupMain.error .Button:focus {
+	border: 1px solid #ebccd1;
+}
+
+.PopupMain.info .PopupBody {
+	box-shadow: 0px 0px 8px 2px #3c763d;
+}
+
+.PopupMain.info .Button,
+.PopupMain.info .border,
+.PopupMain.info .titleBorder {
+	color: #3c763d;
+	border-color: #d6e9c6;
+	border-width: 1px;
+}
+
+.PopupMain.info .Button,
+.PopupMain.info .titleBorder {
+	background-color: #dff0d8;
+}
+
+.PopupMain.info .Button:focus {
+	border: 1px solid #d6e9c6;
+}
+
+.PopupMain .Body {
+	background-color: #fff;
+}
+
+.PopupMain .Button {
+	padding: 20px 10px;
+}
+
+/* Pager */
+
+.Pager {
+	font-weight: bold;
+	padding: 0 4px;
+}
+
+.Pager>.pagingBody>.Button {
+	min-width: 20px;
+}
+
+.Button.pbtn {
+	background-color: transparent;
+	font-size: 16px;
+	border-color: transparent;
+	/* color: initial; */
+	padding: 0;
+}
+
+.perPageCombo .fieldbody {
+	width: 72px !important;
+}
+
+/* Fókusz */
+
+.dropdown:focus,
+.fieldBorder:focus,
+.fieldButton:focus,
+.dummyFocus,
+.datepicker div.pbtn.selected,
+.fieldButtonFront:focus {
+	border: 1px solid rgba(56, 102, 193, .8);
+}
+
+.dummyFocus {
+	border-radius: 4px;
+}
+
+.disabled {
+	opacity: 0.4;
+}
+
+.disabled * {
+	/*csak a legfelső elem legyen halvány és ne recurzivan*/
+	opacity: 1;
+}
+
+.disabled * {
+	cursor: not-allowed !important;
+}
+
+/* placeholder */
+input:placeholder-shown {
+	user-select: none;
+}
+
+/*IKONOK*/
+.icon {
+	font-family: "Font Awesome 5 Free";
+	font-size: 18px;
+}
+
+.loadmask .icon {
+	font-size: 60px;
+}
+
+.icon.close:before {
+	content: "\f00d";
+}
+
+.icon.not:before {
+	content: "\f05e";
+}
+
+.icon.delete:before {
+	content: "\f1f8";
+}
+
+.icon.save:before {
+	content: "\f0c7";
+	font-size: 40px;
+	padding: 10px;
+}
+
+.icon.edit:before {
+	content: "\f303";
+}
+
+.icon.add:before {
+	content: "\f055";
+}
+
+.icon.search:before {
+	content: "\f002";
+}
+
+.icon.clear:before {
+	content: "\f12d";
+}
+
+.icon.view:before {
+	content: "\f06e";
+}
+
+.icon.details:before {
+	content: "\f06E";
+}
+
+.icon.publish:before {
+	content: "\f0a1";
+}
+
+.icon.export:before {
+	content: "\f1c3";
+}
+
+.icon.import:before {
+	content: "\f093";
+}
+
+.icon.karbantart:before {
+	content: "\f0ad";
+}
+
+.icon.print:before {
+	content: "\f02f";
+}
+
+.icon.archive:before {
+	content: "\f187";
+}
+
+.icon.pageLeftBig:before {
+	content: "\f100";
+}
+
+.icon.pageLeft:before {
+	content: "\f104";
+}
+
+.icon.pageRight:before {
+	content: "\f105";
+}
+
+.icon.pageRightBig:before {
+	content: "\f101";
+}
+
+.icon.pageRefresh:before {
+	content: "\f0E2";
+}
+
+.icon.spinningMask:before {
+	content: "\f013";
+}
+
+.icon.sort.asc::after {
+	content: "\f30c";
+}
+
+.icon.sort.desc::after {
+	content: "\f309";
+}
+
+.icon.datepickicon:before {
+	content: "\f073";
+}
+
+.icon.intervalOn:before {
+	content: "\f204";
+}
+
+.icon.intervalOff:before {
+	content: "\f205";
+	color: #444;
+}
+
+.icon.sDetailDown:before {
+	content: "\f078";
+}
+
+.icon.sDetailRight:before {
+	content: "\f054";
+}
+
+.icon.comboBox:before {
+	content: "\f107";
+}
+
+.icon.upload:before {
+	content: "\f093";
+}
+
+.icon.download:before {
+	content: "\f019";
+}
+
+.icon.process:before {
+	content: "\f013";
+}
+
+.icon.numberfieldAdd:before {
+	content: "\f067";
+}
+
+.icon.numberfieldSub:before {
+	content: "\f068";
+}
+
+.icon.checked:before {
+	content: "\f00c";
+	color: #444;
+}
+
+.left .collapsedIcon:before,
+.collapsed .right .collapsedIcon:before {
+	content: "\f137";
+}
+
+.right .collapsedIcon:before,
+.collapsed .left .collapsedIcon:before {
+	content: "\f138";
+}
+
+.up .collapsedIcon:before,
+.collapsed .down .collapsedIcon:before {
+	content: "\f139";
+}
+
+.down .collapsedIcon:before,
+.collapsed .up .collapsedIcon:before {
+	content: "\f13a";
+}
+
+/* MEnü ikon */
+.Menu .left .collapsedIcon:before {
+	content: "\f03b";
+}
+
+.Menu.collapsed .left .collapsedIcon:before {
+	content: "\f03c";
+}
+
+/* Animációk */
+
+.spin {
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite
+}
+
+@keyframes spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg)
+	}
+
+	to {
+		-webkit-transform: rotate(1turn);
+		transform: rotate(1turn)
+	}
+}
+
+
+.dropdown:focus,
+.fieldBorder:focus {
+	transition: border .5s ease;
+}

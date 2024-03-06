@@ -1,0 +1,118 @@
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    font-style: normal;
+    font-weight: 900;
+    font-display: block;
+    src: url(fontawesome/fa-solid-900.woff2) format("woff2"), url(fontawesome/fa-solid-900.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url(fontawesome/fa-regular-400.woff2) format("woff2"), url(fontawesome/fa-regular-400.ttf) format("truetype");
+}
+
+:root {
+    --title-background-color: #1e5999;
+    --title-color: #fff;
+    --higlight-text-color: #1e5999;
+    --button-higlight-color: #ff8200;
+    --main-size: 3px;
+    --button-size: 3px;
+    --main-family: Helvetica, Arial, sans-serif;
+}
+
+/* Menu */
+
+.Panel.Menu > .Body {
+  background-color: #1e5999;
+}
+
+.Panel.Menu .collapsedMenuButton,
+.Panel.Menu .MenuButton {
+  border: none;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  background-color: inherit;
+  text-align: left;
+  border-radius: initial;
+  min-height: 50px;
+}
+
+.Menu .collapsedMenuButton.active,
+.Menu .MenuButton.active {
+  background-color: #266daf;
+  color: #fff;
+}
+
+.Nevjegy {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.nevjegy-version,
+.nevjegy-name {
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.nevjegy-owner {
+  margin-top: 5px;
+  color: #ff8200;
+  font-size: 0.8rem;
+}
+
+.MenuButton > .icon {
+  margin-left: 8px;
+}
+
+.MenuButton > .ButtonText {
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  transform: translate(0, -50%);
+}
+
+.Menu.Panel .titlecollapsed {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 100%;
+}
+
+.Menu.Panel.collapsible.notCollapsed > .titleBorder {
+  background-color: #194c8b;
+}
+
+.Menu.Panel.collapsible.collapsed .left .titletoolbar,
+.Menu.Panel.collapsible.collapsed .right .titletoolbar {
+  width: 50px;
+  background-color: #194c8b;
+  height: 50px;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Menu.Panel.collapsible.notCollapsed .left .titletoolbar,
+.Menu.Panel.collapsible.notCollapsed .right .titletoolbar {
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+.Menu .collapsedTopPanelIcon {
+  height:50px;
+  background-color: #194c8b;
+}
+
+.Menu .collapsed {
+	padding:0;
+}
