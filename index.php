@@ -4,7 +4,7 @@ if(!is_file( __DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.hta
 	if(is_file( __DIR__ . DIRECTORY_SEPARATOR . '.htaccess' )){
 		unlink( __DIR__ . DIRECTORY_SEPARATOR . '.htaccess' );
 	}
-	file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.htaccess',"php_value include_path ".__DIR__ . DIRECTORY_SEPARATOR . "lib\nphp_value default_charset Off\nAddDefaultCharset ISO-8859-2");
+	file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.htaccess',"php_value include_path ".__DIR__ . DIRECTORY_SEPARATOR . "lib\n");
 	header("Refresh:0");
 	die;
 }
