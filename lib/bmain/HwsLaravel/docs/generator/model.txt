@@ -1,0 +1,7 @@
+
+Használat:
+
+- Globális, model generálás, összes prefix paraméterben található táblára generál modelt
+    php artisan hws:m
+- Adott tábla modeljét generálja le
+    php artisan hws:m table_name

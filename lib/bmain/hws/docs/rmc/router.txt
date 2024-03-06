@@ -1,0 +1,87 @@
+# Dinamikus routing
+- routes/api.php konfigba alap esetben az alábbi sort kell betenni:
+    use Illuminate\Support\Facades\Route;
+
+    Route::namespace('\\App')->group(function(){
+        hws\rmc\Router::route();
+    });
+    Az api.php miatt kapp egy api groupot és name space miatt az App/api könyvtárban fogja keresni az RMD Controllereket.
+- A router működik prefixexxel és middleware paraméterezéssel is pl:
+    use Illuminate\Support\Facades\Route;
+
+    Route::namespace('\\App')->group(function(){
+        Route::middleware('auth:api')->group(function(){
+            Route::prefix('web')->group(function () {
+                hws\rmc\Router::route();
+            });
+            Route::prefix('mobil')->group(function () {
+                hws\rmc\Router::route();
+            });
+        });
+        Route::prefix('noweb')->group(function () {
+            hws\rmc\Router::route();
+        });
+        Route::prefix('nomobil')->group(function () {
+            hws\rmc\Router::route();
+        });
+    });
+    Ebben az esetben négy mappát használunk. A web és a mobilnál van jogosultság kezelés és a noweb, nobobilnál nincs.
+- Controller példák és hívásuk (commentben):
+    namespace App\api\mobil;
+
+    use hws\rmc\Controller;
+    use Illuminate\Http\Request;
+
+    class TesztRMC extends Controller
+    {
+        //GET api/mobil/teszt
+        public function list(Request $request){
+            return 'teszt mobil list';
+        }
+
+        //GET api/mobil/teszt/{id}
+        public function view(Request $request,$id){
+            return 'teszt mobil view';
+        }
+
+        //POST api/mobil/teszt
+        public function create(Request $request){
+            return 'teszt mobil create';
+        }
+
+        //PUT api/mobil/teszt/{id}
+        public function update(Request $request,$id){
+            return 'teszt mobil update';
+        }
+
+        //DELETE api/mobil/teszt/{id}
+        public function delete(Request $request,$id){
+            return 'teszt mobil delete';
+        }
+
+        // api/mobil/teszt/export
+        public function export(Request $request){
+            return 'teszt mobil export';
+        }
+
+        // api/mobil/teszt/csv
+        public function csv(Request $request){
+            return 'teszt mobil csv';
+        }
+
+        // api/mobil/teszt/pdf
+        public function pdf(Request $request){
+            return 'teszt mobil pdf';
+        }
+
+        // api/mobil/teszt/xls
+        public function xls(Request $request){
+            return 'teszt mobil xls';
+        }
+
+        // api/mobil/teszt/import
+        public function import(Request $request){
+            return 'teszt mobil import';
+        }
+    }
+- A router működik cachel is. Előtte ```composer i``` parancsot kell futtatni!

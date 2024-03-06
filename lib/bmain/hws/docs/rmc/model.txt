@@ -1,0 +1,81 @@
+# Model generálás
+- Console parancs az összes adatbáis tábla alapján model generálásra:
+    php artisan hws:m
+
+- Console parancs az egy adatbáis tábla alapján model generálásra:
+    php artisan hws:m users
+
+A generálás eredménye egy model a következő paraméterekkel: 
+
+- Tábla neve:
+    protected $table = 'logs';
+
+- Fillable mezők:
+    protected $fillable = [
+        "user_id",
+        "user_name",
+        "event_id",
+    ];
+
+- Casts értékek (szerepük a keresésnél fontos):
+    protected $casts = [
+        "id" => "integer",
+        "user_id" => "integer",
+        "user_name" => "string",
+        "event_id" => "integer",
+        "created_at" => "datetime:Y-m-d H:i:s",
+        "updated_at" => "datetime:Y-m-d H:i:s",
+    ];
+
+- Validálási szabályok:
+    protected $validation = [
+        "user_id" => "required|integer|digits_between:1,11",
+        "user_name" => "required|max:255",
+        "event_id" => "required|integer|digits_between:1,11",
+    ];
+
+- Label-ek (A tábla oszlopainak megyjegyzései alapján):
+    protected $labels = [
+        "id" => "Naplóbejegyzés azonosítója",
+        "user_id" => "Felhasználó azonosítója",
+        "user_name" => "Felhasználó neve",
+        "event_id" => "Esemény azonosítója",
+        "created_at" => "Létrehozás dátum",
+        "updated_at" => "Módosítás dátum",
+    ];
+
+A generált model igény szerint saját relation-ökkel bővíthető.
+
+
+# Keresés
+Azt, hogy melyik mezőre hogyan történik a keresés, a tábla alapján generált model  ```$casts``` tömbje alapján dönti el a search() scope. 
+
+```
+protected $casts = [
+    "id" => "integer",
+    "user_id" => "integer",
+    "user_name" => "string",
+    "event_id" => "integer",
+    "created_at" => "datetime:Y-m-d H:i:s",
+    "updated_at" => "datetime:Y-m-d H:i:s",
+];
+```
+
+- array, boolean, float, és integer esetén: ```=```
+- string esetén: ```%LIKE%```
+- date és datetime esetén
+    - ha nincs relációs jel: ```=```
+    - ha vannak relációs jelek (pl: created_at>, created_at<), akkor -tól -ig keresés történik: ```>=```, ```<=```
+
+# Rendezés
+Rendezés esetén query paraméterben a ```sort>``` és ```sort<``` értékeket kell küldeni. 
+- ```sort>``` esetén a rendezés növekvő sorrendet eredményez
+- ```sort<``` esetén a rendezés csökkenő sorrendet 
+
+    Paraméterül a scope-nak átadhatunk egy tömböt. pl.: ['datum' => 'ido'],
+    A fenti paraméterezés azt csinálja, ha a dátum illetve idő oszlop külön van, akkor a dátumra rendezéskor az idő oszlopra is rendezzen
+
+# Lapozás
+- Lapozásnál query paratméterben ```per-page``` értéket kell küldeni ahhoz, hogy oldalanként hány adatot szeretnénk visszakapni. 
+- A kért oldal sorszámát a ```page``` értékkel lehet megadni. 
+- A visszaadott adatoknál a ```total``` tartalmazza az összes adat mennyiségét.

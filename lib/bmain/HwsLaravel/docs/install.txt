@@ -1,0 +1,81 @@
+- hws mappát be kell másolni a project mappába (jlónozni kell a hws-laravelgit repot)
+- .git mappát törölni kell a hws- mappán belül. (a projektbe nelegyen beágyazott git repó)
+- composer.json szerkesztése, hogy autoloadba-ba kerüljön a hws mappa és a helper:
+    "autoload": {
+        "files": [
+            "hws/helpers.php"
+        ],
+        "classmap": [
+            "hws"
+        ]
+    },
+- modulok esetében nem telepítünk laravelt, doctrinet, phpspreadsheet és phpmailer-ert, hanem composer.json-ben behúzzuk
+    "autoload": {
+        "files": [
+                "hws/helpers.php",
+                "../Laravel6/include.php"
+        ]
+    },
+
+- doctrine telepítése (migráció generáláshoz kell) (Nem borderes környezet):
+    composer require doctrine/dbal
+
+- phpspreadsheet telepítése (export / import miatt kell) (Nem borderes környezet):
+    composer require phpoffice/phpspreadsheet
+
+- phpmailer telepítése (email küldéshez) (Nem borderes környezet):
+    composer require phpmailer/phpmailer
+
+- routes/console.php  fájlba kell másolni az alábbi parancsokat, hogy lehessen használni a generátorokat (Itt történik a prefixek paraméterezése is!):
+    use hws\generator\ControllerGenerator;
+    use hws\generator\ModelGenerator;
+    use Illuminate\Support\Facades\Artisan;
+
+    Artisan::command('hws:m {name?}', function ($name = null) {
+        ModelGenerator::$table_prefix = [''];
+        new ModelGenerator($name);
+    })->describe('Generate model');
+
+    Artisan::command('hws:c {name} {methods?*}', function ($name, $methods = []) {
+        new ControllerGenerator($name, $methods);
+    })->describe('Generate model');
+
+    Artisan::command('hws:mig {table?}', function ($table = null) {
+        MigrationGenerator::$table_prefix = ['wkf_'];
+        new MigrationGenerator($table);
+    })->describe('Generate model');
+
+- "app/Models" mappa létrehozása. (Model generátor ide másol)
+
+- "app/api" mappa létrehozása. (RMC controllerek itt lesznek)
+
+- app/Exceptions/Handler.php módosítás (valaidációs szabályok miatt)
+    public function render($request, Exception $exception)
+    {
+        //validálás hiba json kiirítás
+        if ($exception instanceof ValidationException) {
+            return response()->json($exception->errors(), 422);
+        }
+
+        //Szabványos hibakezelés ha debug mód be van kapcsolva
+        if (config('app.debug')) return parent::render($request, $exception);
+        //Alapértelmezett hibaüzenet
+        // Json adat visszadása
+        return response()->json([
+            'message' => $exception->getMessage(),
+        ], 400);
+    }
+
+- Border környezetben, BORDER classzt kell példányosítani az app\Providers\AppServiceProvider.php - belsejében:
+    (modul azonosítót és jogok kultcs érték párosa kell)
+    public function boot()
+    {
+        new Border("workflow", [
+            'badmin' => 'borderadmin',
+            'admin' => 'WorkFlow - Admin',
+            'alap' => 'WorkFlow - Feladatkezelő',
+            'vezeto' => 'WorkFlow - Csoportvezető',
+        ]);
+    }
+
+- telepítjük a legfrissebb magyarosítást

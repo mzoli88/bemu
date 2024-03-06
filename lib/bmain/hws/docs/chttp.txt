@@ -1,0 +1,42 @@
+Kommunikácis osztály, ami hibakezést és naplózást is végez.
+
+Használat (paraméterül adott url segítségével példányosítjuk az osztályt):
+    $chttp = new Chttp('http:teszt.hu');
+
+Egyéb paraméterezések:
+    //header beállítása, kulcs és érték alapján
+    $chttp->setHeader($key, $value)
+
+    //fájl küldéshez
+	$chttp->addUpload($key, $tmp_name, $fname, $type)
+
+    //ezzel nem jasonként küldünk adatokat
+    $chttp->isJsonRequest = false;
+
+    //ezzel nem dekódoljuk automatikusan a választ
+	$chttp->isJsonResponse = false;
+
+    //ezzel kikapcsoljuk az a funkciót, hogy leáljon a program hiba esetén.
+	$chttp->ignore_errors = true;
+
+Ezek után az alábbi metódusok hívhatóak a küldéshez.
+    paraméterek:
+        $get_params - url query által átadott paraméterek, (tömb)
+        $id - egy rekord adatbázis azonosítója
+        $params - body paraméterek, létrehozásnál vagy módosításnál
+
+    // rest lisa hívás
+	$chttp->GET($get_params = false)
+
+    // rest vue hívás, id-vel
+	$chttp->VIEW($id = false, $get_params = false)
+
+    //rest létrehozás
+	$chttp->CREATE($params, $get_params = false)
+
+    //rest módosítás
+	$chttp->UPDATE($id = false, $params, $get_params = false)
+
+    //rest törlé
+	$chttp->DELETE($id = false, $get_params = false)
+

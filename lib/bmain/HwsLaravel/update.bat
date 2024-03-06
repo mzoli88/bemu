@@ -1,0 +1,1 @@
+cd .. & rd /s /q "hws" & git clone https://hws-git.i.hwstudio.hu/hws-Alkalmazas/hws-laravel.git hws -b "v1.x" & rd /s /q "hws/.git" & PAUSE

@@ -1,0 +1,28 @@
+Border modul esetében:
+
+- BorderInit.php fájlban használt osztályt kell használni
+    new BorderInit('modul_azonon',[
+        'admin' => 'modul - admin'
+    ])
+
+    Első paraméterként átadjuk a modul azonosítóját. A modul azonosító a legjobb esetben a "mod" mappában találhat frontend mappa neve.
+
+    Második paraméter a modul jogosultságok. Kulcs értékben olyan jog azonosítót adunk meg amire fontenden és backenden hivatkozhatunk.
+
+- Naplózás: Modulok esetén a Napló modult használjuk. A BorderInit osztály és a NaploLogger.php segítségével a általános Laravel log függvények is oda fognak naplózni.
+    Használat: logger()->info('log szövege');
+
+
+- Globális változók:
+    config('modul_azon') // modul azonosító így olvasható ki
+    config('BORDER_PREFIX') // border_prefix
+    config('BORDER_PATH_BORDER') // border elérére, frontend "mod" mappát érhetjük el vele 
+    config('BORDER_PATH_BORDERDOC') // php_inc -ben található dokumentumok mappát érhetjük el
+    config('BORDER_PATH_BORDERLIB') // php_inc -ben található lib mappa elérése
+
+- Statikus helper függvények
+    Border::belepve() // true értékat ad vissza , ha be van lépve a user_id
+    Border::send_error($txt,$status_code) // $txt és $status_code segítségével ey általános hiba üzenetet adhatunk vissza
+    Border::getUserData() // vissza adja tömb-ben tárolt felhasználó adatokat, jogokat és  modul azonosítót. A modul eső betöltéséhez adja vissza a választ.
+    Border::checkJog($jog) // van-e a felhasználónak jogosultsága? paraméterül a jogok alias-át kell megadni, vesszőel elálasztva többet is lehet.
+        pl.: checkJog('admin','megtekint'); // akkor lesz true az érték, ha vagy "admin" vagy "megtekint" jogosultággal rendelkezik a felhasználó
