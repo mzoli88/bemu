@@ -177,8 +177,8 @@ function hasPerm($jog)
     return true;
 }
 
-// function setParams(array $params, $modul_azon = null)
-// {
+function setParams(array $params, $modul_azon = null)
+{
 //     $modul_azon = $modul_azon ?: getModulAzon();
 //     collect($params)->each(function ($value, $key) use ($modul_azon) {
 //         $rec = Params::where('modul_azon', $modul_azon)->where('key', $key)->one();
@@ -195,10 +195,10 @@ function hasPerm($jog)
 //         }
 //     });
 //     Params::cache();
-// }
+}
 
-// function getParams($modul_azon = null)
-// {
+function getParams($modul_azon = null)
+{
 //     $modul_azon = $modul_azon ?: getModulAzon();
 //     return collect(Params::getCache())
 //         ->filter(function ($v, $k) use ($modul_azon) {
@@ -208,13 +208,13 @@ function hasPerm($jog)
 //             return [preg_replace('/^.*\//', '', $k) => $v];
 //         })
 //         ->toArray();
-// }
+}
 
-// function getParam($key, $modul_azon = null)
-// {
+function getParam($key, $modul_azon = null)
+{
 //     $params = getParams($modul_azon);
 //     return array_key_exists($key, $params) ? $params[$key] : null;
-// }
+}
 
 function toHtml($text)
 {

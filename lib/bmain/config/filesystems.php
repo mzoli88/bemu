@@ -1,5 +1,8 @@
 <?php
 
+
+if(!is_dir(BORDER_PATH_BORDERDOC . 'bmain_logs')) mkdir(BORDER_PATH_BORDERDOC . 'bmain_logs', 0777);
+
 return [
 
     /*
@@ -70,7 +73,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        // public_path('storage') => storage_path('app/public'),
     ],
 
 ];

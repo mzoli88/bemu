@@ -12,15 +12,20 @@ class Border3
     static function init()
     {
 
-        Config::set('BORDER_PATH_BORDER', BORDER_PATH_BORDER);
-        Config::set('BORDER_PATH_BORDERDOC', BORDER_PATH_BORDERDOC);
-        Config::set('BORDER_PATH_BORDERLIB', BORDER_PATH_BORDERLIB);
-
         //storage beállítás
-        // Config::set('filesystems.default', 'local');
-        // Config::set('filesystems.disks.local.root', BORDER_PATH_BORDERDOC . getModulAzon() . DIRECTORY_SEPARATOR);
-        // Config::set('path.storage', BORDER_PATH_BORDERDOC . getModulAzon() . DIRECTORY_SEPARATOR);
+        $path = preg_replace('#\\'.DIRECTORY_SEPARATOR.'$#','',BORDER_PATH_BORDERDOC);
+        app()->useStoragePath($path);
+        Config::set('filesystems.disks.local.root', $path);
 
+        // adatbázis konfiguráció
+        Config::set('database.default', 'mysql');
+        Config::set('database.connections.mysql', [
+            'driver' => 'mysql',
+            'host' => BORDER_DB_HOST,
+            'database' => BORDER_DB_DATABASE,
+            'username' => BORDER_DB_USER,
+            'password' => BORDER_DB_PASSWORD,
+        ]);
     }
 
     static function send_error($txt, $code = 500, $title = false)
