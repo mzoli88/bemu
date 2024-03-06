@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8');
+// header('Content-Type: text/html; charset=UTF-8');
 if(!is_file( __DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.htaccess')){
 	if(is_file( __DIR__ . DIRECTORY_SEPARATOR . '.htaccess' )){
 		unlink( __DIR__ . DIRECTORY_SEPARATOR . '.htaccess' );
