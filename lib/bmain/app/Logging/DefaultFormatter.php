@@ -5,7 +5,6 @@ namespace App\Logging;
 use Monolog\Formatter\JsonFormatter as BaseJsonFormatter;
 use Illuminate\Support\Facades\Config;
 use Monolog\LogRecord;
-use Illuminate\Support\Str;
 
 class DefaultFormatter extends BaseJsonFormatter
 {

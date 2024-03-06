@@ -3,6 +3,7 @@
 use App\Border3;
 use hws\rmc\Model;
 use App\Exceptions\SendErrorException;
+use mod\admin\models\Params;
 
 function getUser()
 {
@@ -180,41 +181,41 @@ function hasPerm($jog)
 
 function setParams(array $params, $modul_azon = null)
 {
-//     $modul_azon = $modul_azon ?: getModulAzon();
-//     collect($params)->each(function ($value, $key) use ($modul_azon) {
-//         $rec = Params::where('modul_azon', $modul_azon)->where('key', $key)->one();
+    $modul_azon = $modul_azon ?: getModulAzon();
+    collect($params)->each(function ($value, $key) use ($modul_azon) {
+        $rec = Params::where('modul_azon', $modul_azon)->where('key', $key)->one();
 
-//         if ($rec) {
-//             $rec->value = $value;
-//             $rec->save();
-//         } else {
-//             Params::create([
-//                 'modul_azon' => $modul_azon,
-//                 'key' => $key,
-//                 'value' => $value,
-//             ]);
-//         }
-//     });
-//     Params::cache();
+        if ($rec) {
+            $rec->value = $value;
+            $rec->save();
+        } else {
+            Params::create([
+                'modul_azon' => $modul_azon,
+                'key' => $key,
+                'value' => $value,
+            ]);
+        }
+    });
+    Params::cache();
 }
 
 function getParams($modul_azon = null)
 {
-//     $modul_azon = $modul_azon ?: getModulAzon();
-//     return collect(Params::getCache())
-//         ->filter(function ($v, $k) use ($modul_azon) {
-//             return preg_match('/^' . $modul_azon . '\//', $k);
-//         })
-//         ->mapWithKeys(function ($v, $k) {
-//             return [preg_replace('/^.*\//', '', $k) => $v];
-//         })
-//         ->toArray();
+    $modul_azon = $modul_azon ?: getModulAzon();
+    return collect(Params::getCache())
+        ->filter(function ($v, $k) use ($modul_azon) {
+            return preg_match('/^' . $modul_azon . '\//', $k);
+        })
+        ->mapWithKeys(function ($v, $k) {
+            return [preg_replace('/^.*\//', '', $k) => $v];
+        })
+        ->toArray();
 }
 
 function getParam($key, $modul_azon = null)
 {
-//     $params = getParams($modul_azon);
-//     return array_key_exists($key, $params) ? $params[$key] : null;
+    $params = getParams($modul_azon);
+    return array_key_exists($key, $params) ? $params[$key] : null;
 }
 
 function toHtml($text)
