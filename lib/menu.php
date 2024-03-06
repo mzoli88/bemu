@@ -103,14 +103,14 @@ header('Content-Type: text/html; charset=UTF-8');
 				foreach ($modul['menu'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
 			}
 
-			collect($perms)->each(function ($jog) {
+			collect($perms)->each(function ($jog) use ($modul_azon){
 				$ellenorzendo = conv($jog);
 				$equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
 				$result = $equery->first();
 				if (!$result) {
 					DB::table('nevek_csoport')->insert([
 						'nev' => $ellenorzendo,
-						'modul_azon' => $_GET['modul'],
+						'modul_azon' => $modul_azon,
 					]);
 				}
 			});
