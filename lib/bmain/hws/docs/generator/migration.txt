@@ -1,6 +1,0 @@
-Használat:
-
-- Globális, migration generálás, összes prefix paraméterben található táblára kigyűjti a változást
-    php artisan hws:mig
-- Adott tábla migration-jét generálja le
-    php artisan hws:m table_name
