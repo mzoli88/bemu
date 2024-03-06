@@ -1,0 +1,8 @@
+<IfModule mod_headers.c>
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "same-origin"
+  Header unset X-Powered-By
+</IfModule>
+AddDefaultCharset utf-8

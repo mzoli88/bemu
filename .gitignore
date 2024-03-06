@@ -1,5 +1,7 @@
 /mod/*
 !/mod/modulsmink
+!/mod/bmain
+/mod/bmain/node_modules
 /config.php
 /.htaccess
 /lib/*
