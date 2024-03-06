@@ -13,5 +13,3 @@ define('BORDER_DB_USER', 'root');
 define('BORDER_DB_PASSWORD', '');
 define('BORDER_DB_DATABASE', 'border');
 
-
-define('BORDER_PATH_URL', '/');
