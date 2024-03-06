@@ -6,30 +6,24 @@ use App\Exceptions\SendErrorException;
 
 function getUser()
 {
+    if(config('user_cached','nono') == 'nono') {
+        if (empty(session_id())) {
+            session_name('SESS_' . BORDER_PREFIX . 'ID');
+            session_start();
+        }
     
-    // if(config('user_cached','nono') == 'nono') {
-        // if (empty(session_id())) {
-        //     session_name('SESS_' . BORDER_PREFIX . 'ID');
-        //     session_start();
-        // }
-    
-        // if (empty($_SESSION['id'])){
-            // config(['user_cached' => false]);
-            // session_destroy();
-        // }else{
-            // config(['user_cached' => (object)[
-            //     'id' => (int)$_SESSION['id'],
-            //     'login' => toUtf($_SESSION['nev']),
-            //     'name' => toUtf($_SESSION['teljesnev']),
-            // ]]);
-        // }
-    // }
-    // return config('user_cached');
-    return (object)[
-        'id' => 2,
-        'login' => 'a',
-        'name' => 'b',
-    ];
+        if (empty($_SESSION['id'])){
+            config(['user_cached' => false]);
+            session_destroy();
+        }else{
+            config(['user_cached' => (object)[
+                'id' => (int)$_SESSION['id'],
+                'login' => toUtf($_SESSION['nev']),
+                'name' => toUtf($_SESSION['teljesnev']),
+            ]]);
+        }
+    }
+    return config('user_cached');
 }
 
 function getUserId()
