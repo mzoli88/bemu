@@ -20,5 +20,15 @@ return [
             'icon' => 'f5fd',
             'name' => 'Szerepkör kezelés',
         ],
+
+        'modules'=> [
+            'icon'=> 'f14e',
+            'name'=> 'Modulok',
+
+        ],
     ]
+    
+
+        
+
 ];
