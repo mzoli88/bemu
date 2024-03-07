@@ -93,10 +93,14 @@ class Border3
         $mods = config('mods');
 
         if (array_key_exists($modul_azon, $mods)) {
-            $menu = collect($mods[$modul_azon]['menu'])->filter(function ($menu, $key) use ($jogok){
-                if(!array_key_exists($key,$jogok))return false;
-                return $jogok[$key];
-            });
+            if(isSysAdmin() && ($modul_azon == 'admin' || $modul_azon == 'naplo')) {
+                $menu = $mods[$modul_azon]['menu'];
+            }else{
+                $menu = collect($mods[$modul_azon]['menu'])->filter(function ($menu, $key) use ($jogok){
+                    if(!array_key_exists($key,$jogok))return false;
+                    return $jogok[$key];
+                })->toArray();
+            }
         }
         if (count($menu) < 1) self::send_error("Nincs jogosultság menüpont eléréséhez!", 403);
 
