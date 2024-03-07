@@ -1,4 +1,25 @@
 <?php
+
+$menu = [];
+
+if (defined('BORDER_EMU')){
+
+    $menu['useredit'] = [
+        'icon' => 'f007',
+        'name' => 'Felhasználó kezelés',
+    ];
+    
+    $menu['groupedit'] = [
+        'icon' => 'f5fd',
+        'name' => 'Szerepkör kezelés',
+    ];
+}
+
+$menu['modules'] = [
+    'icon' => 'f14e',
+    'name' => 'Modulok',
+];
+
 return [
 
     'name' => 'Rendszer',
@@ -11,24 +32,6 @@ return [
         // 'badmin' => 'Admin',
     ],
 
-    'menu' => [
-        'useredit' => [
-            'icon' => 'f007',
-            'name' => 'Felhasználó kezelés',
-        ],
-        'groupedit' => [
-            'icon' => 'f5fd',
-            'name' => 'Szerepkör kezelés',
-        ],
-
-        'modules'=> [
-            'icon'=> 'f14e',
-            'name'=> 'Modulok',
-
-        ],
-    ]
-    
-
-        
+    'menu' => $menu
 
 ];

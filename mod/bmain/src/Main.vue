@@ -93,7 +93,7 @@ export default {
 
     // this.ActiveToMenu(this.active);
 
-    dd (this.active,this.active_modul,this.active_menu);
+    // dd (this.active,this.active_modul,this.active_menu);
 
     getStore("admin.perms").load({
       modul:this.active_modul
