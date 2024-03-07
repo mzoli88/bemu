@@ -1,0 +1,51 @@
+Általános gomb komponens.
+    Feladata az automatikus ikon kiválasztás a slot-ban meghatározott szöveg alapján. 
+    Tehát a gombon megjelenített szöveg alapján határozza meg az alapértelmezett ikont.
+    A komponensen belül talált "switch case" bővebb leírást ad, hogy milyen ikonok lehetnek.
+    Ebbe a verzióban a gombokat csak is ikonokkal használjuk. Ezért az ikon mellett oda kell figyelni, hogy ha az egeret rávisszük, akkor látszódjon a gomb szövege.
+
+    - példányosítható: igen
+    - Forráskód: hws/components/Button.vue
+    - Fokuszálható: igen
+    - hash szabályok: igen
+    - Felhasznált komponensek: 
+        o nem használ másik komponenst
+
+Props:
+    icon: String,  
+        - nem alapértelemezett, css-ben definiált icon class nevét lehet megadni vagy a font-awsome unicode karaktereit.
+        - lásd docs/css/icon.txt vagy font-awsome ikonok.
+        - [default]: null (nem csinál semmit)
+    active: Boolean,
+        - Főleg az App komponensen belül menü szerkezet esetében használjuk. Aktív menüpont jelölésére.
+        - [default]: null/false (nem csinál semmit) 
+        - [true]: "active" css class szabály illesztése
+    disable: Boolean,
+        - Aktív / inaktív állapotba tehetjük a gombot. (Inaktív állapotban halvány és nem használható).
+        - [default]: null/false (nem csinál semmit) 
+        - [true]: "active" css class szabály illesztése
+    highlight: Boolean
+        - A gomb kinézetét ezzel a tulajdonsággal emelhetjük ki. Pl.: narancs sárga színt kap, hogy jobban ki legyen hangsúlyozva,
+        - [default]: null/false - ha egy html tag-en belül nincs kiemelt gomb, akkor automatikusan az első gomb lesz kiemelve
+        - [true]: "highlight" css class szabály illesztése, (megváltozik a színe a gombnak)
+
+Events:
+    @click:
+        - komponensre kattintáskor aktiválódik
+        - paraméterek: [event,vue komponens]
+    @focus:
+        - Fókusz megszerzésére aktiválódik
+        - paraméterek: [event,vue komponens]
+    @blur:
+        - Fókusz elveszítésekor aktiválódik
+        - paraméterek: [event,vue komponens]
+Slots:
+    default:
+        - A komponensen belül megjelenített szöveg.
+        - Ez alapján derül ki az ikon.
+
+Példák:
+    <Button icon="edit"/>
+    <Button title="Gomb" icon="f111"/>
+    <Button>Módosítás</Button>
+    <Button @click="onClick">Törlés</Button>

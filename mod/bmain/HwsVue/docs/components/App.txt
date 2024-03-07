@@ -1,0 +1,113 @@
+Applikáció fő komponense
+    Feladatai:
+        o Loading maszkot tartalmazza és kezeli
+        o Popup komponenset húzza be
+        o Menü szerkezetet és névjegyet generálja
+
+    - példányosítható: nem
+    - Forráskód: hws/components/App.vue
+    - Fokuszálható: nem
+    - hash szabályok: igen 
+    - Felhasznált komponensek: 
+        o Panel
+        o Button
+        o Popup
+
+Props:
+Events:
+Slots:
+    A hws/init.js -ben definiált App objektum segítségével paraméterezni az src/main.js fájlban.
+
+Globálisan hívható függvények:
+    maskOn() - Betöltő képernyő vagy maszk bekapcsolása
+    maskOff() - Betöltő képernyő vagy maszk kikacsolása
+    colapseMenu(colapse) - A menüt csukhatjuk be vagy ki programozottan. Ha colapse paraméter értéke true akkor bezárja, ha falsz akkor kinyitja
+    msg(header, type, fn, pre) - Felugró ablakban értesítő szöveget jelenítünk meg vagy igen/nem megerősítést kérhetünk
+                o header: String
+                    Az ablak fejlécét tartalmazó szöveg
+                o type: String
+                    Milyen típusú ablak legyen. ('i/n' - érték esetén megerősító, igen/nem ablak) (Üres esetén, információ közlés)
+                o fn: Function(sucsess)
+                    valamelyik gomb lenyomása esetén fut ez a függvény. Első paramétere (sucsess) true akkor az igen gombra kattintottak.
+                o pre: String
+                    egyéb információkat tartalmazó nem HTML (pre tag-ben kezelt) szöveg
+
+Paraméterezés, alkalmazás indítás:
+    Az src mappában tároljuk a project specifikus tartalmakat.
+    src/main.js - fájban kell konfigurálni az alkalmazást.
+    App.start() függvényt kell hívni és átadni egy paraméter objektumot.
+    Az objektum kulcsai határozzák meg az url-be írt értékeket. (tehát az adott menüt, kulcsban paraméterezett elnevezéssel érhetjük el)
+    Kulcsok értéke a menüpont paramétereit tartalmazzák:
+        o permissions: Array
+            Fel kell sorolni, hogy milyen jogosultságokkal érhető el a menüpont.
+        o text: String
+            A menüpont megnevezése.
+        o icon: String
+            A menügomb (Button komponens) ikon tulajdonsága. (Font awsome unicode-ja)
+        o render: Vue components
+            A komponens ami render-eli a menüpontot
+
+    Pl.:
+
+        import registry from "./registry.vue";
+        export default {
+            registry: {
+                permissions: ["admin","ik_doc"],
+                text: "Iktatás felvitele",
+                icon: "f111",
+                render: registry,
+            }
+        };
+
+Weboldal esetén kell az src/main.js -en kívül egy src/web.vue fájl. Ez tartalmazza a login-oldalra első funkcionalitást.
+    Tartalomba így oldal specifikus dolgokat tudnunk betenni. pl.: IPR fejléc
+    <template>
+    <Login>
+        <template #title>
+        <h1>IPR Manager</h1>
+        </template>
+    </Login>
+    </template>
+
+
+    <style scoped>
+    h1 {
+    text-align: center;
+    }
+    </style>
+
+
+Példa a main.js -re
+
+    import { defineAsyncComponent } from 'vue'
+    import "./stores";
+    const tasks = defineAsyncComponent(() =>
+        import('./tasks/tasks.vue')
+    )
+    const workflow = defineAsyncComponent(() =>
+        import('./workflow/workflow.vue')
+    )
+    const userentry = defineAsyncComponent(() =>
+        import('./userentry/userentry.vue')
+    )
+
+    export default {
+    tasks: {
+        permissions: ['alap', 'vezeto'],
+        text: "Feladatok",
+        icon: "022",
+        render: tasks,
+    },
+    userentry: {
+        permissions: ['alap', 'vezeto'],
+        text: "Bejegyzések megtekintése",
+        icon: "f4ff",
+        render: userentry,
+    },
+    workflow: {
+        permissions: ['admin'],
+        text: "Folyamat beállítások",
+        icon: "013",
+        render: workflow,
+    },
+    };

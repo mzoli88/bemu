@@ -1,0 +1,9 @@
+Globális típus ellenörző függvények.
+
+    empty(val); //true, ha ures az értéke. Működük üres tömb és string esetén is.
+    isString(val); //true, ha val értéke string.
+    isNumeric(val); //true, ha val értéke string szám vagy integer.
+    isNumber(val); //true, ha val értéke integer.
+    isFunction(val); //true, ha val értéke függvény.
+    isArray(val); //true, ha val értéke tömb.
+    isObject(val); //true, ha val értéke objectum.

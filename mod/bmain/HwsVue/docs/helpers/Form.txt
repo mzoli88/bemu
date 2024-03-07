@@ -1,0 +1,27 @@
+Minden komponensre hívhatóvá válnak az alábbi függvények. (Mezők manipulálására szolgál rekurzívan)
+
+
+findFields(extrafind,noDisplayAndDisabled)
+    - vissza adja a komponensen belüli mezőket
+    - extrafind, extra keresési paraméter
+    - noDisplayAndDisabled, (true/false) ha default false, mindent vissza ad, 
+        true esetben nem adja vissza a display vagy a disabled mezőket.
+
+formGet()
+    - Rekurzívan vissza adja a componensben lévő mezők értékeit objektum formájában.
+
+formSet(data)
+    - Rekurzívan beállítja a componensben lévő mezők értékeit. A data objektum formájátum.
+    pl formSet({
+        name: 'Zoli',
+        age: '32'
+    });
+
+formReset()
+    - Rekurzívan reseteli a componensben lévő mezőket.
+
+formValidate()
+    - Rekurzívan validálja a componensben lévő mezőket.
+
+formSetErrors()
+    - Hiba szövegek megjelenítését segítő függvény. Objektumot adhatunk át neki amiben a field name tulajdonság a kulcs az érték pedig a megjelenítendő üzenet

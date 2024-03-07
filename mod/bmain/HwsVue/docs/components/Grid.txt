@@ -1,0 +1,158 @@
+Lista vagy "Grid" komponens
+    Feladata egy komplex lista legenerálása. Keresés, lapozás, rendezés, felvitel, módosíts, törlés, részletek, export, import
+    A Grid, első sorban a szerver oldalról kapott meta adatok alapján próbálja felállítani az oszlopokat.
+    Lehetőség szerint szerver oldal modeljeiben kell egységesen tárolni az oszlop elnevezéseket, oszlop típusokat, stb.
+    A komponens biztosít arra is lehetőséget, hogy mi határozzuk meg az oszlopok meta adatait.
+
+    - példányosítható: igen
+    - Forráskód: hws/components/grid -mappa
+    - Fokuszálható: nem
+    - hash szabályok: igen
+    - Felhasznált komponensek: 
+        o panel
+        o Button
+        o Form
+        o Field
+        o Pager
+        o és hws/components/grid mappában lévő fájlok
+
+Props:
+
+    store: String,
+        - Adatok betöltéséhez szükséges store neve
+    cols: Object,
+        - oszlopok manuális paraméterezése, főleg meta adatokból érkezik. Részlekért lásd lentebb.
+    extracols: Object,
+        - ha a meta adatokat nem akarjuk teljesen felül írni, csak kiegészítő adatokat szeretnénk.
+    noPager: Boolean,
+        - default false, ha true akkor nincs lapozó.
+    noSearch: Boolean,
+        - default false, ha true akkor nincs kereső panel.
+    create: [Boolean, Object],
+        - default false, ha true meta adatok alapján, generál felviteli formot.
+    update: [Boolean, Object],
+        - default false, ha true meta adatok alapján, generál módosító formot.
+    setRowClass: Function(rowdata),
+        - Soroknénd a rowdata -ban lévő rekord információkkal, saját osztájokat adhatunk meg. 
+        - pl Soronként színezhetünk. Pl lejárt határidő piros
+        - A függvény visszatérési értéke lehet string, vagy egy (css class) stringeket tartalmazó tömb.
+    del:  [Boolean, String],
+        - törlés gomb megjelenítése. string estében a törlés szövegét adhatjuk meg
+    defaultSearch: Object,
+        - Alapértelmezett kereési feltéleket adhatunk át a keresési formnek. (lásd helpers/Form.js formSet)
+    smallDetaile: Boolean,
+        - default false, ha true akkor oszlop meta adatok alapján kis részletek listánt generál.
+    smallDetailsNocols: Boolean,
+        - default false, ha true akkor nem rendezi a kis részletek mezőit oszlopokba.
+    smallDetailsOpen: Boolean,
+        - default false, ha true akkor mindig nyitva lesznek a kis részletek.
+    detailsrefreshbtn: Boolean,
+        - default false, ha true akkor a nagy részleteknél megjelenik egy frissítés gomb.
+    imp: [Boolean, Function],
+        - default false, ha true akkor megjelnik az import gomb
+        - ha függvény, akkor a gomb kattintás eseményét definiálhatjuk felül
+    exp: Boolean,
+        - default false, ha true akkor megjelnik az export gomb
+        - ha függvény, akkor a gomb kattintás eseményét definiálhatjuk felül
+    sort: String,
+        - oszlop neve. Ez az oszlopot akarjuk alapértelmezetten abc sorrendbe rendezni.
+    desc: Boolean,
+        - Alapértelmezett sorbarendezés esetén, ezzel fordott sorrendet állíthatunk be
+    checkbox: Boolean,
+        - jelölő négyzetet tesz a sorok elejére
+    heckboxIf: Function,
+        - paraméterül kapott rowData alapján ha a visszatérés false akkor nem látszódik a jelölő négyzet 
+    canRowUpdate: Function,
+        - ha visszatérési érték true akkor a paraméterül kapott rowData alapján megmondhatjuk, hogy legyen vagy ne legyen módosítás gomb.
+    canRowDel: Function,
+        - ha visszatérési érték true akkor a paraméterül kapott rowData alapján megmondhatjuk, hogy legyen vagy ne legyen törlés gomb.
+    searchOpen: Boolean,
+        - true akkor alapértelmezetten nyiva lesz a kereső panel
+    entity: Boolean,
+        - true akkor entitás kezelés hasznéálata bekapcsolódik
+    afterSave: Function,
+        - mentés után funkció
+    cRoutes: Object,
+        - create-hez hasonló gombok definiálása
+    uRoutes: Object,
+        - updatehez hasonló gombok generálása
+    fastFilter: Object,
+        - nézetek paraméterezése
+    fastFilterStart: String,
+        - első nézet
+    fastFilterDefaultSearch: Object,
+        - nézetenként keresési feltétel módosítás
+    askBeforeUpdate: String,
+        - módosítás előtt megerősítés kérése
+    askBeforeCreate: String,
+        - létrehozás előtt megerősítés kérése
+    parent: String,
+        - ha van szülő komponesn mert egy részletek ablakban vagyunk, akkot az azonosítóját fixqery-ben ezen a néven küldje
+
+
+
+Slots:
+    default:
+        - nincs
+    rowBtn
+        - a műveletek közé helyezhetünk gombot
+    smallDetaile
+        - kis részletekhez illesztehetünk be általunk definiált tartalmat
+    bottomToolbar
+        - lapozó mellé tehetünk extra gombokat
+    detailToolbar
+        - Részletek ablaknál az alap adatok fölötti bezárás gomb mellé tehetünk gombokat
+    create 
+        - létrehozó form-ot lehet személyre szabni
+    update 
+        - módosító form-ot lehet személyre szabni
+    details
+        - részletek ablakot definiál
+
+Oszlopok paraméterezése:
+    Paraméterezés alapja egy objektum aminek a kulcs értékei a mező nevét határozzák meg. Ez a adatbázis elnevezésekkel azonos.
+    o list, [Boolean],
+        - ha false akkor nem szerepel a listán ,
+    o create, [Boolean, String]
+        - ha false akkor nem szerepel a felvitelnél,
+        - ha sting akkor a field komponens típusát is meghatározza
+    o update, [Boolean, String]
+        - ha false akkor nem szerepel a módosításnál,
+        - ha sting akkor a field komponens típusát is meghatározza
+    o cu, [Boolean, String]
+        - ha false akkor nem szerepel a módosításnál és létrehozásnál,
+        - ha sting akkor a field komponens típusát is meghatározza létrehozásnál és módosításnál is
+    o search, [Boolean, String]
+        - ha false akkor nem szerepel a keresőben,
+        - ha sting akkor a field komponens típusát is meghatározza
+    o type, [String, String]
+        - oszlop field általános típusa,
+    o align, [String]
+        - igazítás, értéki 'left' vagy 'right',
+    o render, [Function(val)]
+        - val értéke alapján módosíthatunk itt a megjelenítésen. Ezzel a megoldással exportba nem kerül bele az érték.
+        - Return érték a megjelenített adat lesz.
+
+    pl.: {
+        id: {
+            list: false
+        },
+        name: {
+            list: true,
+            create: true,
+            update: true,
+            search: true,
+            type: 'text',
+            align: 'text',
+            render: 'text',
+        },
+        egyedi: {
+            search:{
+                type: 'text'
+            },
+            create:{
+                type: 'number'
+            },
+        }
+    }
+

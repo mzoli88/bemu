@@ -1,0 +1,1 @@
+cd .. & rd /s /q "hws" & git clone https://hws-git.i.hwstudio.hu/hws-Alkalmazas/hws-vue.git -b "v1.x" hws & rd /s /q "hws/.git" & PAUSE
