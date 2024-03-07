@@ -108,27 +108,55 @@ class Border3
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
             'menu' => $menu,
             'entities' => self::getUserEntitys(),
+            'active_entity' => getEntity(),
         ];
     }
 
     static function getEntityTypeId()
     {
+        // Cache::forget('entity_type_id');
         return Cache::rememberForever('entity_type_id', function () {
             $result = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first();
             if (!$result) DB::table('b_nagycsoport_tipus')->insert(['tipusnev' => 'Entitás']);
-            return DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first()->b_nagycsoport_tipus_id;
+            $type_id = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first()->b_nagycsoport_tipus_id;
+            $result = DB::table('b_nagycsoport')->select('b_nagycsoport_id')->where('b_nagycsoport_tipus_id', $type_id)->first();
+            if (!$result) DB::table('b_nagycsoport')->insert(['nev' => 'Entitás', 'b_nagycsoport_tipus_id' => $type_id]);
+            return $type_id;
         });
-
     }
 
-    static function getUserEntitys()
+    static function getEntities()
     {
+        return Cache::remember('entities', now()->addMinutes(10), function () {
+            return DB::table('b_nagycsoport')
+                ->select('b_nagycsoport_id as value', 'nev as name')
+                ->where('b_nagycsoport_tipus_id', self::getEntityTypeId())
+                ->get()->keyBy('value')
+                ->toArray();
+        });
+    }
+
+    static function getUserEntityIds($user_id = null)
+    {
+        $user_id = $user_id ?: getUserId();
+        return Cache::remember('user_entities_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
+            return collect(self::getUserEntitys($user_id))->pluck('value');
+        });
+    }
+
+    static function getUserEntitys($user_id = null)
+    {
+
+        $user_id = $user_id ?: getUserId();
+
+        if (hasJustOneEntity()) return entities();
+
         return DB::table('b_nagycsoport')->select('b_nagycsoport_id as value', 'nev as name')
             ->where('b_nagycsoport_tipus_id', self::getEntityTypeId())
-            ->whereExists(function ($query) {
+            ->whereExists(function ($query) use ($user_id) {
                 $query->select()
                     ->from('b_nagycsoport_nevek')
-                    ->where('b_nagycsoport_nevek.nevek_id', getUserId())
+                    ->where('b_nagycsoport_nevek.nevek_id', $user_id)
                     ->whereColumn('b_nagycsoport_nevek.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
             })
             ->whereExists(function ($query) {

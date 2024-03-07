@@ -77,12 +77,12 @@ function getModulVersion($modul_azon = null)
     return $mods[$modul_azon]['version'];
 }
 
-// function getMenu()
-// {
-//     $route = explode('/', request()->route()->getPrefix());
-//     if (count($route) < 2) return false;
-//     return $route[1];
-// }
+function getMenu()
+{
+    $route = explode('/', request()->route()->getPrefix());
+    if (count($route) < 2) return false;
+    return $route[1];
+}
 
 function getEntity()
 {
@@ -92,24 +92,20 @@ function getEntity()
 
 function getEntityName($entity_id = null)
 {
-    return '-';
-//     $entity_id = $entity_id ?: getEntity();
-//     if (!$entity_id) return;
-//     $entities = entities();
-//     return array_key_exists($entity_id, $entities) ? $entities[$entity_id]['name'] : null;
+    $entity_id = $entity_id ?: getEntity();
+    if (!$entity_id) return;
+    $entities = entities();
+    return array_key_exists($entity_id, $entities) ? $entities[$entity_id]['name'] : null;
 }
 
-// function entities()
-// {
-//     return Cache::remember('entities', now()->addMinutes(10), function () {
-//         return Entities::status()->get()->keyBy('id')->toArray();
-//     });
-// }
+function entities()
+{
+    return Border3::getEntities();
+}
 
 function hasJustOneEntity()
 {
-    // return count(entities()) == 1;
-    return true;
+    return count(entities()) == 1;
 }
 
 // function getUserPerms($user_id = null)
@@ -148,13 +144,10 @@ function hasJustOneEntity()
 //     });
 // }
 
-// function getUserEntities($user_id = null)
-// {
-//     $user_id = $user_id ?: getUserId();
-//     return Cache::remember('user_entities_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
-//         return UserEntities::where('user_id', $user_id)->pluck('entity_id')->toArray();
-//     });
-// }
+function getUserEntities($user_id = null)
+{
+    return Border3::getUserEntityIds($user_id);
+}
 
 // function getUserPermsByEntity($user_id = null, $entity_id = null)
 // {
@@ -165,13 +158,13 @@ function hasJustOneEntity()
 //     return false;
 // }
 
-// function hasEntity($user_id = null, $entity_id = null)
-// {
-//     $user_id = $user_id ?: getUserId();
-//     $entity_id = $entity_id ?: getEntity();
-//     $entities = getUserEntities($user_id);
-//     return in_array($entity_id, $entities);
-// }
+function hasEntity($user_id = null, $entity_id = null)
+{
+    $user_id = $user_id ?: getUserId();
+    $entity_id = $entity_id ?: getEntity();
+    $entities = getUserEntities($user_id);
+    return in_array($entity_id, $entities);
+}
 
 function hasPerm($jog)
 {

@@ -1,0 +1,76 @@
+/*!******************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-1.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/vue-loader/dist/index.js??ruleSet[0]!./src/Main.vue?vue&type=style&index=0&id=3ffae6b2&lang=css ***!
+  \******************************************************************************************************************************************************************************************************************************************/
+
+.MainTopToolbar {
+  /* background-color: #1e5999; */
+  padding: 6px;
+  position: absolute;
+  top: 3px;
+  right: 2px;
+  border-radius: 4px;
+  z-index: 10;
+  color: white;
+}
+.MainTopToolbar .nevjegy-user {
+  margin-right: 16px;
+}
+.collapsedTopPanelIcon {
+  height: 51px;
+}
+.main_wrap {
+  padding-top: 10px;
+  padding-left: 10px;
+}
+.vPanel.collapsible.collapsed>.titleBorder {
+  flex: 1 1 auto;
+}
+@keyframes lights {
+0% {
+    text-shadow: -10px 5px 2px #33333300;
+}
+5% {
+    text-shadow: 0px 5px 2px #333333dd;
+}
+10% {
+    text-shadow: 15px 5px 2px #33333300;
+}
+}
+@keyframes alert-button-effect {
+0% {
+    box-shadow: 0 0 0 0 var(--higlight-text-color);
+}
+15% {
+    box-shadow: 0 0 2px 5px rgba(254, 57, 5, 0);
+}
+}
+@keyframes ring {
+0% {
+    transform: rotate(0deg);
+}
+5% {
+    transform: rotate(0deg);
+}
+15% {
+    transform: rotate(0deg);
+}
+25% {
+    transform: rotate(20deg);
+}
+35% {
+    transform: rotate(-15deg);
+}
+45% {
+    transform: rotate(10deg);
+}
+55% {
+    transform: rotate(-5deg);
+}
+60% {
+    transform: rotate(0deg);
+}
+100% {
+    transform: rotate(0deg);
+}
+}
+
