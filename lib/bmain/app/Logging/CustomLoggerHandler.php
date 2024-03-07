@@ -65,7 +65,7 @@ class CustomLoggerHandler extends AbstractProcessingHandler
         if (array_key_exists('channel', $record->context)) $channel = $record->context['channel'];
         if (array_key_exists('modul_azon', $record->context)) $modul_azon = $record->context['modul_azon'];
 
-        file_put_contents(storage_path('bmain_logs' . DIRECTORY_SEPARATOR . $modul_azon . '-' . $channel . '-' . date('Y-m-d') . '.log'), $record->formatted . "\n", FILE_APPEND | LOCK_EX);
+        file_put_contents( BORDER_PATH_BORDERDOC . 'bmain_logs' . DIRECTORY_SEPARATOR . $modul_azon . '-' . $channel . '-' . date('Y-m-d') . '.log', $record->formatted . "\n", FILE_APPEND | LOCK_EX);
     }
 
     static function sql_log()

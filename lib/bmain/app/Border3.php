@@ -13,9 +13,11 @@ class Border3
     {
 
         //storage beállítás
-        $path = preg_replace('#\\' . DIRECTORY_SEPARATOR . '$#', '', BORDER_PATH_BORDERDOC);
+        $path = BORDER_PATH_BORDERDOC . getModulAzon();
         app()->useStoragePath($path);
         Config::set('filesystems.disks.local.root', $path);
+        // Config::set('path.storage', $path);
+
 
         // adatbázis konfiguráció
         Config::set('database.default', 'mysql');
