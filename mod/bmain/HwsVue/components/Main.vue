@@ -159,6 +159,7 @@ export default {
     };
 
     global.getJog = me.getJog;
+    global.setEntity = me.setEntity;
     global.getUserData = me.getUserData;
 
     var me = this,
@@ -222,6 +223,12 @@ export default {
       }
       if (!this.buttons[index]) index = Object.keys(this.buttons)[0];
       this.active = index;
+    },
+
+    setEntity: function (val,fn) {
+      this.$root.changeEntity(val, function () {
+        fn();
+      });
     },
 
     errScreen: function (text) {

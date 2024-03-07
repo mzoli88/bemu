@@ -91,6 +91,7 @@ export default {
     global.getUserData = this.getUserData;
     global.isSysAdmin = this.isSysAdmin;
     global.getActiveMenu = this.getActiveMenu;
+    global.setEntity = this.setEntity;
 
     // this.ActiveToMenu(this.active);
 
@@ -110,6 +111,13 @@ export default {
       this.entities = x.entities;
       this.active_entity = this.active_entity || x.active_entity;
       this.perms = x.perms;
+
+      if(this.entities.length>1){
+        this.$root.entity = {
+          active: this.active_entity,
+          list: this.entities,
+        }
+      }
       // Mods = x.mods;
       // dd(Mods[this.active_entity]);
       // this.buttons = Mods[this.active_entity];
@@ -222,18 +230,12 @@ export default {
       return this.active_menu;
     },
 
-    setEntity: function (val) {
+    setEntity: function (val,fn) {
       if (this.active_entity == val) return;
       this.active_entity = val;
       sessionStorage.setItem("active_entity", val);
-      this.render = false;
-      this.$nextTick(() => {
-        this.buttons = Mods[this.active_entity];
-        this.ActiveToMenu(this.active);
-        this.$nextTick(() => {
-          this.render = true;
-        });
-      });
+      if(this.$root.entity)this.$root.entity.active = val;
+      fn();
     },
 
     $hash: function (hash) {

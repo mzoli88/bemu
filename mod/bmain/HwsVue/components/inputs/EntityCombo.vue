@@ -23,7 +23,7 @@ export default {
   methods: {
     onChange: function (val) {
       var me = this;
-      this.$root.changeEntity(val, function () {
+      setEntity(val, function () {
         //callbackbe kellett rakni, különben a grid -ben lévő showGrid computed érték hamarabb fut le és nem frissül
         let pager = me.up("Pager");
         if (pager) pager.doLoad();

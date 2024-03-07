@@ -108,8 +108,24 @@ class Border3
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
             'menu' => $menu,
             'entities' => self::getUserEntitys(),
-            'active_entity' => getEntity(),
+            'active_entity' => self::getDefaultEntityId(),
         ];
+    }
+
+    static function getDefaultEntityId(){
+
+        $entity = getEntity();
+        
+        if(!empty($entity) && $entity != 0) return $entity;
+        
+        $entities = self::getUserEntityIds();
+        // dd ($entities);
+        
+        if (count($entities) == 0){
+            sendError("Felhasználó nincsen entitáshoz kötve! Keressen fel egy rendszer adminisztrátort!");
+        } 
+
+        return array_shift($entities);
     }
 
     static function getEntityTypeId()
@@ -127,11 +143,13 @@ class Border3
 
     static function getEntities()
     {
+        // Cache::forget('entities');
         return Cache::remember('entities', now()->addMinutes(10), function () {
             return DB::table('b_nagycsoport')
                 ->select('b_nagycsoport_id as value', 'nev as name')
                 ->where('b_nagycsoport_tipus_id', self::getEntityTypeId())
                 ->get()->keyBy('value')
+                ->map(function($v){return (array)$v;})
                 ->toArray();
         });
     }
@@ -139,9 +157,10 @@ class Border3
     static function getUserEntityIds($user_id = null)
     {
         $user_id = $user_id ?: getUserId();
-        return Cache::remember('user_entities_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
-            return collect(self::getUserEntitys($user_id))->pluck('value');
-        });
+        // Cache::forget('user_entities_' . $user_id);
+        // return Cache::remember('user_entities_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
+        return collect(self::getUserEntitys($user_id))->pluck('value')->toArray();
+        // });
     }
 
     static function getUserEntitys($user_id = null)
@@ -159,12 +178,12 @@ class Border3
                     ->where('b_nagycsoport_nevek.nevek_id', $user_id)
                     ->whereColumn('b_nagycsoport_nevek.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
             })
-            ->whereExists(function ($query) {
-                $query->select()
-                    ->from('b_nagycsoport_modul')
-                    ->where('b_nagycsoport_modul.modul_azon', getModulAzon())
-                    ->whereColumn('b_nagycsoport_modul.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
-            })
+            // ->whereExists(function ($query) {
+            //     $query->select()
+            //         ->from('b_nagycsoport_modul')
+            //         ->where('b_nagycsoport_modul.modul_azon', getModulAzon())
+            //         ->whereColumn('b_nagycsoport_modul.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
+            // })
             ->get();
     }
 

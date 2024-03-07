@@ -7958,7 +7958,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     onChange: function (val) {
       var me = this;
-      this.$root.changeEntity(val, function () {
+      setEntity(val, function () {
         //callbackbe kellett rakni, különben a grid -ben lévő showGrid computed érték hamarabb fut le és nem frissül
         let pager = me.up("Pager");
         if (pager) pager.doLoad();
@@ -10560,6 +10560,7 @@ var Mods;
     __webpack_require__.g.getUserData = this.getUserData;
     __webpack_require__.g.isSysAdmin = this.isSysAdmin;
     __webpack_require__.g.getActiveMenu = this.getActiveMenu;
+    __webpack_require__.g.setEntity = this.setEntity;
 
     // this.ActiveToMenu(this.active);
 
@@ -10579,6 +10580,13 @@ var Mods;
       this.entities = x.entities;
       this.active_entity = this.active_entity || x.active_entity;
       this.perms = x.perms;
+
+      if(this.entities.length>1){
+        this.$root.entity = {
+          active: this.active_entity,
+          list: this.entities,
+        }
+      }
       // Mods = x.mods;
       // dd(Mods[this.active_entity]);
       // this.buttons = Mods[this.active_entity];
@@ -10691,18 +10699,12 @@ var Mods;
       return this.active_menu;
     },
 
-    setEntity: function (val) {
+    setEntity: function (val,fn) {
       if (this.active_entity == val) return;
       this.active_entity = val;
       sessionStorage.setItem("active_entity", val);
-      this.render = false;
-      this.$nextTick(() => {
-        this.buttons = Mods[this.active_entity];
-        this.ActiveToMenu(this.active);
-        this.$nextTick(() => {
-          this.render = true;
-        });
-      });
+      if(this.$root.entity)this.$root.entity.active = val;
+      fn();
     },
 
     $hash: function (hash) {
