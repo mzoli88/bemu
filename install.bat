@@ -1,2 +1,2 @@
-@REM LARAVEL 10 install
-composer i --working-dir=lib\bmain
+call composer i --working-dir=lib\bmain
+call php lib\bmain\artisan migrate --force

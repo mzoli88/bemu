@@ -71,7 +71,7 @@ export default {
       buttons: null,
       perms: {},
       userData: {},
-      // entities: {},
+      entities: {},
       // active_entity: parseInt(sessionStorage.getItem("active_entity")) || null,
       // site_name: config.name,
       // site_company: config.company,
@@ -107,7 +107,7 @@ export default {
 
       g_userData = JSON.parse(JSON.stringify(x));
       this.userData = x;
-      // this.entities = x.entities;
+      this.entities = x.entities;
       // this.active_entity = this.active_entity || x.active_entity;
       this.perms = x.perms;
       // Mods = x.mods;

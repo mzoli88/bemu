@@ -13,7 +13,7 @@ class Border3
     {
 
         //storage beállítás
-        $path = preg_replace('#\\'.DIRECTORY_SEPARATOR.'$#','',BORDER_PATH_BORDERDOC);
+        $path = preg_replace('#\\' . DIRECTORY_SEPARATOR . '$#', '', BORDER_PATH_BORDERDOC);
         app()->useStoragePath($path);
         Config::set('filesystems.disks.local.root', $path);
 
@@ -74,7 +74,7 @@ class Border3
             $out[$key] = $val ? true : false;
         }
 
-        Cache::set('user_perm_' . getUserId() . '_' . $modul_azon,$out);
+        Cache::set('user_perm_' . getUserId() . '_' . $modul_azon, $out);
     }
 
     static function getUserData()
@@ -107,9 +107,38 @@ class Border3
             'modul_verzio' => toUtf($modul_data->verzio),
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
             'menu' => $menu,
+            'entities' => self::getUserEntitys(),
         ];
     }
 
+    static function getEntityTypeId()
+    {
+        return Cache::rememberForever('entity_type_id', function () {
+            $result = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first();
+            if (!$result) DB::table('b_nagycsoport_tipus')->insert(['tipusnev' => 'Entitás']);
+            return DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first()->b_nagycsoport_tipus_id;
+        });
+
+    }
+
+    static function getUserEntitys()
+    {
+        return DB::table('b_nagycsoport')->select('b_nagycsoport_id as value', 'nev as name')
+            ->where('b_nagycsoport_tipus_id', self::getEntityTypeId())
+            ->whereExists(function ($query) {
+                $query->select()
+                    ->from('b_nagycsoport_nevek')
+                    ->where('b_nagycsoport_nevek.nevek_id', getUserId())
+                    ->whereColumn('b_nagycsoport_nevek.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
+            })
+            ->whereExists(function ($query) {
+                $query->select()
+                    ->from('b_nagycsoport_modul')
+                    ->where('b_nagycsoport_modul.modul_azon', getModulAzon())
+                    ->whereColumn('b_nagycsoport_modul.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
+            })
+            ->get();
+    }
 
     static function queryJog($ellenorzendo, $user_id = false)
     {
@@ -159,7 +188,7 @@ class Border3
                 $has_jog = true;
                 break;
             }
-            if (array_key_exists($value,$jogok) && $jogok[$value] === true) {
+            if (array_key_exists($value, $jogok) && $jogok[$value] === true) {
                 $has_jog = true;
                 break;
             }
