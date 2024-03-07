@@ -1,6 +1,6 @@
 <template>
   <Grid store="groups" title="Szerepkör kezelés">
-    <template #details>
+    <!-- <template #details>
       <Tab>
         <Panel title="Felhasználók">
           <Grid
@@ -24,28 +24,28 @@
           />
         </Panel>
         <Panel title="Jogosultságok"> <Perms /> </Panel>
-      </Tab>
-    </template>
+      </Tab> -->
+    <!-- </template> -->
   </Grid>
 </template>
 <script>
 export default {
   components: {
-    Perms: cLoad("groupedit.perms"),
+    // Perms: cLoad("groupedit.perms"),
   },
   methods: {
-    toogle: function (e, cmp, r) {
-      if (!getJog("group_admin") && !isSysAdmin()) return;
+    // toogle: function (e, cmp, r) {
+    //   if (!getJog("group_admin") && !isSysAdmin()) return;
 
-      getStore("users").update(r.id);
-      getStore("users").load();
-    },
+    //   getStore("users").update(r.id);
+    //   getStore("users").load();
+    // },
   },
 };
 </script>
-
+<!-- 
 <style scoped>
 .add.Button {
   background-color: #aaa;
 }
-</style>
+</style> -->
