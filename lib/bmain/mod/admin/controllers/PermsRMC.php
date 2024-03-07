@@ -10,6 +10,6 @@ class PermsRMC extends Controller3
 
     public function list()
     {
-        return Border3::getUserData();
+        return Border3::getUserData($_GET['modul']);
     }
 }

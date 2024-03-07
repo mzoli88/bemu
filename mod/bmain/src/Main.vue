@@ -54,7 +54,7 @@ const Contents = {};
 //hasPerm hívás miatt kell a g_userData, g_active_modul, ne reaktív legyen a változó. ha reaktív akkor is frissít amikor modult változtat. (false -lesz a jog) 
 var g_userData, g_active_modul;
 
-var Mods;
+// var Mods;
 export default {
   name: "Main",
   data: function () {
@@ -73,8 +73,6 @@ export default {
       userData: {},
       entities: {},
       active_entity: parseInt(sessionStorage.getItem("active_entity")) || null,
-      // site_name: config.name,
-      // site_company: config.company,
       pressed: null,
       active_modul: tmp[0],
       active_menu: tmp.length == 2 ? tmp[1] : null,
@@ -95,9 +93,9 @@ export default {
 
     // this.ActiveToMenu(this.active);
 
-    // dd (this.active,this.active_modul,this.active_menu);
+    dd (this.active,this.active_modul,this.active_menu);
 
-    getStore(this.active_modul +".perms").load({
+    getStore("admin.perms").load({
       modul:this.active_modul
     },(s, x, code) => {
       if (!s) {
@@ -118,14 +116,9 @@ export default {
           list: this.entities,
         }
       }
-      // Mods = x.mods;
-      // dd(Mods[this.active_entity]);
-      // this.buttons = Mods[this.active_entity];
-      
+
       this.buttons = x.menu;
-      // dd (this.menu);
       this.ActiveToMenu(this.active);
-      // this.setTitle();
       this.render = true;
       maskOff();
     });
@@ -133,10 +126,7 @@ export default {
   watch: {
     active: function (value) {
       global.MajaxManager.deleteAll();
-
       this.setHash(value);
-
-      // this.setTitle();
     },
   },
 

@@ -36,16 +36,17 @@ class Border3
         exit();
     }
 
-    static function getJogok()
+    static function getJogok($modul_azon = null)
     {
+        $modul_azon = $modul_azon ?: getModulAzon();
         //belépve ellenőrzés
         if (!getUser()) sendError("Nincs belépve!", 401);
-        return Cache::get('user_perm_' . getUserId() . '_' . getModulAzon());
+        return Cache::get('user_perm_' . getUserId() . '_' . $modul_azon);
     }
 
-    static function setJogok()
+    static function setJogok($modul_azon = null)
     {
-        $modul_azon = getModulAzon();
+        $modul_azon = $modul_azon ?: getModulAzon();
 
         $modul = config('mods')[$modul_azon];
 
@@ -75,23 +76,26 @@ class Border3
         }
 
         Cache::set('user_perm_' . getUserId() . '_' . $modul_azon, $out);
+        return $out;
     }
 
-    static function getUserData()
+    static function getUserData($modul_azon = null)
     {
-        self::setJogok();
-        $jogok = self::getJogok();
-        $modul_data = self::getModulData()->first();
+        $modul_azon = $modul_azon ?: getModulAzon();
+        $jogok = self::setJogok($modul_azon);
 
+        $modul_data = self::getModulData($modul_azon)->first();
+        
         if (!$modul_data) return self::send_error("Modul verziója nincs telepítve!", 404);
 
         $menu = [];
 
         $mods = config('mods');
 
-        if (isset($_GET['modul']) && array_key_exists($_GET['modul'], $mods)) {
-            $menu = collect($mods[$_GET['modul']]['menu'])->filter(function ($menu, $key) {
-                return hasPerm($key);
+        if (array_key_exists($modul_azon, $mods)) {
+            $menu = collect($mods[$modul_azon]['menu'])->filter(function ($menu, $key) use ($jogok){
+                if(!array_key_exists($key,$jogok))return false;
+                return $jogok[$key];
             });
         }
         if (count($menu) < 1) self::send_error("Nincs jogosultság menüpont eléréséhez!", 403);
