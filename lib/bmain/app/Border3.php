@@ -110,11 +110,12 @@ class Border3
             'id' => $user->id,
             'nev' => $user->login,
             'teljesnev' => $user->name,
-            'permissions' => $jogok,
+            'perms' => $jogok,
             'modul_nev' => toUtf($modul_data->modulnev),
             'modul_verzio' => toUtf($modul_data->verzio),
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
             'menu' => $menu,
+            'sys_admin' => isSysAdmin() ? 'I' : 'N',
             'entities' => self::getUserEntitys(),
             'active_entity' => self::getDefaultEntityId(),
         ];
@@ -240,6 +241,10 @@ class Border3
 
         foreach ($tmp as $value) {
             if ($value === true) {
+                $has_jog = true;
+                break;
+            }
+            if($value == 'SysAdmin' && isSysAdmin()){
                 $has_jog = true;
                 break;
             }

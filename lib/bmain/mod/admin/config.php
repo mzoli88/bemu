@@ -13,12 +13,18 @@ if (defined('BORDER_EMU')){
         'icon' => 'f5fd',
         'name' => 'Szerepkör kezelés',
     ];
+
+    $menu['modules'] = [
+        'icon' => 'f14e',
+        'name' => 'Modulok',
+    ];
 }
 
-$menu['modules'] = [
-    'icon' => 'f14e',
-    'name' => 'Modulok',
+$menu['systemparam'] = [
+    'icon' => 'f7d9',
+    'name' => 'Rendszer beállítások',
 ];
+
 
 return [
 

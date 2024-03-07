@@ -91,37 +91,8 @@ export default {
     global.getActiveMenu = this.getActiveMenu;
     global.setEntity = this.setEntity;
 
-    // this.ActiveToMenu(this.active);
+    this.loadMenu();
 
-    // dd (this.active,this.active_modul,this.active_menu);
-
-    getStore("admin.perms").load({
-      modul:this.active_modul
-    },(s, x, code) => {
-      if (!s) {
-        maskOff();
-        if (code == 401) return;
-        return msg(x.message, "error");
-      }
-
-      g_userData = JSON.parse(JSON.stringify(x));
-      this.userData = x;
-      this.entities = x.entities;
-      this.active_entity = this.active_entity || x.active_entity;
-      this.perms = x.perms;
-
-      if(this.entities.length>1){
-        this.$root.entity = {
-          active: this.active_entity,
-          list: this.entities,
-        }
-      }
-
-      this.buttons = x.menu;
-      this.ActiveToMenu(this.active);
-      this.render = true;
-      maskOff();
-    });
   },
   watch: {
     active: function (value) {
@@ -131,6 +102,36 @@ export default {
   },
 
   methods: {
+    loadMenu: function(){
+      getStore("admin.perms").load({
+        modul:this.active_modul
+      },(s, x, code) => {
+        if (!s) {
+          maskOff();
+          if (code == 401) return;
+          return msg(x.message, "error");
+        }
+        
+        g_userData = JSON.parse(JSON.stringify(x));
+        this.userData = x;
+        this.entities = x.entities;
+        this.active_entity = this.active_entity || x.active_entity;
+        this.perms = x.perms;
+        
+        if(this.entities.length>1){
+          this.$root.entity = {
+            active: this.active_entity,
+            list: this.entities,
+          }
+        }
+        
+        this.buttons = x.menu;
+        
+        this.ActiveToMenu(this.active);
+        this.render = true;
+        maskOff();
+      });
+    },
 
     ActiveToMenu: function (active) {
       if (!isString(active)) return;
@@ -184,12 +185,12 @@ export default {
           if (arguments[i] == "SysAdmin" && this.isSysAdmin()) {
             return true;
           }
+
           if (
-            this.perms[this.getActiveEntity()] &&
-            this.perms[this.getActiveEntity()][this.getActiveModul()]
+            this.perms[this.getActiveModul()]
           ) {
-            var perms =
-              this.perms[this.getActiveEntity()][this.getActiveModul()];
+
+            var perms = this.perms[this.getActiveModul()];
 
             if (perms[arguments[i]] === true || perms[arguments[i]] === "I") {
               return true;
@@ -229,7 +230,14 @@ export default {
     },
 
     $hash: function (hash) {
-      this.ActiveToMenu(hash);
+      var a = hash.split(".");
+      if(this.active_modul != a[0]){
+        this.active_modul = a[0];  
+        this.active = hash;
+        this.loadMenu();
+      }else{
+        this.ActiveToMenu(hash);
+      }
     },
   },
 };
