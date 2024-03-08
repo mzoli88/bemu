@@ -86,20 +86,17 @@ class Border3
         $modul_azon = $modul_azon ?: getModulAzon();
         $jogok = self::setJogok($modul_azon);
 
-        $modul_data = self::getModulData($modul_azon)->first();
-        
-        if (!$modul_data) return self::send_error("Modul verziója nincs telepítve!", 404);
+        // $modul_data = self::getModulData($modul_azon)->first();
+        $mods = config('mods');
 
         $menu = [];
 
-        $mods = config('mods');
-
         if (array_key_exists($modul_azon, $mods)) {
-            if(isSysAdmin() && ($modul_azon == 'admin' || $modul_azon == 'naplo')) {
+            if (isSysAdmin() && ($modul_azon == 'admin' || $modul_azon == 'naplo')) {
                 $menu = $mods[$modul_azon]['menu'];
-            }else{
-                $menu = collect($mods[$modul_azon]['menu'])->filter(function ($menu, $key) use ($jogok){
-                    if(!array_key_exists($key,$jogok))return false;
+            } else {
+                $menu = collect($mods[$modul_azon]['menu'])->filter(function ($menu, $key) use ($jogok) {
+                    if (!array_key_exists($key, $jogok)) return false;
                     return $jogok[$key];
                 })->toArray();
             }
@@ -113,8 +110,8 @@ class Border3
             'nev' => $user->login,
             'teljesnev' => $user->name,
             'perms' => $jogok,
-            'modul_nev' => toUtf($modul_data->modulnev),
-            'modul_verzio' => toUtf($modul_data->verzio),
+            'modul_nev' => $mods[$modul_azon]['name'],
+            'modul_verzio' => $mods[$modul_azon]['version'],
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
             'menu' => $menu,
             'sys_admin' => isSysAdmin() ? 'I' : 'N',
@@ -123,18 +120,19 @@ class Border3
         ];
     }
 
-    static function getDefaultEntityId(){
+    static function getDefaultEntityId()
+    {
 
         $entity = getEntity();
-        
-        if(!empty($entity) && $entity != 0) return $entity;
-        
+
+        if (!empty($entity) && $entity != 0) return $entity;
+
         $entities = self::getUserEntityIds();
         // dd ($entities);
-        
-        if (count($entities) == 0){
+
+        if (count($entities) == 0) {
             sendError("Felhasználó nincsen entitáshoz kötve! Keressen fel egy rendszer adminisztrátort!");
-        } 
+        }
 
         return array_shift($entities);
     }
@@ -160,7 +158,9 @@ class Border3
                 ->select('b_nagycsoport_id as value', 'nev as name')
                 ->where('b_nagycsoport_tipus_id', self::getEntityTypeId())
                 ->get()->keyBy('value')
-                ->map(function($v){return (array)$v;})
+                ->map(function ($v) {
+                    return (array)$v;
+                })
                 ->toArray();
         });
     }
@@ -246,7 +246,7 @@ class Border3
                 $has_jog = true;
                 break;
             }
-            if($value == 'SysAdmin' && isSysAdmin()){
+            if ($value == 'SysAdmin' && isSysAdmin()) {
                 $has_jog = true;
                 break;
             }
