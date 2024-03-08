@@ -1,16 +1,19 @@
 <template>
   <Tab>
     <Panel title="Felhasználók">
-      <Grid parent="group_id" store="users" :uRoutes="{
+      <Grid parent="group_id" store="users" :setRowClass="setRowClass" :uRoutes="{
         AddUser: {
           title: 'gomb1',
-          icon: 'f076',
+          if: (rowData) => rowData.user_has == 0,
+          icon: '055',
           click: AddUser,
         },
         DeleteUser: {
           title: 'gomb2',
-          icon: 'f076',
+          if: (rowData) => rowData.user_has == 1,
+          icon: 'Törlés',
           click: DeleteUser,
+
         }
       }">
       </Grid>
@@ -20,13 +23,32 @@
 </template>
 <script>
 export default {
+  props:{
+    rowData: Object,
+  },
   methods: {
+    setRowClass: function (rowData) {
+      if (rowData.user_has !==0) return "GREEN";
+    },
     AddUser: function () {
       console.log('adduser');
     },
     DeleteUser: function () {
       console.log('deleteuser');
-    }
+    },
+
+
   }
 };
 </script>
+<style>
+.pictoBtn.DeleteUser {
+  background-color: transparent !important;
+  color: red !important;
+}
+
+.pictoBtn.AddUser {
+  background-color: transparent !important;
+  color: green !important;
+}
+</style>
