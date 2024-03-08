@@ -1,12 +1,11 @@
 <?php
 // header('Content-Type: text/html; charset=UTF-8');
 if(!is_file( __DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.htaccess')){
-	if(is_file( __DIR__ . DIRECTORY_SEPARATOR . '.htaccess' )){
-		unlink( __DIR__ . DIRECTORY_SEPARATOR . '.htaccess' );
-	}
 	file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.htaccess',"php_value include_path ".__DIR__ . DIRECTORY_SEPARATOR . "lib\n");
 	header("Refresh:0");
 	die;
+}else{
+	file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . '.htaccess',"php_value include_path ".__DIR__ . DIRECTORY_SEPARATOR . "lib\n");
 }
 
 require_once('lib/config.class.php');
