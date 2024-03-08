@@ -70,7 +70,6 @@ header('Content-Type: text/html; charset=UTF-8');
 <body>
 	<?php
 
-	use App\Border3;
 	use Illuminate\Support\Facades\DB;
 
 	function refreshModulData()
