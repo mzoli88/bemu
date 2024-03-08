@@ -24,17 +24,22 @@
 <script>
 export default {
   props:{
+    record_id: [Number,String],
     rowData: Object,
+
+  },
+  data: function(){
+    getStore("users").fixQuery("group_id",this.record_id)
   },
   methods: {
     setRowClass: function (rowData) {
       if (rowData.user_has !==0) return "GREEN";
     },
-    AddUser: function () {
-      console.log('adduser');
+    AddUser: function (e,b,rowData) {
+      getStore("users").create(rowData).load();
     },
-    DeleteUser: function () {
-      console.log('deleteuser');
+    DeleteUser: function (e,b,rowData) {
+      getStore("users").delete(rowData.nevek_id).load();
     },
 
 
