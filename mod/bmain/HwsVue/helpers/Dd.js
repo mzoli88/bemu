@@ -1,0 +1,1 @@
+global.dd = log = console.log;

@@ -1,0 +1,70 @@
+Űrlap komponens
+    Feladata a Field-ek segítségével űrlap megjelenítése. 
+
+    - példányosítható: igen
+    - Forráskód: hws/components/Form.vue
+    - Fokuszálható: nem
+    - hash szabályok: 
+    - Felhasznált komponensek: 
+        o Field
+
+Props: 
+    record_id: [String, Number]
+        - A módosítandó rekord azonosítója
+        - Segítségével tölti be a store az adatokat
+    save: [Boolean, Function]
+        - Ha true értéket kap, az alapértelmezett Mentés (onSave) függvény kerül meghívásra
+        - Ha függvényt kap értékül, akkor a mentés gombra kattintva a megadott függvény kerül meghívásra. 
+    savetext: String  
+        - A mentés gomb szövege 
+        - [default]: "Mentés"
+    imp: [Boolean, Function] (alapértelmezetten true)
+        - Ha true értéket kap, az alapértelmezett Importálás (doImport) függvény kerül meghívásra
+        - Ha függvényt kap értékül, akkor a mentés gombra kattintva a megadott függvény kerül meghívásra.
+    back: [Function]
+        - A mégsem gomb megnyomásakor fut a paraméterül átadott függvényt.
+    store: String
+        - Az űrlaphoz tartozó store, ami segítségével betölti az adatokat. 
+    fields: Array
+        - Az űrlapban szereplő beviteli mezők paraméterei, tömbként felsorolva. 
+    data: Object
+        - A űralpba betöltendő, kezdő adatok
+    load: Boolean
+        - Ha van store definiálva, aktiváláskor betölti a stire-t és feltölti a formot a kapott adatokkal. 
+    noreset: Boolean (default false)
+        - Ha true, az űrlap mentése után ne törlődjenek az űrlapon szereplő adatok.
+    loaded: Function
+        - Ez a függvény a store betöltéskor fut le.
+    saveOkText: String
+        - Sikeres mentéskor egyedileg megadható szöveg.
+        - Ha nincs megadva és nincs mégsem(vissza) gomb, akkor 'Sikeres mentés!' szöveg jelenik meg. 
+    afterSave: Function
+        - Mentés után futtatható extra függvény.
+    values: Object
+        - Ugyan az mint a data paraméter csak reset-futtatásakor ez töltődik be. 
+
+
+    Formázási beállítások:
+
+    noFixWidth: Boolean
+        - A mezők ne az alapértelmezett fix szélességgel rendelkezzenek, hanem töltsék ki a rendelkezésre álló helyet.
+    colsLayout: Boolean
+        - A mezők oszlopos elhelyezkedést kapjanak.
+    topLabels: Boolean
+        - A bevieteli mezőkhöz tartozó label-ek a mezők fölött helyezkedjenek-e el. 
+    topToolbar: Boolean (default false)
+        - Az eszköztár a form tetején vagy alján helyezkedjen-e el.
+        - Alapértelmezetten a form alján helyezkedik el.
+
+Slots:
+    default:
+        - A formban megjelenő beviteli mezők.
+    toolbar
+        - A panel tetején vagy alján megjelenő eszköztárak.
+        - A topToolbar-tól függ az eszköztár helye.
+    formTop
+        - form tetejére helyezhetünk komponenseket. (toolbar és mezők közé)
+    body
+        - Mezők fölé helyezhető komponensek.
+    afterFields
+        - Mezők után lehet komponenseket elhelyezni.

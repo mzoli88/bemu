@@ -1,0 +1,29 @@
+Tab panel komponens
+    Panel komponenseket jelenít meg TAB típusú elrendezéssel. 
+    A panelek title típusú értéke fogja meghatározni, a komponens fölött megjelenített gombokat.
+
+!!!!!!
+    Tab panelen belül a fő komponens elveszíti a react tulajdonságokat, tehát kezdeti értékeket tudunk csak átadni paraméterül.
+    Ezek az értékek nem változnak. Szükség esetén a reactiv tulajdonágokkal feruházadó panelt ki kell vezetni egy külön komponens fájlba.
+!!!!!!
+
+    - példányosítható: igen
+    - Forráskód: hws/components/Tab.vue
+    - Fokuszálható: nem
+    - hash szabályok: igen
+    - Felhasznált komponensek: 
+        o nem használ másik komponenst
+    
+    Props:
+        - nem kell neki
+
+    Slots:
+        - Panelek, kellenek title értékekkel
+
+PL.:
+
+    <Tab>
+        <Panel title="Tab 1">Tartalom 1</Panel>
+        <Panel title="Tab 2">Tartalom 2</Panel>
+        <Panel title="Tab 3">Tartalom 3</Panel>
+    </Tab>

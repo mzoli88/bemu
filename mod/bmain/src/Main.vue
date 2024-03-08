@@ -54,7 +54,7 @@ const Contents = {};
 //hasPerm hívás miatt kell a g_userData, g_active_modul, ne reaktív legyen a változó. ha reaktív akkor is frissít amikor modult változtat. (false -lesz a jog) 
 var g_userData, g_active_modul;
 
-var Mods;
+// var Mods;
 export default {
   name: "Main",
   data: function () {
@@ -71,10 +71,8 @@ export default {
       buttons: null,
       perms: {},
       userData: {},
-      // entities: {},
-      // active_entity: parseInt(sessionStorage.getItem("active_entity")) || null,
-      // site_name: config.name,
-      // site_company: config.company,
+      entities: {},
+      active_entity: parseInt(sessionStorage.getItem("active_entity")) || null,
       pressed: null,
       active_modul: tmp[0],
       active_menu: tmp.length == 2 ? tmp[1] : null,
@@ -91,48 +89,49 @@ export default {
     global.getUserData = this.getUserData;
     global.isSysAdmin = this.isSysAdmin;
     global.getActiveMenu = this.getActiveMenu;
+    global.setEntity = this.setEntity;
 
-    // this.ActiveToMenu(this.active);
+    this.loadMenu();
 
-    // dd (this.active,this.active_modul,this.active_menu);
-
-    getStore(this.active_modul +".perms").load({
-      modul:this.active_modul
-    },(s, x, code) => {
-      if (!s) {
-        maskOff();
-        if (code == 401) return;
-        return msg(x.message, "error");
-      }
-
-      g_userData = JSON.parse(JSON.stringify(x));
-      this.userData = x;
-      // this.entities = x.entities;
-      // this.active_entity = this.active_entity || x.active_entity;
-      this.perms = x.perms;
-      // Mods = x.mods;
-      // dd(Mods[this.active_entity]);
-      // this.buttons = Mods[this.active_entity];
-      
-      this.buttons = x.menu;
-      // dd (this.menu);
-      this.ActiveToMenu(this.active);
-      // this.setTitle();
-      this.render = true;
-      maskOff();
-    });
   },
   watch: {
     active: function (value) {
       global.MajaxManager.deleteAll();
-
       this.setHash(value);
-
-      // this.setTitle();
     },
   },
 
   methods: {
+    loadMenu: function(){
+      getStore("admin.perms").load({
+        modul:this.active_modul
+      },(s, x, code) => {
+        if (!s) {
+          maskOff();
+          if (code == 401) return;
+          return msg(x.message, "error");
+        }
+        
+        g_userData = JSON.parse(JSON.stringify(x));
+        this.userData = x;
+        this.entities = x.entities;
+        this.active_entity = this.active_entity || x.active_entity;
+        this.perms = x.perms;
+        
+        if(this.entities.length>1){
+          this.$root.entity = {
+            active: this.active_entity,
+            list: this.entities,
+          }
+        }
+        
+        this.buttons = x.menu;
+        
+        this.ActiveToMenu(this.active);
+        this.render = true;
+        maskOff();
+      });
+    },
 
     ActiveToMenu: function (active) {
       if (!isString(active)) return;
@@ -186,12 +185,12 @@ export default {
           if (arguments[i] == "SysAdmin" && this.isSysAdmin()) {
             return true;
           }
+
           if (
-            this.perms[this.getActiveEntity()] &&
-            this.perms[this.getActiveEntity()][this.getActiveModul()]
+            this.perms[this.getActiveModul()]
           ) {
-            var perms =
-              this.perms[this.getActiveEntity()][this.getActiveModul()];
+
+            var perms = this.perms[this.getActiveModul()];
 
             if (perms[arguments[i]] === true || perms[arguments[i]] === "I") {
               return true;
@@ -222,22 +221,23 @@ export default {
       return this.active_menu;
     },
 
-    setEntity: function (val) {
+    setEntity: function (val,fn) {
       if (this.active_entity == val) return;
       this.active_entity = val;
       sessionStorage.setItem("active_entity", val);
-      this.render = false;
-      this.$nextTick(() => {
-        this.buttons = Mods[this.active_entity];
-        this.ActiveToMenu(this.active);
-        this.$nextTick(() => {
-          this.render = true;
-        });
-      });
+      if(this.$root.entity)this.$root.entity.active = val;
+      fn();
     },
 
     $hash: function (hash) {
-      this.ActiveToMenu(hash);
+      var a = hash.split(".");
+      if(this.active_modul != a[0]){
+        this.active_modul = a[0];  
+        this.active = hash;
+        this.loadMenu();
+      }else{
+        this.ActiveToMenu(hash);
+      }
     },
   },
 };

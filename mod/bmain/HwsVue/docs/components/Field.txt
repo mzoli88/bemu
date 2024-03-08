@@ -1,0 +1,114 @@
+Áltatlános beviteli mező komponens. 
+A formon belül beviteli mezők létrehozására használjuk, az input komponensek segítségével.
+        
+    - példányosítható: igen
+    - Forráskód: hws/components/Field.vue
+    - Fokuszálható: igen
+    - hash szabályok: nem 
+    - Felhasznált komponensek: 
+        a components/inputs mappában lévő komponensek
+
+Props:
+    label: String,
+        - Beviteli mezőhöz tartozó label érték
+    validation: String
+        - A validálást valósítja meg, ha mentjük a field-et tartalmazó formot.
+        - A laravelhez hasonló validálási paraméterezés. (Hiányos még, szükség szerint )
+        - Értékei lehetnek: required, email, url
+        - [default]: null
+    type: String
+        - A beviteli mező típusa
+        - Értékei lentebb részlezve.
+        - [default]: Text
+    name: String
+        - A beviteli mező azonosító neve. Az adatbázis elnevezésekkel megegyező.
+    startValue: String
+        - [default]: null
+        - Kezdő értéket határozhatunk meg
+    vReg: String
+        - [default]: null
+        - egyedi validációt határozhatunk meg. Reguláris kifejezés segítségével. pl.: "^[0-9]*$"
+    vRegText: String
+        - [default]: null
+        - "vReg" prop-hoz hibaüzenet szövegét kell itt meghatározni
+    disabled: Boolean
+        - [default]: false
+        - ha true, akkor a mező látható lesz, de nem lehet használni. Inaktívvá tehetjük a mezőt.
+    required:  Boolean
+        - [default]: false
+        - ha true, akkor a kötelezően kitöltendő mező lesz. Validation helyett használhatjuk.
+    change: Function
+        - [default]: null
+        - A beviteli mező tartalmának változásárára futó esemény. (rekordot nem tartalmaz, csak az érték változásával foglalkozik.)
+        - paraméterek: [value,vue Field komponens]
+    info: String
+        - [default]: null
+        - mező mellett információ jellegű szöveg megjelenítése
+    warning: String
+        - [default]: null
+        - mező mellett figyelmeztető jellegű szöveg megjelenítése
+    if: String
+        - [default]: null
+        - Stringként megfogalmazhatjuk, hogy a mező csak abban az esetben látható, ha egy másik mező értéke egyenlő egy meghatározott értékkel.
+        - pl.: parent_id=12, - ebben az esetben egy másik mező aminek a name tulajdonsága parent_id, kapni fog egy change eseményt mely figyeli, hogy ha a az értéke 12, akkor
+            a jelenlegi mező láthatóvá váljon.
+
+Events:
+    @change:
+        - A beviteli mező tartalmának változására aktiválódik
+        - paraméterek: [value,vue komponens]
+    @onEnter:
+        - Enter gomb megnyomására event
+        - paraméterek: [event,vue komponens]
+
+Mező típusok, és specifikus paraméterek:
+    entity - globális entitást kezelő mező
+    text - alapértelmezett szöveges mező
+    textarea - sortörések és hosszabb szöveges tartalmú beviteli mező
+    display - megjelenítésre szolgáló mező
+        o render: Function, feltöltött value érték alapján return -ben új értéket határozhatunk meg
+    number - Szám típusú mező
+    numberinterval - Számtól számig mező
+    searchnumber - Számtól számig típusú mező (keresésre használjuk)
+    date - Dátum típusú mező
+    dateinterval - Dátum-tól dátumig mező
+    searchdate - Dátumtól dátumig típusú mező (kereséshez)
+    checkbox - Jelölő négyzet típusú mező
+    checkboxgroup - Jelölő négyzet csoport típusú mező
+        o boxes: array, ha nincs store akkor innen veszi a tartalmát. "value" tartalmazza az azonosítót, "name" pedig a megnevezést
+            pl.: [{value:1,name:"egy"},{value:2,name:"Kettő"}]
+            Mező értéke a value lesz, a name pedig csak megjelenített információ
+        o store: String, a boxes adatokat store segítségvével tölti be
+    cstatus - Jelölő négyzet csoport típusú státusz mező
+    password - jelszó típusú mező
+    cigennem - Jelölő négyzet csoport típusú igen/nem mező
+    radiogroup - Radio csoport típusú mező
+    rigennem - Radio csoport típusú igen/nem mező
+    rstatus - Radio csoport típusú státusz mező
+    file - Fájl típusú mező (egy fájlt lehet feltöteni vele)
+    multifile - Több fájlfeltöltést végző mező
+    color - Szín választó mező
+    combo - legördülő lista
+        o boxes: array, ha nincs store akkor innen veszi a tartalmát. "value" tartalmazza az azonosítót, "name" pedig a megnevezést
+            pl.: [{value:1,name:"egy"},{value:2,name:"Kettő"}]
+            Mező értéke a value lesz, a name pedig csak megjelenített információ
+        o store: String, a boxes adatokat store segítségvéel tölti be
+        o nosearch: Boolean, (alapértelmezetten false), ha true akkor nincs keresés
+        o noBlank: Boolean, (alapértelmezetten false), ha true akkor nincs üresen választható sor, (választás kiürítése)
+    multicombo - legördülő lista, több eleme is ki lehet vele választani
+        o boxes: array, ha nincs store akkor innen veszi a tartalmát. "value" tartalmazza az azonosítót, "name" pedig a megnevezést
+            pl.: [{value:1,name:"egy"},{value:2,name:"Kettő"}]
+            Mező értéke a value lesz, a name pedig csak megjelenített információ
+        o store: String, a boxes adatokat store segítségvéel tölti be
+        o nosearch: Boolean, (alapértelmezetten false), ha true akkor nincs keresés
+        o noBlank: Boolean, (alapértelmezetten false), ha true akkor nincs üresen választható sor, (választás kiürítése)
+
+Példák:
+    <Field label="szöveg" name="property_name" type="text"/>
+    <Field label="szöveg" name="property_name" type="text" validation="required"/>
+    <Field label="szöveg" name="property_name" type="text" validation="required|email"/>
+    <Field label="szöveg" name="property_name" type="combo" store="types"/>
+    <Field label="szöveg" name="property_name" type="combo" :boxes="[{value:1,name:"egy"},{value:2,name:"Kettő"}]"/>
+
+A mezők értékeinek feltöltését, kinyerését, validálását, reset-elését vagy összegyűjtését a Helpers/Form.js segítésével oldjuk meg!
+    

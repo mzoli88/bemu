@@ -1,0 +1,69 @@
+Fő kommunikációs osztály. (Megyik + Ajax elnevezésből keletkezett)
+A kommunikációt nem ömlesztve hanem sorban állassál végzi el.
+
+A store-okat az src/store.js fájlban definiáljuk.
+    new Majax('../remote/test').store('teszt');
+A fenti példában létrehoztunk egy teszt evezetű store-t ami a remote/teszt url-re mutat.
+    getStore('teszt');
+Ezzel a példával bárhol globálisan hozzáférhetünk az elnevezett storehoz.
+
+Jogosultság kezelés
+    Modul esetén és web esetén a permissions elnevezésű storetól fogja váni a jogosultságokat.
+        new Majax('../remote/permissions').store('permissions');
+
+    Web esetn token kezelés:
+        tokenHandler.setClientId(1); // kliens azonosítót állítjuk be
+        tokenHandler.setClientSecret('GPN0CaHj1y4qJCGfMTHlGHY6BMi17ZOY2nyZfVg9'); //clientSecret értéket állítjuk be
+        new Majax('api/noweb/login').store('login'); //ez lesz a logun urlje és a refresh tokené is
+        new Majax('api/web/mobiluser').store('mobiluser').useToken();
+        // useToken() - hívásával megondjuk  hogy a storenak login adatokat kell küldeni.
+
+        Login hívás 
+            tokenHandler.login("superuser@hws.hu", "Demo1234");
+        Manuális token frissítés (ha lejár a token akkor automatán frissít)
+            tokenHandler.refresh();
+        Kilépés
+            tokenHandler.logout();
+
+Betöltő maszk nélküli hívás esetén át kell adni a hivást indító függvnynek a  "noMaskOn" string értéket.
+    pl.: store.load("noMaskOn")
+    pl.: store.put("noMaskOn",1)
+
+Ajax kérések paraméterezése: (ezek általános paraméterezések amik, ha be vannak állítva minden rájuk vonatkozó hívásnál megmaradnak)
+var store = getStore('teszt'); //esetén.
+
+    store.setHeader(kulcs,érték) // header beállítás
+    store.onLoad(fn) // fn egy event függvény ami akkor fut le, ha lekérdezünk egy listát
+    store.onView(fn) // fn egy event függvény ami akkor fut le, ha view típusú hívást indítunk a storra
+    store.onSave(fn) // fn egy event függvény ami akkor fut le, ha mentést hajtunk végre a storra, update vagy create
+    store.fixQuery(key,val) // url query paramétereket adhatunk át. ezek a paraméterek fixen megmaradnak a storban
+    store.search(obj) // a formból kinyert keresési paramétereket adhatjuk át. Fixen megmaradnak, ha nincs felül paraméterezve
+    store.sort(prop,asc) // megmaradó rendezést állíthatunk be. prop az oszlop neve, asc true akkor abc sorren false akkor fordított.
+    store.page(numb) // megmaradó oldal számát adjuk meg a lapozóhoz
+    store.perPage(numb) // megmaradó oldalnénti tartalom számát adjuk meg a lapozóhoz
+
+Store hívások
+    store.load()
+        - Síma GET hívás, paramétereket a típustól függően különböztetjük meg
+        - Iteger típus esetén, a hívás view típusú lesz és a recor id-jét adjuk át
+        - Objektum esetén, get query paramétereket adhatunk meg, ezek a következő hívásnál nem maradnak meg
+        - Function eseté egy egyszer használatos callbacket határoznk meg.
+    store.post()
+        - POST hívás, paramétereket a típustól függően különböztetjük meg
+        - Iteger típus esetén, a hívás view típusú lesz és a recor id-jét adjuk át az url végének
+        - Objektum esetén, json body paramétereket adhatunk meg, ezek a következő hívásnál nem maradnak meg
+        - Function eseté egy egyszer használatos callbacket határoznk meg.
+    store.put()
+        - PUT hívás, paramétereket a típustól függően különböztetjük meg
+        - Iteger típus esetén, a hívás view típusú lesz és a recor id-jét adjuk át az url végének
+        - Objektum esetén, json body paramétereket adhatunk meg, ezek a következő hívásnál nem maradnak meg
+        - Function eseté egy egyszer használatos callbacket határoznk meg.
+    store.delete()
+        - DELETE hívás, paramétereket a típustól függően különböztetjük meg
+        - Iteger típus esetén, a hívás view típusú lesz és a recor id-jét adjuk át az url végének
+        - Objektum esetén, json body paramétereket adhatunk meg, ezek a következő hívásnál nem maradnak meg
+        - Function eseté egy egyszer használatos callbacket határoznk meg.
+    store.export()
+        - az url-hez hozzá tesz a "/exportot" és segít a fájl letöltésvel
+    store.import()
+        - az url-hez hozzá tesz a "/imort"

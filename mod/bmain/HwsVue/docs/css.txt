@@ -1,0 +1,59 @@
+
+Az alábbiakban css Class neveket sorolok fel amiket érdemes tudni illetve használni kell új komponens létrehozásakor.
+
+    .noselect - Tartalmakat, főleg szöveget nem engedi kijelölni.
+    .vflex - A tag gyermek komponensei vertikálisan helyezkedjenek el.
+    .hflex - A tag gyermek komponensei horizontálisan helyezkedjenek el.
+    .cflex - A tag gyermek komponensei középpen helyezkedjenek el.
+    .fit - Ha a tagnek vflex,hflex,cflex layoutal rendelkezik a közvetlen szülője akkor töltse ki a rendelkezésére álló teret.
+    .bold - Szöveg legyen félkövér.
+    .pointer - Cursor olyan legyen a komponensen, mint ha egy linkre vagy gombra húznánk az egeret.
+    .Body - Alap tároló komponens, amiben megjelenhet mind a két irányú görgető sáv.
+    .toolbar - Gobmok egymás mellé rendezett layout-ját segíti.
+    .pre - Sortöréseket és szóközöket a hagyományos módszerekkel mutatja. pl br - helyett \n.
+
+Új input mező készítésekor az alábbi class-okat kell alkalmazni. 
+    .fieldbody - Mezők alap osztálya.
+    .fieldButton - Mezők gombjainak formázása.
+    .fieldBorder - Input mezők megjelenítése és elhelyezését befolyásolja.
+
+
+Ikonok
+
+    .icon.close - Bezárás ikon
+    .icon.not - Mégsem ikon
+    .icon.delete - Törlés ikon
+    .icon.save - Mentés ikon
+    .icon.edit - Módosítás ikon
+    .icon.add - hozzáadás ikon
+    .icon.search - keresés ikon
+    .icon.clear - kiürítés ikon
+    .icon.view - Megtekintés ikon
+    .icon.details - Részletek ikon
+    .icon.publish - Publikálás ikon
+    .icon.export - Exportálás ikon
+    .icon.import - Importálás ikon
+    .icon.karbantart - Karbantartás ikon
+    .icon.print - Nyomtatás ikon
+    .icon.archive - Archiválás ikon
+    .icon.pageLeftBig - Teljes lapozás balra ikon
+    .icon.pageLeft - Lapozás balra ikon
+    .icon.pageRight - Lapozás jobbra ikon
+    .icon.pageRightBig - Teljes lapozás jobbra ikon
+    .icon.pageRefresh - Lista frissítése ikon
+    .icon.spinningMask - Betöltés folyamatban ikon
+    .icon.sort.asc - ABC sorrendben rendezés ikonja
+    .icon.sort.desc - Fordított ABC sorrendben rendezés ikonja
+    .icon.datepickicon - Dátum választó ikon
+    .icon.sDetailDown - Kis részletek ikon
+    .icon.comboBox - Legördülő lista ikon
+    .icon.upload - Fájl feltöltés ikon
+    .icon.download - Fájl letöltés ikon
+    .icon.process - Feldolgozás gombhoz ikon
+    .icon.checked - Jelölő négyzet pipa ikonja
+
+Új ikon esetén:
+    - Button komponens icon prop tulajdonság segíthet
+    - vagy ha nem kell a Button kmponens akkor, modul specifikusan (src mappán belül) kell felvenni a css szabályt:
+        .icon.sajat_ikon_neve:before {content:"\f00d";}
+A content értéke a font awsome által megfeleltetett ikon kódja. (Lásd a weboldalukat, hogy milyen ingyenes ikonok vannak.)

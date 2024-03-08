@@ -1,0 +1,21 @@
+
+Globális hash módosító függvény
+
+    setHash(data) - data változó egy tömb miben stringként adjuk át a hash elemeit
+
+    pl.: setHash(['tasks', 'details|' + id , '/0']);
+         az url kimenet: #tasks/details|1/0
+
+
+Minden komponenshez örököl hash kezelő függvényeket és vannak olyanok melyek befolyásolják.
+Ilyen pl a Tab vagy a Grid komponens. A hash kezelő függvények rekurzívan működnek. Elsőnek a szülő komponensek futnak le, aztán a gyerekek.
+Ha van egy komponensünk $hash nevezetű metódussal, akkor az is hash kezelésre szolgál és beáll a rekurzív sorba.
+
+A $hash metódus csak a rá vonatkozó hash értékeket örökli. "/" -karakter választja el a komponenseket egymástól és a "|"-karkater segítségével egyéb paramétereket is adhatunk át segítségül.
+
+    this.$getHash()
+        - lekérdezhetjük a teljes hash tartalmát
+    this.getCpHash()
+        - lekérdezhetjük az aktuális komponens hash értékét. (bizonyos esetekben ennek a fügvénynek a segítségével gyorsabban megszerezhetjük a komponensre vonatkozó hash-t mint a komponens legenerálódik)
+    this.setHash(hash)
+        - beálíthatjuk a hash tartalmát (tömbként és string -ként is megadhatjuk)

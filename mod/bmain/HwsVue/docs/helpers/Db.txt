@@ -1,0 +1,4 @@
+
+Globális console.log függvény.
+    pl.:
+    dd('ezt loggolom','vagy debuggolok');

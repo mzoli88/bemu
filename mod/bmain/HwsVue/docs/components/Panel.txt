@@ -1,0 +1,36 @@
+Panel komponens
+    Tartalmat megjelnítő komponens.
+
+    - példányosítható: igen
+    - Forráskód: hws/components/Panel.vue
+    - Fokuszálható: nem
+    - hash szabályok: nem
+    - Felhasznált komponensek: 
+        o nem használ másik komponenst
+
+Props:
+    title: String
+        - A panel tetején megjelenő cím. 
+    size: String
+        - A panel mérete. 
+        - Meghadható %-ban vagy pixelben.
+    h: Boolean
+        - A tartalmak vertikális helyett horizontálisan helyezkedjenek el.
+    c: Boolean
+        - A tartalmak vertikális helyett középre igazítva helyezkedjenek el.
+    collapsed: Boolean
+        - Alap esetben be van-e csukva a panel
+    collapsible: Boolean
+        - Csukható-e a panel
+
+Slots:
+    default:
+        - A panelben megjelenő tartalom. Pl: Grid, Tab, stb...
+
+Példák:
+    <Panlel title="Cím" size="50%">Tartalom</Panlel>
+    <Panlel title="Cím" size="400px">Tartalom</Panlel>
+    <Panlel title="Cím" h>Tartalom</Panlel>
+    <Panlel title="Cím" c>Tartalom</Panlel>
+    <Panlel title="Cím" collapsible>Tartalom</Panlel>
+    <Panlel title="Cím" collapsible collapsed>Tartalom</Panlel>

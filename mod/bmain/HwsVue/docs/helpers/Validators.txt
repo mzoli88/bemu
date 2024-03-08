@@ -1,0 +1,8 @@
+Az összes validációs szabály itt van leképezve.
+    date: dátum formátum ellenőrzés,
+    required: kötelező mező,
+    url: url formátum ellenőrzés,
+    email: email formátum ellenőrzés,
+    interval: két értéket hasonlít össze, hibás intervallum érték esetén szól, működik dátumra is
+    taxnumber: adószám ellenőrzés
+    irsz: irányítószám ellenőrzés

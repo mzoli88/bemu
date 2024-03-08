@@ -1,0 +1,24 @@
+Az összes komponense, komponens kereső funkciókat ad.
+
+A find értéke , ha string, akkor Komponens elnvezést keres.
+Ha find értéke objektum akkor kulcs értékek alapján típus ellenőrzést is végezhetünk
+
+    down(find, notRecursive)   
+        - A keresési feltélként meghatározott legelső talált komponenst adja vissza (tehát 1dv vagy NULL ha nincs találat).
+        - Find a kereső paraméter, lásd lentebb
+        - notRecursive, ne keressen rekurzívan
+    up(find)
+        - A kereső feltételeknek megfelelően, vissza adj egy szülő komponenst. Vagy NULL értéket ha nem talál semmit. 
+    getComps(find)
+        - a komponensben található komponenseit listázza kis. Illetve kereshetünk benne.
+        - Tömböt ad vissza ami a kereési feltetelektől függően vagy üres, vagy komponensek vannak benne
+
+Kivétel kezelés: ha a find objektum kulcs értéke  $hasno, akkor olyat fog keresni ami nincs a $hasno kulcs értékében.
+    pl.: { $hasno: { type: 'display' } } - ebben az esetben olyan mezőket adhat vissza amik nem display típusúak
+
+
+Pl.:
+
+    this.down('Panel'); //vissza adja a legelső gyermek Panel komponenst
+    this.up('Tab'); //vissza adja a legelső szülő Tab komponenst
+    this.getComps({name:String}); //vissza adja az összes olyan gyermek komponest aminek name tulajdonsága van és az String típusú

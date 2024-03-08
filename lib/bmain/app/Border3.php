@@ -13,9 +13,11 @@ class Border3
     {
 
         //storage beállítás
-        $path = preg_replace('#\\'.DIRECTORY_SEPARATOR.'$#','',BORDER_PATH_BORDERDOC);
+        $path = BORDER_PATH_BORDERDOC . getModulAzon();
         app()->useStoragePath($path);
         Config::set('filesystems.disks.local.root', $path);
+        // Config::set('path.storage', $path);
+
 
         // adatbázis konfiguráció
         Config::set('database.default', 'mysql');
@@ -36,16 +38,17 @@ class Border3
         exit();
     }
 
-    static function getJogok()
+    static function getJogok($modul_azon = null)
     {
+        $modul_azon = $modul_azon ?: getModulAzon();
         //belépve ellenőrzés
         if (!getUser()) sendError("Nincs belépve!", 401);
-        return Cache::get('user_perm_' . getUserId() . '_' . getModulAzon());
+        return Cache::get('user_perm_' . getUserId() . '_' . $modul_azon);
     }
 
-    static function setJogok()
+    static function setJogok($modul_azon = null)
     {
-        $modul_azon = getModulAzon();
+        $modul_azon = $modul_azon ?: getModulAzon();
 
         $modul = config('mods')[$modul_azon];
 
@@ -74,25 +77,32 @@ class Border3
             $out[$key] = $val ? true : false;
         }
 
-        Cache::set('user_perm_' . getUserId() . '_' . $modul_azon,$out);
+        Cache::set('user_perm_' . getUserId() . '_' . $modul_azon, $out);
+        return $out;
     }
 
-    static function getUserData()
+    static function getUserData($modul_azon = null)
     {
-        self::setJogok();
-        $jogok = self::getJogok();
-        $modul_data = self::getModulData()->first();
+        $modul_azon = $modul_azon ?: getModulAzon();
+        $jogok = self::setJogok($modul_azon);
 
+        $modul_data = self::getModulData($modul_azon)->first();
+        
         if (!$modul_data) return self::send_error("Modul verziója nincs telepítve!", 404);
 
         $menu = [];
 
         $mods = config('mods');
 
-        if (isset($_GET['modul']) && array_key_exists($_GET['modul'], $mods)) {
-            $menu = collect($mods[$_GET['modul']]['menu'])->filter(function ($menu, $key) {
-                return hasPerm($key);
-            });
+        if (array_key_exists($modul_azon, $mods)) {
+            if(isSysAdmin() && ($modul_azon == 'admin' || $modul_azon == 'naplo')) {
+                $menu = $mods[$modul_azon]['menu'];
+            }else{
+                $menu = collect($mods[$modul_azon]['menu'])->filter(function ($menu, $key) use ($jogok){
+                    if(!array_key_exists($key,$jogok))return false;
+                    return $jogok[$key];
+                })->toArray();
+            }
         }
         if (count($menu) < 1) self::send_error("Nincs jogosultság menüpont eléréséhez!", 403);
 
@@ -102,14 +112,91 @@ class Border3
             'id' => $user->id,
             'nev' => $user->login,
             'teljesnev' => $user->name,
-            'permissions' => $jogok,
+            'perms' => $jogok,
             'modul_nev' => toUtf($modul_data->modulnev),
             'modul_verzio' => toUtf($modul_data->verzio),
             'modul_company' => date('Y') . ' HW Stúdió Kft.',
             'menu' => $menu,
+            'sys_admin' => isSysAdmin() ? 'I' : 'N',
+            'entities' => self::getUserEntitys(),
+            'active_entity' => self::getDefaultEntityId(),
         ];
     }
 
+    static function getDefaultEntityId(){
+
+        $entity = getEntity();
+        
+        if(!empty($entity) && $entity != 0) return $entity;
+        
+        $entities = self::getUserEntityIds();
+        // dd ($entities);
+        
+        if (count($entities) == 0){
+            sendError("Felhasználó nincsen entitáshoz kötve! Keressen fel egy rendszer adminisztrátort!");
+        } 
+
+        return array_shift($entities);
+    }
+
+    static function getEntityTypeId()
+    {
+        // Cache::forget('entity_type_id');
+        return Cache::rememberForever('entity_type_id', function () {
+            $result = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first();
+            if (!$result) DB::table('b_nagycsoport_tipus')->insert(['tipusnev' => 'Entitás']);
+            $type_id = DB::table('b_nagycsoport_tipus')->select('b_nagycsoport_tipus_id')->where('tipusnev', 'Entitás')->first()->b_nagycsoport_tipus_id;
+            $result = DB::table('b_nagycsoport')->select('b_nagycsoport_id')->where('b_nagycsoport_tipus_id', $type_id)->first();
+            if (!$result) DB::table('b_nagycsoport')->insert(['nev' => 'Entitás', 'b_nagycsoport_tipus_id' => $type_id]);
+            return $type_id;
+        });
+    }
+
+    static function getEntities()
+    {
+        // Cache::forget('entities');
+        return Cache::remember('entities', now()->addMinutes(10), function () {
+            return DB::table('b_nagycsoport')
+                ->select('b_nagycsoport_id as value', 'nev as name')
+                ->where('b_nagycsoport_tipus_id', self::getEntityTypeId())
+                ->get()->keyBy('value')
+                ->map(function($v){return (array)$v;})
+                ->toArray();
+        });
+    }
+
+    static function getUserEntityIds($user_id = null)
+    {
+        $user_id = $user_id ?: getUserId();
+        // Cache::forget('user_entities_' . $user_id);
+        // return Cache::remember('user_entities_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
+        return collect(self::getUserEntitys($user_id))->pluck('value')->toArray();
+        // });
+    }
+
+    static function getUserEntitys($user_id = null)
+    {
+
+        $user_id = $user_id ?: getUserId();
+
+        if (hasJustOneEntity()) return entities();
+
+        return DB::table('b_nagycsoport')->select('b_nagycsoport_id as value', 'nev as name')
+            ->where('b_nagycsoport_tipus_id', self::getEntityTypeId())
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select()
+                    ->from('b_nagycsoport_nevek')
+                    ->where('b_nagycsoport_nevek.nevek_id', $user_id)
+                    ->whereColumn('b_nagycsoport_nevek.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
+            })
+            // ->whereExists(function ($query) {
+            //     $query->select()
+            //         ->from('b_nagycsoport_modul')
+            //         ->where('b_nagycsoport_modul.modul_azon', getModulAzon())
+            //         ->whereColumn('b_nagycsoport_modul.b_nagycsoport_id', 'b_nagycsoport.b_nagycsoport_id');
+            // })
+            ->get();
+    }
 
     static function queryJog($ellenorzendo, $user_id = false)
     {
@@ -159,7 +246,11 @@ class Border3
                 $has_jog = true;
                 break;
             }
-            if (array_key_exists($value,$jogok) && $jogok[$value] === true) {
+            if($value == 'SysAdmin' && isSysAdmin()){
+                $has_jog = true;
+                break;
+            }
+            if (array_key_exists($value, $jogok) && $jogok[$value] === true) {
                 $has_jog = true;
                 break;
             }

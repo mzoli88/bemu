@@ -84,9 +84,6 @@ header('Content-Type: text/html; charset=UTF-8');
 			]);
 		}
 
-
-
-
 		collect(config('mods'))->each(function ($modul, $modul_azon) {
 			$modulData = DB::table('b_modulok')->where('azon', $modul_azon)->first();
 			if (!$modulData) {
@@ -122,13 +119,8 @@ header('Content-Type: text/html; charset=UTF-8');
 		});
 
 
-		$jog_id = Border3::getJogId('Rendszer - Felhasználó kezelés (menüpont)');
-		$result = DB::table('nevek_csoportosit')->where('nevek_id', getUserId())->where('csoport_id', $jog_id)->first();
-		if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => getUserId(), 'csoport_id' => $jog_id,]);
-
-		$jog_id = Border3::getJogId('Rendszer - Szerepkör kezelés (menüpont)');
-		$result = DB::table('nevek_csoportosit')->where('nevek_id', getUserId())->where('csoport_id', $jog_id)->first();
-		if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => getUserId(), 'csoport_id' => $jog_id,]);
+		$result = DB::table('nevek_csoportosit')->where('nevek_id', 2)->where('csoport_id', 2)->first();
+		if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => 2, 'csoport_id' => 2]);
 
 	}
 
