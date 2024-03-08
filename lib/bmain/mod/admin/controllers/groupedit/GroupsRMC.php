@@ -10,13 +10,32 @@ class GroupsRMC extends Controller3
 
     public $model = BNagycsoport::class;
 
-    // public $permissons = [
-    //     'list' => ['badmin']
-    // ];
 
     public $select = [
-        '*'
+        'id' => 'b_nagycsoport_id',
+         'nev',
+        'b_nagycsoport_tipus_name' => 'BNagycsoportTipus.tipusnev',
+        
     ];
+
+
+    public function cols() {
+        return [
+            'nev' => true,
+            'b_nagycsoport_tipus_name' => [
+                'cu' => [
+                    'type' => 'combo',
+                    'store' => 'types',
+                    'required' => true,
+                    'name' => 'b_nagycsoport_tipus_id',
+
+                ],
+            ],
+
+
+        ];
+    }
+
 
     public function list(){
         return $this->defaultList();
@@ -29,5 +48,6 @@ class GroupsRMC extends Controller3
     public function update(){
         return $this->defaultUpdate();
     }
+    
 
 }

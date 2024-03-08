@@ -31,8 +31,8 @@ class BNagycsoport extends Model
     ];
 
     protected $validation = [
-        "nev" => "nullable|max:100",
-        "b_nagycsoport_tipus_id" => "nullable|integer|digits_between:1,11",
+        "nev" => "required|max:100",
+        "b_nagycsoport_tipus_id" => "required|integer|digits_between:1,11",
     ];
 
     protected $labels = [

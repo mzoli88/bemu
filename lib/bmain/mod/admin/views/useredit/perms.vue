@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     setRowClass: function (rowData) {
-      if (rowData.user_has !== 0) return "info";
+      if (rowData.user_has !== 0) return "GREEN";
     },
     giveOne: function (e,b,rowData) {
       getStore("perms").create(rowData).load();
