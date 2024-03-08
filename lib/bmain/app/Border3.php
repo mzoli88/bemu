@@ -13,9 +13,9 @@ class Border3
     {
 
         //storage beállítás
-        $path = BORDER_PATH_BORDERDOC . getModulAzon();
-        app()->useStoragePath($path);
-        Config::set('filesystems.disks.local.root', $path);
+        // $path = BORDER_PATH_BORDERDOC . getModulAzon();
+        // app()->useStoragePath($path);
+        // Config::set('filesystems.disks.local.root', $path);
         // Config::set('path.storage', $path);
 
 
