@@ -1,7 +1,7 @@
 <template>
   <Tab>
     <Panel title="Felhasználók">
-      <Grid store="users" :uRoutes="{
+      <Grid parent="group_id" store="users" :uRoutes="{
         AddUser: {
           title: 'gomb1',
           icon: 'f076',
