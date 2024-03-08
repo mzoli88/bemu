@@ -9,6 +9,12 @@ function getUser()
 {
     if (app()->runningInConsole()) return false;
     if(config('user_cached','nono') == 'nono') {
+
+        if(!isset($_COOKIE['SESS_' . BORDER_PREFIX . 'ID'])) {
+            config(['user_cached' => false]);
+            return false;
+        }
+
         if (empty(session_id())) {
             session_name('SESS_' . BORDER_PREFIX . 'ID');
             session_start();
@@ -16,7 +22,7 @@ function getUser()
     
         if (empty($_SESSION['id'])){
             config(['user_cached' => false]);
-            session_destroy();
+            // session_destroy();
         }else{
             config(['user_cached' => (object)[
                 'id' => (int)$_SESSION['id'],
