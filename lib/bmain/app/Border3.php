@@ -96,6 +96,7 @@ class Border3
                 $menu = $mods[$modul_azon]['menu'];
             } else {
                 $menu = collect($mods[$modul_azon]['menu'])->filter(function ($menu, $key) use ($jogok) {
+                    if (array_key_exists('noprem', $menu)) return true;
                     if (!array_key_exists($key, $jogok)) return false;
                     return $jogok[$key];
                 })->toArray();
@@ -128,11 +129,11 @@ class Border3
         if (!empty($entity) && $entity != 0) return $entity;
 
         $entities = self::getUserEntityIds();
-        // dd ($entities);
 
-        if (count($entities) == 0) {
-            sendError("Felhasználó nincsen entitáshoz kötve! Keressen fel egy rendszer adminisztrátort!");
-        }
+        // if (count($entities) == 0) {
+        //     kivettem, hogy ne dobjon hibaüzenetet olyan modulban ahol nincs entitás kezelés
+        //     sendError("Felhasználó nincsen entitáshoz kötve! Keressen fel egy rendszer adminisztrátort!");
+        // }
 
         return array_shift($entities);
     }
