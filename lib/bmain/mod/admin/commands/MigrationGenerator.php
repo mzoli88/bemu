@@ -18,10 +18,13 @@ class MigrationGenerator extends Command
     {
         $modul_azon = $this->argument('modul_azon');
         $table = $this->argument('table');
+
         $prefix = config('mods.' . $modul_azon . '.db_prefix', [$modul_azon . '_']);
         MG::$table_prefix = $prefix;
         MG::$base_file_path = config('mods.' . $modul_azon . '.dir') . 'migrations';
         MG::$modul_azon = $modul_azon;
+
+        MG::$static_tables = config('mods.' . $modul_azon . '.static_tables');
         new MG($table);
     }
 }
