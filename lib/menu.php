@@ -70,7 +70,8 @@ header('Content-Type: text/html; charset=UTF-8');
 <body>
 	<?php
 
-	use Illuminate\Support\Facades\DB;
+use App\Border3;
+use Illuminate\Support\Facades\DB;
 
 	function refreshModulData()
 	{
@@ -83,40 +84,7 @@ header('Content-Type: text/html; charset=UTF-8');
 			]);
 		}
 
-		collect(config('mods'))->each(function ($modul, $modul_azon) {
-			$modulData = DB::table('b_modulok')->where('azon', $modul_azon)->first();
-			if (!$modulData) {
-				DB::table('b_modulok')->insert([
-					'azon' => $modul_azon,
-					'modulnev' => $modul['name'],
-					'verzio' => 'v' . $modul['version'],
-				]);
-			}
-
-			// $modul = config('mods')[getModulAzon()];
-			$perms = [];
-
-			if (array_key_exists('perms', $modul)) {
-				foreach ($modul['perms'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value;
-			}
-
-			if (array_key_exists('menu', $modul)) {
-				foreach ($modul['menu'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
-			}
-
-			collect($perms)->each(function ($jog) use ($modul_azon) {
-				$ellenorzendo = conv($jog);
-				$equery = DB::table('nevek_csoport')->where('nev', $ellenorzendo);
-				$result = $equery->first();
-				if (!$result) {
-					DB::table('nevek_csoport')->insert([
-						'nev' => $ellenorzendo,
-						'modul_azon' => $modul_azon,
-					]);
-				}
-			});
-		});
-
+		Border3::update_border(true);
 
 		$result = DB::table('nevek_csoportosit')->where('nevek_id', 2)->where('csoport_id', 2)->first();
 		if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => 2, 'csoport_id' => 2]);

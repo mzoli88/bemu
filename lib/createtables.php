@@ -164,6 +164,33 @@ INSERT INTO `b_nagycsoport_tipus` (`b_nagycsoport_tipus_id`, `tipusnev`) VALUES
 	(1,	'Szervezeti egység'),
 	(2,	'Jogosultság csoport');");
 
+$conn->execute_query("
+	CREATE TABLE IF NOT EXISTS `b_menu` (
+	  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+	  `id_csoport` int(11) NOT NULL DEFAULT '0',
+	  `item` tinyint(4) NOT NULL DEFAULT '0',
+	  `menu` varchar(100) NOT NULL DEFAULT '',
+	  `link` varchar(100) DEFAULT NULL,
+	  `feltime` int(11) DEFAULT NULL,
+	  `feltolto` int(11) unsigned DEFAULT NULL,
+	  PRIMARY KEY (`id`),
+	  KEY `id_csoport` (`id_csoport`),
+	  KEY `menu` (`menu`),
+	  KEY `link` (`link`),
+	  KEY `item` (`item`)
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+	
+$conn->execute_query("
+	CREATE TABLE IF NOT EXISTS `b_menucsop` (
+	  `b_menucsop_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+	  `menu_id` int(11) NOT NULL DEFAULT '0',
+	  `csoport_id` int(11) NOT NULL DEFAULT '1',
+	  `csop_e` tinyint(1) unsigned DEFAULT NULL,
+	  `feltolthet` tinyint(1) NOT NULL DEFAULT '0',
+	  PRIMARY KEY (`b_menucsop_id`),
+	  KEY `menu_id` (`menu_id`),
+	  KEY `csoport_id` (`csoport_id`)
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
 
 $conn->close();
 header("Location: ../");

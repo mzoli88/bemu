@@ -7,16 +7,19 @@ if (defined('BORDER_EMU')){
     $menu['useredit'] = [
         'icon' => 'f007',
         'name' => 'Felhasználó kezelés',
+        'noprem' => true,
     ];
     
     $menu['groupedit'] = [
         'icon' => 'f5fd',
         'name' => 'Szerepkör kezelés',
+        'noprem' => true,
     ];
 
     $menu['modules'] = [
         'icon' => 'f14e',
         'name' => 'Modulok',
+        'noprem' => true,
     ];
 }
 

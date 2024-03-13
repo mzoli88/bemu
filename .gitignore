@@ -2,6 +2,7 @@
 !/mod/modulsmink
 !/mod/bmain
 /mod/bmain/node_modules
+/mod/bmain/HwsVue/.git
 /config.php
 /.htaccess
 /lib/*
@@ -18,3 +19,4 @@
 /lib/bmain/mod
 !/lib/bmain/mod/admin
 !/lib/bmain/mod/naplo
+/lib/bmain/HwsLaravel/.git

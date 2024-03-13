@@ -1,5 +1,6 @@
 <?php
 
+use App\Border3;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -24,5 +25,9 @@ $output = new BufferedOutput;
 Artisan::call('optimize:clear', [], $output);
 Artisan::call('migrate --force', [], $output);
 Artisan::call('optimize', [], $output);
+
+
 // echo 'A telepites konyvtara: ' . BORDER_PATH_BORDERLIB . '<br>';
 echo str_replace("\n", '<br>', $output->fetch());
+
+Border3::update_border();

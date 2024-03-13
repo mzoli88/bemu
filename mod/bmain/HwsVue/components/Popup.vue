@@ -35,6 +35,7 @@ export default {
   created: function () {
     var me = this;
     global.msg = function (txt, type, fn, pre) {
+      txt = txt || '';
       if (me.type == "maintenance" && type == "off") {
         me.active = false;
         return;

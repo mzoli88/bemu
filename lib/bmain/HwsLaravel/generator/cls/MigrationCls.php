@@ -90,7 +90,51 @@ class MigrationCls
 
         $sql_up = $fromSchema->getMigrateToSql($toSchema, DB::getDoctrineConnection()->getDatabasePlatform());
         $sql_down = $toSchema->getMigrateToSql($fromSchema, DB::getDoctrineConnection()->getDatabasePlatform());
-        // print_r($sql_up);
+
+
+        if (!empty(MigrationGenerator::$static_tables)) {
+            foreach (MigrationGenerator::$static_tables as $stable) {
+
+                // $do_truncate = false;
+                // $to_sm->createSequence();
+
+                if (DB::connection('hwsmig')->getSchemaBuilder()->hasTable($stable)) {
+                    $tmp_from = DB::connection($defaultDb)->table($stable)->get()->keyBy('id');
+                    $tmp_mig = DB::connection('hwsmig')->table($stable)->get()->keyBy('id');
+
+                    if (json_encode($tmp_from) == json_encode($tmp_mig)) continue;
+
+                    $to_delete = [];
+                    $to_create = [];
+                    $to_update = [];
+
+                    $tmp_from->each(function ($row, $id) use ($tmp_mig, &$to_create, &$sql_up, $stable) {
+                        if (!$tmp_mig->has($id)) {
+                            $to_create[] = $row;
+                        } else {
+                            $ch_data = $tmp_mig->get($id);
+                            foreach ($row as $key => $value) {
+                                if (!array_key_exists($key, (array)$ch_data) || $ch_data->{$key} != $value) {
+                                    $sql_up[] = self::update_insert_query($stable, $id, $row);
+                                    break;
+                                }
+                            }
+                        }
+                    });
+
+
+                    if (!empty($to_create)) $sql_up[] = self::create_insert_query($stable, $to_create);
+                    // dd ($to_create);
+                } else {
+                    $data = DB::connection($defaultDb)->table($stable)->get()->toArray();
+                    if (empty($data)) continue;
+                    $sql_up[] = self::create_insert_query($stable, DB::connection($defaultDb)->table($stable)->get()->toArray());
+                }
+            }
+        }
+
+
+        // dd($sql_up);
         // print_r($sql_down);
         // dd(addslashes('What does "yolo" mean?'));
 
@@ -107,6 +151,27 @@ class MigrationCls
             echo "No changes found!\n";
         }
         return $this;
+    }
+
+
+
+    static function create_insert_query($tablename, $array)
+    {
+        $keys = array_keys((array)$array[0]);
+        return "INSERT INTO $tablename (" . implode(', ', $keys) . ") "
+            . "VALUES " . collect($array)->map(function ($x) {
+                return "('" . implode("', '", array_values((array)$x)) . "')";
+            })->implode(', ');
+    }
+
+    static function update_insert_query($tablename, $id, $array)
+    {
+        $values = collect($array)->filter(function ($v, $k) {
+            return $k != 'id';
+        })->map(function ($v, $k) {
+            return "$k = '$v'";
+        })->implode(', ');
+        return "UPDATE $tablename SET $values WHERE id = $id";
     }
 
     public function fkdir($path)
@@ -129,15 +194,15 @@ class MigrationCls
 
         $laravel_version = explode('.', app()->version());
 
-        
-        if ($modul_azon){
+
+        if ($modul_azon) {
             $cname = date('YmdHis');
             config()->set('modul_azon', $modul_azon);
             $fname = $modul_azon . '_mig_' . $cname;
-        }else{
+        } else {
             $cname = time();
             $fname = date('Y_m_d_His_') . config('modul_azon', 'mig') . '_mig' . $cname;
-        } 
+        }
 
         switch ($laravel_version[0]) {
             case '6':

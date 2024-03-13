@@ -631,11 +631,16 @@ global.Majax = class Majax {
           success = false;
         }
 
-        //karbantartás mód
-        if (status == 0 || status == 503) {
-          // dd(11111, status);
+        if (status == 0) {
           maskOff();
-          var title = 'Az oldal jelenleg karbantartás alatt van (státusz: ' + (status || '0') + ')';
+          msg('Hálózati probléma, kérem várjon!', 'error');
+          return;
+        }
+
+        //karbantartás mód
+        if (status == 503) {
+          maskOff();
+          var title = 'Az oldal jelenleg karbantartás alatt van';
           var message = 'Köszönjük türelmét!';
           if (isObject(me.$lastResponse) && me.$lastResponse.title) title = me.$lastResponse.title;
           if (isObject(me.$lastResponse) && me.$lastResponse.message) message = me.$lastResponse.message;

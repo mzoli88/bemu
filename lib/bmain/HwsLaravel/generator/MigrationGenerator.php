@@ -12,6 +12,7 @@ class MigrationGenerator
 
     static $base_file_path = 'database/migrations';
     static $modul_azon = null;
+    static $static_tables = null;
 
 
     static $exclude_table_prefix = [

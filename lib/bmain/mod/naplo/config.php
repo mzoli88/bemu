@@ -1,7 +1,7 @@
 <?php
 return [
 
-    'name' => 'Napló',
+    'name' => 'Dev Napló',
     'icon' => 'f02d',
 
     'version' => '4.0.0',
