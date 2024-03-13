@@ -256,7 +256,8 @@ class Border3
 
     static function update_border($admin = false)
     {
-        collect(config('mods'))->each(function ($modul, $modul_azon) use ($admin) {
+        $mods = include base_path('config/mods.php');
+        collect($mods)->each(function ($modul, $modul_azon) use ($admin) {
             if ($admin == false && $modul_azon == 'admin') return;
 
             //jogok feltöltése       
