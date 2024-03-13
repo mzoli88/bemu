@@ -8,9 +8,9 @@ use mod\admin\models\Params;
 function getUser()
 {
     if (app()->runningInConsole()) return false;
-    if(config('user_cached','nono') == 'nono') {
+    if (config('user_cached', 'nono') == 'nono') {
 
-        if(!isset($_COOKIE['SESS_' . BORDER_PREFIX . 'ID'])) {
+        if (!isset($_COOKIE['SESS_' . BORDER_PREFIX . 'ID'])) {
             config(['user_cached' => false]);
             return false;
         }
@@ -19,11 +19,11 @@ function getUser()
             session_name('SESS_' . BORDER_PREFIX . 'ID');
             session_start();
         }
-    
-        if (empty($_SESSION['id'])){
+
+        if (empty($_SESSION['id'])) {
             config(['user_cached' => false]);
             // session_destroy();
-        }else{
+        } else {
             config(['user_cached' => (object)[
                 'id' => (int)$_SESSION['id'],
                 'login' => toUtf($_SESSION['nev']),
@@ -53,13 +53,16 @@ function getModulAzon()
         }
     }
 
-    if(config('modul_aon_cached','nono') == 'nono') {
-        $modul_azon = null;
-        if (request()->route()) $modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
-        if ($modul_azon == 'auth' || $modul_azon == 'start' || empty($modul_azon)) $modul_azon = 'admin';
-        config(['modul_aon_cached' => $modul_azon]);
+    if (defined('MODUL_AZON')) return MODUL_AZON;
+    $modul_azon = null;
+    if (request()->getPathInfo()) {
+        $modul_azon = preg_replace(['#^\/#', '/\/.*$/'], '', request()->getPathInfo());
+    } else if (request()->route()) {
+        $modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
     }
-    return config('modul_aon_cached');
+    if ($modul_azon == 'auth' || $modul_azon == 'start' || empty($modul_azon)) $modul_azon = 'admin';
+    define('MODUL_AZON', $modul_azon);
+    return $modul_azon;
 }
 
 function isSysAdmin()
