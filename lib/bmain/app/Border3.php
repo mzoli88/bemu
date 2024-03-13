@@ -338,11 +338,29 @@ class Border3
                         ->update(['menu' => toLatin($modul['name'])]);
                 }
 
+
                 $count = 1;
 
                 foreach ($modul['menu'] as $key => $value) {
                     $almenu_name = $count . ' - ' . $value['name'];
                     $count++;
+
+                    $jog_id = DB::table('nevek_csoport')->where('modul_azon', $modul_azon)->where('menu_azon', $key)->first()->csoport_id;
+
+                    $hasjog = DB::table('b_menucsop')
+                        ->where('menu_id', $main_menu->id)
+                        ->where('csoport_id', $jog_id)
+                        ->first();
+
+                    if (!$hasjog) {
+                        DB::table('b_menucsop')->insert([
+                            'menu_id' => $main_menu->id,
+                            'csoport_id' => $jog_id,
+                            'csop_e' => 1,
+                            'feltolthet' => 0,
+                        ]);
+                    }
+
                     $almenu = DB::table('b_menu')
                         ->where('modul_azon', $modul_azon)
                         ->where('menu_azon', $key)
@@ -363,16 +381,23 @@ class Border3
                             ->where('modul_azon', $modul_azon)
                             ->where('menu_azon', $key)
                             ->first();
+                    }
 
+                    //almenü jogosultság létrehozása
+                    $hasjog2 = DB::table('b_menucsop')
+                        ->where('menu_id', $almenu->id)
+                        ->where('csoport_id', $jog_id)
+                        ->first();
 
-                        //almenü jogosultság létrehozása
+                    if (!$hasjog2) {
                         DB::table('b_menucsop')->insert([
                             'menu_id' => $almenu->id,
-                            'csoport_id' => DB::table('nevek_csoport')->where('modul_azon', $modul_azon)->where('menu_azon', $key)->first()->csoport_id,
+                            'csoport_id' => $jog_id,
                             'csop_e' => 1,
                             'feltolthet' => 0,
                         ]);
                     }
+
 
                     //név változás miatt update ha kell
                     if (toUtf($almenu->menu) != $almenu_name) {
