@@ -45,7 +45,12 @@ class Kernel extends ConsoleKernel
             // Modul azonosító kinyerése
             $class = get_class($this->getArtisan()->all()[$event->command]);
             $class = explode('\\',$class);
-            if($class[0]=='mod')config(['modul_azon'=>$class[1]]);
+            global $global_modul_azon;
+            if($class[0]=='mod'){
+                $global_modul_azon = $class[1];
+            }else{
+                $global_modul_azon = 'admin';
+            }
         });
 
         // $this->load(__DIR__.'/Commands');

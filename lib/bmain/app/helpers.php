@@ -5,20 +5,23 @@ use hws\rmc\Model;
 use App\Exceptions\SendErrorException;
 use mod\admin\models\Params;
 
+//globális változók cache miatt
+$global_modul_azon = null;
+$global_active_user = null;
+
 function getUser()
 {
-    if (defined('USER_ID')) {
-        if (is_array(USER_ID)) return (object)USER_ID;
-        return false;
-    }
+    global $global_active_user;
+
+    if ($global_active_user != null) return $global_active_user;
 
     if (app()->runningInConsole()) {
-        define('USER_ID', false);
+        $global_active_user = false;
         return false;
     }
 
     if (!isset($_COOKIE['SESS_' . BORDER_PREFIX . 'ID'])) {
-        define('USER_ID', false);
+        $global_active_user = false;
         return false;
     }
 
@@ -28,15 +31,15 @@ function getUser()
     }
 
     if (empty($_SESSION['id'])) {
-        define('USER_ID', false);
+        $global_active_user = false;
         return false;
     } else {
-        define('USER_ID', [
+        $global_active_user = (object)[
             'id' => (int)$_SESSION['id'],
             'login' => toUtf($_SESSION['nev']),
             'name' => toUtf($_SESSION['teljesnev']),
-        ]);
-        return (object)USER_ID;
+        ];
+        return $global_active_user;
     }
 }
 
@@ -48,27 +51,18 @@ function getUserId()
 
 function getModulAzon()
 {
-    if (app()->runningInConsole()) {
-        $trace = collect(debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS, 10))->slice(1)->pluck('class');
-        $find = $trace->filter(function ($v) {
-            return preg_match('#^mod\\.*#', $v);
-        })->first();
-        if ($find) {
-            $tmp = explode('\\', $find);
-            return $tmp[1];
-        }
-    }
+    global $global_modul_azon;
 
-    if (defined('MODUL_AZON')) return MODUL_AZON;
-    $modul_azon = null;
+    if ($global_modul_azon) return $global_modul_azon;
+
     if (request()->getPathInfo()) {
-        $modul_azon = preg_replace(['#^\/#', '/\/.*$/'], '', request()->getPathInfo());
+        $global_modul_azon = preg_replace(['#^\/#', '/\/.*$/'], '', request()->getPathInfo());
     } else if (request()->route()) {
-        $modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
+        $global_modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
     }
-    if ($modul_azon == 'auth' || $modul_azon == 'start' || empty($modul_azon)) $modul_azon = 'admin';
-    define('MODUL_AZON', $modul_azon);
-    return $modul_azon;
+    if ($global_modul_azon == 'auth' || $global_modul_azon == 'start' || empty($global_modul_azon)) $global_modul_azon = 'admin';
+
+    return $global_modul_azon;
 }
 
 function isSysAdmin()
