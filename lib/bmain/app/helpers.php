@@ -7,7 +7,10 @@ use mod\admin\models\Params;
 
 function getUser()
 {
-    if (defined('USER_ID')) return USER_ID;
+    if (defined('USER_ID')) {
+        if (is_array(USER_ID)) return (object)USER_ID;
+        return false;
+    }
 
     if (app()->runningInConsole()) {
         define('USER_ID', false);
@@ -28,12 +31,12 @@ function getUser()
         define('USER_ID', false);
         return false;
     } else {
-        define('USER_ID', (object)[
+        define('USER_ID', [
             'id' => (int)$_SESSION['id'],
             'login' => toUtf($_SESSION['nev']),
             'name' => toUtf($_SESSION['teljesnev']),
         ]);
-        return USER_ID;
+        return (object)USER_ID;
     }
 }
 
