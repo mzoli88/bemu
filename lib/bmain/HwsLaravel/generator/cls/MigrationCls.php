@@ -169,7 +169,7 @@ class MigrationCls
         $values = collect($array)->filter(function ($v, $k) {
             return $k != 'id';
         })->map(function ($v, $k) {
-            return "$k = '$v'";
+            return "`$k` = '$v'";
         })->implode(', ');
         return "UPDATE $tablename SET $values WHERE id = $id";
     }
