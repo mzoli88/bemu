@@ -34,6 +34,7 @@ function getUser()
             'name' => toUtf($_SESSION['teljesnev']),
         ]);
         return USER_ID;
+    }
 }
 
 function getUserId()
