@@ -39,25 +39,9 @@ class Cron
 
     static public function addJob($timer, $azon, $artisan_command)
     {
-        //ha php 7-van
-        if (preg_match('/^7/', phpversion())) {
-            if (preg_match('/^PHP 7/', shell_exec('php -v'))) {
-                $php = "php";
-            } else {
-                if (preg_match('/^PHP 7/', shell_exec('php7.3 -v'))) {
-                    $php = "php7.3";
-                } else {
-                    $php = "php7.4";
-                }
-            }
-        } else {
-            //ha php 8-van
-            if (preg_match('/^PHP 8/', shell_exec('php -v'))) {
-                $php = "php";
-            } else {
-                $php = "php8.1";
-            }
-        }
+        $php = 'php'.preg_replace('#^([1-9]*)\.([1-9]*)\..*#','$1.$2',phpversion());
+
+        if(shell_exec($php.' -v') == null) $php = "php";
 
         $job = "\n" . trim($timer);
         $job .= ' ' . $php . ' ' . base_path() . DIRECTORY_SEPARATOR . 'artisan ' . $artisan_command;

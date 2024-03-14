@@ -1,6 +1,7 @@
 <?php
 
 use App\Border3;
+use hws\Cron;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -29,5 +30,7 @@ Artisan::call('optimize', [], $output);
 
 // echo 'A telepites konyvtara: ' . BORDER_PATH_BORDERLIB . '<br>';
 echo str_replace("\n", '<br>', $output->fetch());
+
+Cron::addJob('* * * * *','bmain_schedule','schedule:run');
 
 Border3::update_border();
