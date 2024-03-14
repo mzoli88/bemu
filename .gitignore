@@ -16,7 +16,7 @@
 !/lib/jquery-1.12.4.min.js
 !/lib/bmain/
 /lib/bmain/vendor
-/lib/bmain/mod
+/lib/bmain/mod/*
 !/lib/bmain/mod/admin
 !/lib/bmain/mod/naplo
 /lib/bmain/HwsLaravel/.git
