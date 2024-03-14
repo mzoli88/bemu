@@ -7,31 +7,37 @@ use mod\admin\models\Params;
 
 function getUser()
 {
-    if (app()->runningInConsole()) return false;
-    if(config('user_cached','nono') == 'nono') {
-
-        if(!isset($_COOKIE['SESS_' . BORDER_PREFIX . 'ID'])) {
-            config(['user_cached' => false]);
-            return false;
-        }
-
-        if (empty(session_id())) {
-            session_name('SESS_' . BORDER_PREFIX . 'ID');
-            session_start();
-        }
-    
-        if (empty($_SESSION['id'])){
-            config(['user_cached' => false]);
-            // session_destroy();
-        }else{
-            config(['user_cached' => (object)[
-                'id' => (int)$_SESSION['id'],
-                'login' => toUtf($_SESSION['nev']),
-                'name' => toUtf($_SESSION['teljesnev']),
-            ]]);
-        }
+    if (defined('USER_ID')) {
+        if (is_array(USER_ID)) return (object)USER_ID;
+        return false;
     }
-    return config('user_cached');
+
+    if (app()->runningInConsole()) {
+        define('USER_ID', false);
+        return false;
+    }
+
+    if (!isset($_COOKIE['SESS_' . BORDER_PREFIX . 'ID'])) {
+        define('USER_ID', false);
+        return false;
+    }
+
+    if (empty(session_id())) {
+        session_name('SESS_' . BORDER_PREFIX . 'ID');
+        session_start();
+    }
+
+    if (empty($_SESSION['id'])) {
+        define('USER_ID', false);
+        return false;
+    } else {
+        define('USER_ID', [
+            'id' => (int)$_SESSION['id'],
+            'login' => toUtf($_SESSION['nev']),
+            'name' => toUtf($_SESSION['teljesnev']),
+        ]);
+        return (object)USER_ID;
+    }
 }
 
 function getUserId()
@@ -53,13 +59,16 @@ function getModulAzon()
         }
     }
 
-    if(config('modul_aon_cached','nono') == 'nono') {
-        $modul_azon = null;
-        if (request()->route()) $modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
-        if ($modul_azon == 'auth' || $modul_azon == 'start' || empty($modul_azon)) $modul_azon = 'admin';
-        config(['modul_aon_cached' => $modul_azon]);
+    if (defined('MODUL_AZON')) return MODUL_AZON;
+    $modul_azon = null;
+    if (request()->getPathInfo()) {
+        $modul_azon = preg_replace(['#^\/#', '/\/.*$/'], '', request()->getPathInfo());
+    } else if (request()->route()) {
+        $modul_azon = preg_replace('/\/.*$/', '', request()->route()->getPrefix());
     }
-    return config('modul_aon_cached');
+    if ($modul_azon == 'auth' || $modul_azon == 'start' || empty($modul_azon)) $modul_azon = 'admin';
+    define('MODUL_AZON', $modul_azon);
+    return $modul_azon;
 }
 
 function isSysAdmin()
@@ -114,55 +123,10 @@ function hasJustOneEntity()
     return count(entities()) == 1;
 }
 
-// function getUserPerms($user_id = null)
-// {
-//     $user_id = $user_id ?: getUserId();
-//     return Cache::remember('user_perms_' . $user_id, now()->addMinutes(10), function () use ($user_id) {
-//         $modul_azons = array_keys(config('mods'));
-//         $entities = getUserEntities($user_id);
-//         $UserPerms = UserPerms::where('user_id', $user_id)->whereIn('modul_azon', $modul_azons)->whereIn('entity_id', $entities)->get()->toArray();
-//         $GroupPerms = GroupPerms::whereIn('group_id', UserGroups::where('user_id', $user_id)->join('Rel_group')->where('Rel_group.status', 'I')->get()->pluck('group_id'))->whereIn('entity_id', $entities)->get()->toArray();
-//         // $isSysAdmin = Users::findOne($user_id)->sys_admin == 'I';
-//         $mods = config('mods');
-//         return collect($UserPerms)->merge($GroupPerms)->groupBy(['entity_id', 'modul_azon', 'perm'])->map(function ($r) use ($mods) {
-//             return $r->map(function ($r, $modul_azon) use ($mods) {
-//                 return $r->map(function () {
-//                     return true;
-//                 })->filter(function ($b, $jog) use ($modul_azon, $mods) {
-//                     if (!array_key_exists($modul_azon, $mods)) return false;
-//                     if (array_key_exists('menu', $mods[$modul_azon]) && array_key_exists($jog, $mods[$modul_azon]['menu'])) return true;
-//                     if (array_key_exists('perms', $mods[$modul_azon]) && array_key_exists($jog, $mods[$modul_azon]['perms'])) return true;
-//                     return false;
-//                 });
-//             })->filter(function ($jogok, $modul_azon) use ($mods) {
-//                 //ellenőrizzük, hogy ha csak elemi joga van akkor ne legyen joga, mert nem láthatja a menüpontokat
-//                 if (!array_key_exists($modul_azon, $mods)) return false;
-//                 if (!array_key_exists('menu', $mods[$modul_azon])) return false;
-//                 $menus = collect($mods[$modul_azon]['menu'])->keys()->toArray();
-//                 $hasJogs = $jogok->filter(function ($v) {
-//                     return $v;
-//                 })->filter(function ($v, $k) use ($menus) {
-//                     return in_array($k, $menus);
-//                 })->keys()->toArray();
-//                 return !empty($hasJogs);
-//             });
-//         })->toArray();
-//     });
-// }
-
 function getUserEntities($user_id = null)
 {
     return Border3::getUserEntityIds($user_id);
 }
-
-// function getUserPermsByEntity($user_id = null, $entity_id = null)
-// {
-//     $user_id = $user_id ?: getUserId();
-//     $entity_id = $entity_id ?: getEntity();
-//     $perms = getUserPerms($user_id);
-//     if (array_key_exists($entity_id, $perms)) return $perms[$entity_id];
-//     return false;
-// }
 
 function hasEntity($user_id = null, $entity_id = null)
 {

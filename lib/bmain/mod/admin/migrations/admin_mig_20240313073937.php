@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 
@@ -17,8 +18,10 @@ return new class extends Migration
     ];    
 
     public function up(){
-        foreach($this->sql_up as $sq){
-            DB::statement($sq);
+        if(Schema::hasTable('nevek_csoport')) {
+            foreach($this->sql_up as $sq){
+                DB::statement($sq);
+            }
         }
 	}
 
