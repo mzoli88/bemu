@@ -30,13 +30,6 @@ class Cron
         return shell_exec('echo "' . implode("\n", $jobs) . '" | crontab -');
     }
 
-    // static public function addJob($job = '') {
-    // 	$jobs = self::getJobs();
-    // 	if(in_array($job, $jobs))return false;
-    // 	$jobs[] = $job;
-    // 	return self::saveJobs($jobs);
-    // }
-
     static public function addJob($timer, $azon, $artisan_command)
     {
         $php = 'php'.preg_replace('#^([1-9]*)\.([1-9]*)\..*#','$1.$2',phpversion());
