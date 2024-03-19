@@ -157,8 +157,8 @@ class MigrationCls
 
     static function create_insert_query($tablename, $array)
     {
-        $keys = array_keys((array)$array[0]);
-        return "INSERT INTO $tablename (" . implode(', ', $keys) . ") "
+        $keys = collect(array_keys((array)$array[0]))->map(function($key){return "`$key`";});
+        return "INSERT INTO $tablename (" . $keys->implode(', ') . ") "
             . "VALUES " . collect($array)->map(function ($x) {
                 return "('" . implode("', '", array_values((array)$x)) . "')";
             })->implode(', ');
