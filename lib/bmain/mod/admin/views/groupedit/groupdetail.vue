@@ -32,6 +32,11 @@
           icon: 'Törlés',
           click: DeleteMod,
         }
+      }" :cols="{
+        id: true,
+        name: {
+          title: 'Modul'
+        },
       }">
       </Grid>
     </Panel>
@@ -61,7 +66,7 @@ export default {
       getStore("modules").create(rowData).load();
     },
     DeleteMod: function (e, b, rowData) {
-      getStore("modules").delete(rowData.b_modulok_id).load();
+      getStore("modules").delete(rowData).load();
     },
 
   }

@@ -229,13 +229,6 @@ class Border3
         else false;
     }
 
-    //modul adatok lekérdezése (bármelyik modulé)
-    static function getModulData($azon = false)
-    {
-        if ($azon === false) $azon =  getModulAzon();
-        return DB::table('b_modulok')->where('azon', $azon);
-    }
-
     static function borderMail($cimzett_id, $msg, $felado_neve = null)
     {
         if (!is_array($cimzett_id)) $cimzett_id = [$cimzett_id];
