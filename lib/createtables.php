@@ -132,24 +132,6 @@ $conn->execute_query("
 $ct = $conn->query("select count(*) from nevek_csoportosit")->fetch_row()[0];
 if($ct == 0)$conn->execute_query("INSERT INTO `nevek_csoportosit` (`csoport_id`, `nevek_id`) VALUES (2, 2);");
 
-//ha nincs b_modulok tábla akkor létrehzza
-$conn->execute_query("
-CREATE TABLE IF NOT EXISTS `b_modulok` (
-	`b_modulok_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`azon` varchar(30) NOT NULL DEFAULT '',
-	`verzio` varchar(20) NOT NULL DEFAULT '',
-	`b_menu_id` int(11) NOT NULL DEFAULT '0',
-	`friss_datum` date DEFAULT NULL,
-	`friss_ido` time DEFAULT NULL,
-	`modulnev` varchar(100) DEFAULT NULL,
-	`rejtve` tinyint(1) NOT NULL DEFAULT '0',
-	`csomag` varchar(100) DEFAULT NULL,
-	`last_changed` datetime DEFAULT NULL,
-	PRIMARY KEY (`b_modulok_id`),
-	KEY `azon` (`azon`),
-	KEY `rejtve` (`rejtve`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
-
 $conn->execute_query("
 CREATE TABLE IF NOT EXISTS `b_nagycsoport_tipus` (
 	`b_nagycsoport_tipus_id` int(10) unsigned NOT NULL AUTO_INCREMENT,

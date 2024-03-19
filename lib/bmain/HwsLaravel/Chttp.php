@@ -91,15 +91,15 @@ class Chttp
             CURLOPT_SSL_VERIFYPEER => false,
         ];
 
-        if (is_array($this->proxyParams)){
+        if (is_array($this->proxyParams)) {
             $options = array_merge($options, [
                 CURLOPT_PROXY => $this->proxyParams["proxy_host"],
                 CURLOPT_PROXYPORT => $this->proxyParams["proxy_port"],
                 CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-                CURLOPT_PROXYUSERPWD => $this->proxyParams["proxy_user"].":".$this->proxyParams["proxy_pw"]
+                CURLOPT_PROXYUSERPWD => $this->proxyParams["proxy_user"] . ":" . $this->proxyParams["proxy_pw"]
             ]);
         }
-        
+
         if (empty($this->files) && $this->isJsonRequest) {
             $this->setHeader('Content-type', 'application/json');
             if ($post_params) {
@@ -198,29 +198,12 @@ class Chttp
             logger()->error($msg2);
             $this->logs[] = $msg2;
             if ($this->log_event_id) {
-                logger()->stack(['audit', 'system'])->info($msg2, [
-                    'event' => $this->log_event_id . ' - interface hívás',
-                    'code' => 'Sikertelen',
-                    'error' => 'Kommunikációs hiba történt!',
-                    'user_login' => '-',
-                    'user_name' => 'Technikai felhasználó',
-                    // 'uuid' => '-',
-                    'uri' => 'Interface hívás',
-                    'method' => '-',
-                ]);
+                hwslog(['audit', 'system'], $this->log_event_id . ' - interface hívás', $msg2, 'Kommunikációs hiba történt!');
             }
         } else {
             logger()->info($msg2);
             if ($this->log_event_id) {
-                logger()->stack(['audit', 'system'])->info($msg2, [
-                    'event' => $this->log_event_id . ' - interface hívás',
-                    'code' => 'Sikeres',
-                    'user_login' => '-',
-                    'user_name' => 'Technikai felhasználó',
-                    // 'uuid' => '-',
-                    'uri' => 'Interface hívás',
-                    'method' => '-',
-                ]);
+                hwslog(['audit', 'system'], $this->log_event_id . ' - interface hívás', $msg2);
             }
         }
     }

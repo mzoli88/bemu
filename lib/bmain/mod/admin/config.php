@@ -15,12 +15,6 @@ if (defined('BORDER_EMU')){
         'name' => 'Szerepkör kezelés',
         'noprem' => true,
     ];
-
-    $menu['modules'] = [
-        'icon' => 'f14e',
-        'name' => 'Modulok',
-        'noprem' => true,
-    ];
 }
 
 $menu['systemparam'] = [

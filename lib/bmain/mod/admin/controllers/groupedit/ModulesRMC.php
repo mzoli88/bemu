@@ -13,8 +13,6 @@ class ModulesRMC extends Controller3
 {
 
 
-    public $model = BModulok::class;
-
     public $metaNoCreate = true;
     public $metaNoDelete = true;
 
@@ -23,24 +21,31 @@ class ModulesRMC extends Controller3
 
     public function list(Request $request)
     {
-        return $this->defaultList([
-            '*',
-            "user_has" => DB::raw('SELECT count(*) FROM b_nagycsoport_modul WHERE b_nagycsoport_modul.modul_azon = b_modulok.azon AND b_nagycsoport_modul.b_nagycsoport_id = ' . $request->group_id),
-        ]);
+        $group_id = $request->group_id;
+        return [
+            'data' => collect(config('mods'))->map(function ($m, $modul_azon) use ($group_id) {
+                $m = (object)$m;
+                return [
+                    'id' => $modul_azon,
+                    'name' => $m->name,
+                    'modul_azon' => $modul_azon,
+                    'user_has' => BNagycsoportModul::where('modul_azon', $modul_azon)->where('b_nagycsoport_id', $group_id)->count(),
+                ];
+            })->values()->toArray()
+        ];
     }
 
     public function create(request $request)
     {
         $model = BNagycsoportModul::make();
         $model->b_nagycsoport_id = $request->group_id;
-        $model->modul_azon = $request->azon;
+        $model->modul_azon = $request->modul_azon;
         $model->save();
     }
 
-    public function delete(request $request, $id)
+    public function delete(request $request)
     {
-        $modul_azon = BModulok::findOne($id)->azon;
-        $model = BNagycsoportModul::where('b_nagycsoport_id', $request->group_id)->where('modul_azon', $modul_azon)->one();
+        $model = BNagycsoportModul::where('b_nagycsoport_id', $request->group_id)->where('modul_azon', $request->modul_azon)->one();
         if (!$model) throw new \Exception('A rekord nem található!');
         $model->delete();
     }

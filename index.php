@@ -23,7 +23,7 @@ if(isset($_SERVER['REQUEST_URI'])){
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="shortcut icon" type="image/png" href="favicon.ico"/>
-    <title>BORDER Emulator 2</title>
+    <title>BORDER Emulator</title>
 	<link rel="stylesheet" type="text/css" href="lib/sh.css">
 	<script src="lib/jquery-1.12.4.min.js"></script> 
   </head>
@@ -32,9 +32,9 @@ if(isset($_SERVER['REQUEST_URI'])){
 		<div class="main_page noselect">
 			<div id="emuheader">
 				<div class="page_header">
-					BORDER Emulátor 2
+					BORDER Emulátor
 					<div class="page_version">
-						<span>v1.8.0</span>
+						<span>v2.0.0</span>
 						<span>PHP:<?=phpversion()?></span>
 						<span class="doselect"><a href="http://<?=getHostByName(getHostName())?>"><?=getHostByName(getHostName())?></a></span>
 						<span><?=iconv('ISO-8859-2', 'UTF-8',$_SESSION['teljesnev'])?></span>
