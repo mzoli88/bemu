@@ -41,7 +41,7 @@ export default {
   name: "Main",
   data: function () {
 
-    var active = this.getCpHash();
+    var active = this.getCpHash().split('|').shift();
 
     if (!active) msg("Nincs modul kiválasztva!");
 
@@ -202,17 +202,25 @@ export default {
       this.active_entity = val;
       sessionStorage.setItem("active_entity", val);
       if (this.$root.entity) this.$root.entity.active = val;
-      fn();
+      if(fn)fn();
     },
 
     $hash: function (hash) {
-      var a = hash.split(".");
+
+      var b = hash.split("|");
+      var a = b.shift().split(".");
+      
+      var entity_id = b.shift();
+      if (entity_id){
+        this.setEntity(entity_id);
+      }
+
       if (this.active_modul != a[0]) {
         this.active_modul = a[0];
         this.active = hash;
         this.loadMenu();
       } else {
-        this.ActiveToMenu(hash);
+        this.ActiveToMenu(a.join('.'));
       }
     },
   },

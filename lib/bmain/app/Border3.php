@@ -12,6 +12,8 @@ class Border3
     static function init()
     {
 
+        config(['isBorder' => true]);
+
         //storage beállítás
         $path = BORDER_PATH_BORDERDOC . getModulAzon();
         // app()->useStoragePath($path);
