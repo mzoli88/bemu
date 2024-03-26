@@ -100,6 +100,10 @@ export default {
         this.active_entity = this.active_entity || x.active_entity;
         this.perms = x.perms;
 
+        if (doQueque && x.CacheQueue && x.CacheQueue.Queque == true){
+          doQueque(x.CacheQueue);
+        }
+
         if (this.entities.length > 1) {
           this.$root.entity = {
             active: this.active_entity,

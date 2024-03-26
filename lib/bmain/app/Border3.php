@@ -2,6 +2,7 @@
 
 namespace App;
 
+use hws\CacheQueue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -108,6 +109,7 @@ class Border3
             'sys_admin' => isSysAdmin() ? 'I' : 'N',
             'entities' => self::getUserEntitys(),
             'active_entity' => self::getDefaultEntityId(),
+            'CacheQueue' => CacheQueue::getCache(),
         ];
     }
 

@@ -16,7 +16,7 @@ trait CacheTrait
         if (!config('callq')) return false;
 
         //háttér folyamat leállítása, ha az életjel megszűnt
-        if (!Cache::has('workQuequeSignal_' . config('CacheQueue_id', 'u_') . config('user_id')))  exit;
+        // if (!Cache::has('workQuequeSignal_u_' . config('user_id')))  exit;
 
         // ha 4 másodpercnél régebben írtuk cache-t akkor engedjük írni a következőt
         return ((microtime(true) - $this->lastCacheTime) > 4);
@@ -26,6 +26,6 @@ trait CacheTrait
     public function writeCache(string $cache_text)
     {
         $this->lastCacheTime = microtime(true);
-        Cache::put('workQuequeSignal_' . config('CacheQueue_id', 'u_') . config('user_id'), $cache_text, now()->addMinutes(5));
+        // Cache::put('workQuequeSignal_u_' . config('user_id'), $cache_text, now()->addMinutes(5));
     }
 }

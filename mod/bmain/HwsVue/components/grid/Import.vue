@@ -1,17 +1,8 @@
 <template>
-  <form
-    :action="url"
-    class="padding"
-    method="post"
-    enctype="multipart/form-data"
-  >
+  <form :action="url" class="padding" method="post" enctype="multipart/form-data">
     <div class="fieldbody FileField fit vflex pointer" @click.self="onClick">
-      <input
-        type="file"
-        class="Textfield fakeFileimput fit nopointerevent pointer fieldBorder required"
-        ref="filefield"
-        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      />
+      <input type="file" class="Textfield fakeFileimput fit nopointerevent pointer fieldBorder required" ref="filefield"
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
       <div class="fieldButton cflex nopointerevent pointer">
         <span class="icon upload"></span>
       </div>
@@ -52,14 +43,9 @@ export default {
       var formData = new FormData();
       formData.append("import_file", file);
       var xhttp = new XMLHttpRequest();
-      var store = getStore(this.store);
       xhttp.open(
         "POST",
-        url +
-          "?majax_type=import&" +
-          store.$getQParams(store.$fix_query) +
-          "&majax_store=" +
-          encodeURIComponent(this.store),
+        url,
         true
       );
 
@@ -69,7 +55,7 @@ export default {
       if (Auth.token) {
         xhttp.setRequestHeader("Authorization", "Bearer " + Auth.token);
       }
-      if (global.getActiveEntity){
+      if (global.getActiveEntity) {
         xhttp.setRequestHeader("Active-Entity", getActiveEntity());
       }
 
@@ -85,7 +71,7 @@ export default {
             if (d.success == false || this.status != 200) {
               msg("Sikertelen importálás!", "error", null, d.message);
             } else {
-              if (d.hasOwnProperty("ready")) setQueque("import", me.store, d);
+              // if (d.hasOwnProperty("ready")) setQueque("import", me.store, d);
               me.onBack();
             }
           } else {

@@ -1,31 +1,18 @@
 <template>
-  <button
-    class="Button noselect pointer cflex"
-    type="button"
-    :title="getTitle()"
-    :class="{
-      active: active,
-      disable: disable || (quequeDisable && $root.queque),
-      pictoBtn: isPicto,
-      highlight: isHighlight,
-    }"
-    @click="onClick"
-    @focus="onFocus"
-    @blur="onBlur"
-  >
+  <button class="Button noselect pointer cflex" type="button" :title="getTitle()" :class="{
+    active: active,
+    disable: disable || (quequeDisable && Queque.run),
+    pictoBtn: isPicto,
+    highlight: isHighlight,
+  }" @click="onClick" @focus="onFocus" @blur="onBlur">
     <Icon v-if="!noSpin && MajaxManager.loading" icon="f013" spin />
-    <Icon
-      v-if="noSpin || !MajaxManager.loading"
-      :icon="icon"
-      :title="seenTitle"
-      :spin="spin"
-    />
+    <Icon v-if="noSpin || !MajaxManager.loading" :icon="icon" :title="seenTitle" :spin="spin" />
     <div class="ButtonText confText cflex" v-if="conf_state > 0">
       {{
-        conf_state == 1
-          ? "Megerősítés?"
-          : "Megerősítés(" + (conf_state - 1) + ")"
-      }}
+    conf_state == 1
+      ? "Megerősítés?"
+      : "Megerősítés(" + (conf_state - 1) + ")"
+  }}
     </div>
     <div v-if="!isPicto && !(conf_state > 0)" class="ButtonText cflex">
       <slot />
@@ -51,6 +38,7 @@ export default {
       seenTitle: this.title || otherTitle,
       isPicto: !this.hasSlot(),
       conf_state: 0,
+      Queque: Queque,
       MajaxManager: MajaxManager,
     };
   },
@@ -66,8 +54,8 @@ export default {
       if (empty(out)) return null;
 
       if (this.conf_state == 1) out + " (Kattintson a megerősítéshez!)";
-      if (this.quequeDisable && this.$root.queque)
-        return out + " (Importálás vagy exportálás folyamatban van)";
+      if (this.quequeDisable && this.Queque.run)
+        return out + " (" + this.Queque.name + " folyamatban van)";
 
       return out;
     },
@@ -106,13 +94,13 @@ export default {
       }
       e.stopPropagation() ||
         this.disable ||
-        (this.quequeDisable && this.$root.queque) ||
+        (this.quequeDisable && this.Queque.run) ||
         this.$emit("click", e, this);
     },
     onFocus: function (e) {
       e.stopPropagation() ||
         this.disable ||
-        (this.quequeDisable && this.$root.queque) ||
+        (this.quequeDisable && this.Queque.run) ||
         this.$emit("focus", e, this);
     },
     onBlur: function (e) {
@@ -150,7 +138,7 @@ export default {
   justify-content: center;
 }
 
-.Button > .icon {
+.Button>.icon {
   font-size: calc(15px + var(--button-size));
 }
 
