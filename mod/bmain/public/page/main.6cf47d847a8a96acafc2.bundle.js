@@ -1152,6 +1152,7 @@ __webpack_require__.g.doQueque = function (responseData) {
     Queque.run = true;
     Queque.name = responseData.name;
     clearTimeout(timequeque);
+    Queque.signal = responseData.signal;
 
     if (responseData.ready) {
 
@@ -4552,12 +4553,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     methods: {
         doStop: function () {
-            getStore ('admin.quedownload').list({
+            getStore('admin.quedownload').list({
                 stopQueque: Queque.stop,
             });
         },
-        doDownloadExport: function(){
-            getStore ('admin.quedownload').download({
+        doDownloadExport: function () {
+            getStore('admin.quedownload').download({
                 modul_azon: getActiveModul(),
             });
             Queque.run = false;
@@ -14033,7 +14034,10 @@ const _hoisted_1 = {
   class: "toolbar"
 }
 const _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, null, -1 /* HOISTED */)
-const _hoisted_3 = { key: 0 }
+const _hoisted_3 = {
+  key: 0,
+  style: {"margin-left":"5px"}
+}
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Button")

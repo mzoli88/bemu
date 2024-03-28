@@ -4,7 +4,7 @@
 
         <Button icon="f013" spin v-if="!Queque.download">
             {{ Queque.name }} folyamatban
-            <span v-if="Queque.signal">{{ Queque.signal }}</span>
+            <span style="margin-left:5px" v-if="Queque.signal">{{ Queque.signal }}</span>
         </Button>
 
         <Button v-if="!Queque.download" class="stopExportBtn" icon="Mégsem" @click="doStop"
@@ -24,12 +24,12 @@ export default {
     },
     methods: {
         doStop: function () {
-            getStore ('admin.quedownload').list({
+            getStore('admin.quedownload').list({
                 stopQueque: Queque.stop,
             });
         },
-        doDownloadExport: function(){
-            getStore ('admin.quedownload').download({
+        doDownloadExport: function () {
+            getStore('admin.quedownload').download({
                 modul_azon: getActiveModul(),
             });
             Queque.run = false;

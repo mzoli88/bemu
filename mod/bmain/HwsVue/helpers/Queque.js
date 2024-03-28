@@ -16,6 +16,7 @@ global.doQueque = function (responseData) {
     Queque.run = true;
     Queque.name = responseData.name;
     clearTimeout(timequeque);
+    Queque.signal = responseData.signal;
 
     if (responseData.ready) {
 

@@ -9,7 +9,15 @@ use Illuminate\Support\Facades\Config;
 class CacheQueue
 {
 
-    // use CacheTrait;
+    static function export(callable $job)
+    {
+        return self::handle($job);
+    }
+
+    static function import(callable $job)
+    {
+        return self::handle($job, "Importálás");
+    }
 
     static function handle(callable $job, $eventName = "Exportálás")
     {
@@ -22,7 +30,7 @@ class CacheQueue
             $cache = self::getCache();
             if ($cache) return self::isReady();
 
-            // Cache::put('workQuequeSignal_u_' . getUserId(), '(Előkészítés)', now()->addMinutes(5));
+            Cache::forget('workQuequeSignal_u_' . getUserId());
 
             self::setCache([
                 "Queque" => true,
@@ -44,16 +52,18 @@ class CacheQueue
             return [
                 "Queque" => true,
                 "ready" => false,
+                "signal" => null,
                 "name" => $eventName,
             ];
         }
     }
 
-    static function killp($pid){
+    static function killp($pid)
+    {
         if (substr(php_uname(), 0, 7) == "Windows") {
-            exec("taskkill /PID $pid /F", $output);
+            exec("taskkill /PID $pid /F");
         } else {
-            exec("kill $pid", $output);
+            exec("kill $pid");
         }
     }
 
@@ -91,7 +101,7 @@ class CacheQueue
         Config::set('filesystems.disks.local.root', $path);
         Config::set('path.storage', $path);
 
-        if (array_key_exists('content',$cache) && array_key_exists('file', $cache['content']) && Storage::exists($cache['content']['file'])) {
+        if (array_key_exists('content', $cache) && array_key_exists('file', $cache['content']) && Storage::exists($cache['content']['file'])) {
             self::delCache();
             Downloader::storage($cache['content']['file'], $cache['content']['name'], true);
         }
@@ -106,16 +116,18 @@ class CacheQueue
     {
         $cache = self::getCache();
 
-        if(!array_key_exists("Queque",$cache)) $cache['Queque'] = true;
+        if (!array_key_exists("Queque", $cache)) $cache['Queque'] = true;
 
         if (request()->query('stopQueque') == true) {
-            if(array_key_exists('pid',$cache)) CacheQueue::killp($cache['pid'],0);
+            if (array_key_exists('pid', $cache)) CacheQueue::killp($cache['pid'], 0);
             CacheQueue::delCache();
-            return ["Queque" => true, "ready" => true , 'info' => 'manual stop finish'];
+            return ["Queque" => true, "ready" => true, 'info' => 'manual stop finish'];
         }
 
         if (!$cache) return ["Queque" => true, "ready" => true];
-        // if ($cache['ready'] == true) self::delCache();
+
+        $cache['signal'] = Cache::get('workQuequeSignal_u_' . getUserId());
+
         return $cache;
     }
 
@@ -132,5 +144,6 @@ class CacheQueue
     static function delCache()
     {
         Cache::forget('workQueque_u_' . getUserId());
+        Cache::forget('workQuequeSignal_u_' . getUserId());
     }
 }
