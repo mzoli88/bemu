@@ -277,7 +277,7 @@ class Controller3
 
     public function defaultImport($rowEdit = null, $validator = null, $headers = [])
     {
-        
+
         if (empty($headers)) {
             $q = call_user_func_array([$this, 'list'], [request()]);
             $headers = $this->getExportHeadersFromCols($q);
@@ -285,13 +285,13 @@ class Controller3
 
         $model = $this->model;
 
-        if(!$rowEdit && $model) $rowEdit = function($rowdata) use ($model){
+        if (!$rowEdit && $model) $rowEdit = function ($rowdata) use ($model) {
             $model::create($rowdata);
         };
 
         $xlsx = new XlsxReader();
         $xlsx->import($rowEdit, $headers, $validator);
-        return ['import'=>true];
+        return ['import' => true];
     }
 
     public function defaultUpload(Model $model)
@@ -323,7 +323,7 @@ class Controller3
 
         $request = request();
 
-        if ($request->isMethod('post') || $request->isMethod('put')) {
+        if (!app()->runningInConsole() && ($request->isMethod('post') || $request->isMethod('put'))) {
             $header = $request->header('Content-type');
             if ($method == 'import') {
                 if (!(preg_match('/^multipart\/form\-data/', $header) || $request->isJson())) {

@@ -1170,6 +1170,10 @@ class Model extends Emodel
                     if (is_string($value)) $model->{$key} = toLatin($value);
                 }
             }
+            if($model->useStatus){
+                if($model->status == 'Aktív') $model->status = 'I';
+                if($model->status == 'Inaktív') $model->status = 'N';
+            }
             $model->beforeCreate();
             $model->safeStripAll();
         });
