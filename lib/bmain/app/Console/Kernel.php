@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-
+use Illuminate\Support\Facades\Config;
 
 class Kernel extends ConsoleKernel
 {
@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        if(!DB::getDefaultConnection())return;
+        if (!DB::getDefaultConnection()) return;
         collect(config('mods'))->filter(function ($data, $modul_azon) {
             return file_exists($data['dir'] . 'schedule.php');
         })->each(function ($data) use ($schedule) {
@@ -44,13 +44,16 @@ class Kernel extends ConsoleKernel
         Event::listen(CommandStarting::class, function ($event) {
             // Modul azonosító kinyerése
             $class = get_class($this->getArtisan()->all()[$event->command]);
-            $class = explode('\\',$class);
+            $class = explode('\\', $class);
             global $global_modul_azon;
-            if($class[0]=='mod'){
+            if ($class[0] == 'mod') {
                 $global_modul_azon = $class[1];
-            }else{
+            } else {
                 $global_modul_azon = 'admin';
             }
+            $path = BORDER_PATH_BORDERDOC . getModulAzon();
+            Config::set('filesystems.disks.local.root', $path);
+            Config::set('path.storage', $path);
         });
 
         // $this->load(__DIR__.'/Commands');
@@ -63,7 +66,7 @@ class Kernel extends ConsoleKernel
                 foreach ((new Finder)->in($data['dir'] . 'commands')->files() as $file) {
                     $command = 'mod\\' . $modul_azon . '\\commands\\' . str_replace('.php', '', $file->getFilename());
                     if (is_subclass_of($command, Command::class)) {
-                        Artisan::starting(function ($artisan) use ($command,$modul_azon) {
+                        Artisan::starting(function ($artisan) use ($command, $modul_azon) {
                             $artisan->resolve($command);
                         });
                     }
@@ -73,5 +76,4 @@ class Kernel extends ConsoleKernel
             }
         });
     }
-
 }

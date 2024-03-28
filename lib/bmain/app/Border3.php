@@ -2,6 +2,7 @@
 
 namespace App;
 
+use hws\CacheQueue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,8 @@ class Border3
 
     static function init()
     {
+
+        config(['isBorder' => true]);
 
         //storage beállítás
         $path = BORDER_PATH_BORDERDOC . getModulAzon();
@@ -106,6 +109,7 @@ class Border3
             'sys_admin' => isSysAdmin() ? 'I' : 'N',
             'entities' => self::getUserEntitys(),
             'active_entity' => self::getDefaultEntityId(),
+            'CacheQueue' => CacheQueue::getCache(),
         ];
     }
 

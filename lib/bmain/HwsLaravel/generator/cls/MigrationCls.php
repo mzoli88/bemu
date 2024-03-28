@@ -160,7 +160,11 @@ class MigrationCls
         $keys = collect(array_keys((array)$array[0]))->map(function($key){return "`$key`";});
         return "INSERT INTO $tablename (" . $keys->implode(', ') . ") "
             . "VALUES " . collect($array)->map(function ($x) {
-                return "('" . implode("', '", array_values((array)$x)) . "')";
+                $values = array_values((array)$x);
+                $values = array_map(function($v){
+                    return addslashes($v);
+                },$values);
+                return "('" . implode("', '", $values) . "')";
             })->implode(', ');
     }
 
@@ -169,6 +173,7 @@ class MigrationCls
         $values = collect($array)->filter(function ($v, $k) {
             return $k != 'id';
         })->map(function ($v, $k) {
+            $v = addslashes($v);
             return "`$k` = '$v'";
         })->implode(', ');
         return "UPDATE $tablename SET $values WHERE id = $id";

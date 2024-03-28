@@ -15,6 +15,7 @@ import "./HwsVue/helpers/isType"
 global.defaultToken = true;
 import "./HwsVue/helpers/Validators"
 import "./HwsVue/helpers/animations"
+import "./HwsVue/helpers/Queque"
 import Hash from "./HwsVue/helpers/Hash"
 import GetComp from "./HwsVue/helpers/getComp"
 import Formh from "./HwsVue/helpers/Form"

@@ -618,6 +618,7 @@ global.Majax = class Majax {
       timeout: op.timeout || false,
       wait: op.wait || false,
       hide: op.hide || false,
+      resend: function () { me.$queueAdd(this); },
       on: function (success, response, status) {
 
         try {
@@ -685,6 +686,11 @@ global.Majax = class Majax {
               //engedjük tovább, hogy egyéb komponensek is tudjanak hibát kezelni
               break;
           }
+        }
+
+        if (doQueque && isObject(me.$lastResponse) && me.$lastResponse.Queque === true) {
+          doQueque(me.$lastResponse);
+          return;
         }
 
 

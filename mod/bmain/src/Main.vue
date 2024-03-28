@@ -1,24 +1,11 @@
 <template>
   <div class="vflex mainCt fit" v-if="render">
-    <Panel
-      v-if="buttons"
-      class="Menu"
-      h
-      border
-      collapsible
-      collapsed
-      size="300px"
-    >
+    <Panel v-if="buttons" class="Menu" h border collapsible collapsed size="300px">
       <template #titlecollapsed>
         <div class="pictoMenu vflex toolbar">
           <template v-for="(item, index) in buttons" :key="'mbtn' + index">
-            <Button
-              :active="active_menu == index"
-              @click="onMenuClick(index)"
-              :title="item.name"
-              :icon="item.icon"
-              class="collapsedMenuButton cflex"
-            />
+            <Button :active="active_menu == index" @click="onMenuClick(index)" :title="item.name" :icon="item.icon"
+              class="collapsedMenuButton cflex" />
           </template>
         </div>
       </template>
@@ -32,13 +19,8 @@
         <div class="nevjegy-owner">{{ userData.modul_company }}</div>
       </div>
       <template v-for="(item, index) in buttons" :key="'m2btn' + index">
-        <Button
-          class="MenuButton cflex"
-          :active="active_menu == index"
-          @click="onMenuClick(index)"
-          :icon="item.icon"
-          >{{ item.name }}</Button
-        >
+        <Button class="MenuButton cflex" :active="active_menu == index" @click="onMenuClick(index)" :icon="item.icon">{{
+    item.name }}</Button>
       </template>
     </Panel>
     <div class="hflex main_wrap fit">
@@ -59,7 +41,7 @@ export default {
   name: "Main",
   data: function () {
 
-    var active = this.getCpHash();
+    var active = this.getCpHash().split('|').shift();
 
     if (!active) msg("Nincs modul kiválasztva!");
 
@@ -102,31 +84,35 @@ export default {
   },
 
   methods: {
-    loadMenu: function(){
+    loadMenu: function () {
       getStore("admin.perms").load({
-        modul:this.active_modul
-      },(s, x, code) => {
+        modul: this.active_modul
+      }, (s, x, code) => {
         if (!s) {
           maskOff();
           if (code == 401) return;
           return msg(x.message, "error");
         }
-        
+
         g_userData = JSON.parse(JSON.stringify(x));
         this.userData = x;
         this.entities = x.entities;
         this.active_entity = this.active_entity || x.active_entity;
         this.perms = x.perms;
-        
-        if(this.entities.length>1){
+
+        if (doQueque && x.CacheQueue && x.CacheQueue.Queque == true){
+          doQueque(x.CacheQueue);
+        }
+
+        if (this.entities.length > 1) {
           this.$root.entity = {
             active: this.active_entity,
             list: this.entities,
           }
         }
-        
+
         this.buttons = x.menu;
-        
+
         this.ActiveToMenu(this.active);
         this.render = true;
         maskOff();
@@ -151,12 +137,12 @@ export default {
 
     openMenu: function (modul_azon, modul_menu) {
       if (!this.buttons) return;
-      clearTimeout(this.tmpTimeout);      
+      clearTimeout(this.tmpTimeout);
 
       g_active_modul = modul_azon;
       this.active_modul = modul_azon;
 
-      if(empty({modul_menu}) || !this.buttons[modul_menu]){
+      if (empty({ modul_menu }) || !this.buttons[modul_menu]) {
         modul_menu = Object.keys(this.buttons)[0];
       }
 
@@ -164,9 +150,9 @@ export default {
       this.active = modul_azon + "." + modul_menu;
 
       if (!Contents[this.active]) {
-          Contents[this.active] = cLoad(
-            this.active_menu + "/main-" + this.active_menu
-          );
+        Contents[this.active] = cLoad(
+          this.active_menu + "/main-" + this.active_menu
+        );
       }
 
     },
@@ -186,16 +172,10 @@ export default {
             return true;
           }
 
-          if (
-            this.perms[this.getActiveModul()]
-          ) {
-
-            var perms = this.perms[this.getActiveModul()];
-
-            if (perms[arguments[i]] === true || perms[arguments[i]] === "I") {
-              return true;
-            }
+          if (this.perms[arguments[i]] === true || this.perms[arguments[i]] === "I") {
+            return true;
           }
+
         }
       }
       return false;
@@ -221,22 +201,30 @@ export default {
       return this.active_menu;
     },
 
-    setEntity: function (val,fn) {
+    setEntity: function (val, fn) {
       if (this.active_entity == val) return;
       this.active_entity = val;
       sessionStorage.setItem("active_entity", val);
-      if(this.$root.entity)this.$root.entity.active = val;
-      fn();
+      if (this.$root.entity) this.$root.entity.active = val;
+      if(fn)fn();
     },
 
     $hash: function (hash) {
-      var a = hash.split(".");
-      if(this.active_modul != a[0]){
-        this.active_modul = a[0];  
+
+      var b = hash.split("|");
+      var a = b.shift().split(".");
+      
+      var entity_id = b.shift();
+      if (entity_id){
+        this.setEntity(entity_id);
+      }
+
+      if (this.active_modul != a[0]) {
+        this.active_modul = a[0];
         this.active = hash;
         this.loadMenu();
-      }else{
-        this.ActiveToMenu(hash);
+      } else {
+        this.ActiveToMenu(a.join('.'));
       }
     },
   },
@@ -244,7 +232,6 @@ export default {
 </script>
 
 <style>
-
 .MainTopToolbar {
   /* background-color: #1e5999; */
   padding: 6px;

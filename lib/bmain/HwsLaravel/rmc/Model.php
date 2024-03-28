@@ -986,7 +986,8 @@ class Model extends Emodel
         return $plusz_data;
     }
 
-    static function getHiddenFields(){
+    static function getHiddenFields()
+    {
         $class = static::class;
         return (new $class)->getHidden();
     }
@@ -1038,9 +1039,9 @@ class Model extends Emodel
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function fileUpload($file, $allowedTypes = false, $folder = null)
+    public function fileUpload($file, $allowedTypes = false, $folder = null, $UploadCheck = true)
     {
-        UploadCheck::runFromJson($file, $allowedTypes);
+        if ($UploadCheck) UploadCheck::runFromJson($file, $allowedTypes);
 
         $filepath = (function_exists('getModulAzon') ? call_user_func('getModulAzon') . '/' : '') . preg_replace('/.*\\\\/', '', ($folder ? $folder : static::class)) . '/' . $this->getKey();
 

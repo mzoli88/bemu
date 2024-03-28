@@ -1,42 +1,17 @@
 <template>
   <div class="Grid border vflex fit">
     <template v-if="show == 'create'">
-      <slot
-        name="formCreate"
-        :save="true"
-        :back="toList"
-        :store="store"
-        :record_id="selected_id"
-        :askBeforeCreate="askBeforeCreate"
-        :afterSave="afterSave"
-        :fields="listCreate"
-        :openDetailsAfterCreate="openDetailsAfterCreate"
-      >
+      <slot name="formCreate" :save="true" :back="toList" :store="store" :record_id="selected_id"
+        :askBeforeCreate="askBeforeCreate" :afterSave="afterSave" :fields="listCreate"
+        :openDetailsAfterCreate="openDetailsAfterCreate">
       </slot>
       <Panel title="Felvitel" border h v-if="!hasSlot('formCreate')">
-        <Form
-          save
-          :store="store"
-          :back="toList"
-          :fields="hasSlot('pureCreate') ? null : listCreate"
-          :askBeforeCreate="askBeforeCreate"
-          :afterSave="afterSave"
-          :openDetailsAfterCreate="openDetailsAfterCreate"
-        >
+        <Form save :store="store" :back="toList" :fields="hasSlot('pureCreate') ? null : listCreate"
+          :askBeforeCreate="askBeforeCreate" :afterSave="afterSave" :openDetailsAfterCreate="openDetailsAfterCreate">
           <template #afterFields>
-            <slot
-              name="create"
-              :back="toList"
-              :store="store"
-              :record_id="selected_id"
-            >
+            <slot name="create" :back="toList" :store="store" :record_id="selected_id">
             </slot>
-            <slot
-              name="pureCreate"
-              :back="toList"
-              :store="store"
-              :record_id="selected_id"
-            >
+            <slot name="pureCreate" :back="toList" :store="store" :record_id="selected_id">
             </slot>
           </template>
         </Form>
@@ -44,45 +19,16 @@
     </template>
 
     <template v-if="show == 'update'">
-      <slot
-        :save="true"
-        :load="true"
-        name="formUpdate"
-        :back="toList"
-        :store="store"
-        :record_id="selected_id"
-        :askBeforeCreate="askBeforeCreate"
-        :afterSave="afterSave"
-        :fields="listCreate"
-      >
+      <slot :save="true" :load="true" name="formUpdate" :back="toList" :store="store" :record_id="selected_id"
+        :askBeforeCreate="askBeforeCreate" :afterSave="afterSave" :fields="listCreate">
       </slot>
       <Panel title="Módosítás" border h v-if="!hasSlot('formUpdate')">
-        <Form
-          save
-          load
-          :back="toList"
-          :store="store"
-          :record_id="selected_id"
-          :fields="hasSlot('pureUpdate') ? null : listUpdate"
-          :askBeforeUpdate="askBeforeUpdate"
-          :afterSave="afterSave"
-        >
+        <Form save load :back="toList" :store="store" :record_id="selected_id"
+          :fields="hasSlot('pureUpdate') ? null : listUpdate" :askBeforeUpdate="askBeforeUpdate" :afterSave="afterSave">
           <template #afterFields="udata">
-            <slot
-              name="update"
-              :back="toList"
-              :store="store"
-              :record_id="selected_id"
-              :rowData="udata.rowData"
-            >
+            <slot name="update" :back="toList" :store="store" :record_id="selected_id" :rowData="udata.rowData">
             </slot>
-            <slot
-              name="pureUpdate"
-              :back="toList"
-              :store="store"
-              :record_id="selected_id"
-              :rowData="udata.rowData"
-            >
+            <slot name="pureUpdate" :back="toList" :store="store" :record_id="selected_id" :rowData="udata.rowData">
             </slot>
           </template>
         </Form>
@@ -90,34 +36,15 @@
     </template>
 
     <template v-if="cRoutes && cRoutes[show]">
-      <slot
-        :name="show"
-        :save="true"
-        :store="store"
-        :back="toList"
-        :fields="listCreate"
-      />
+      <slot :name="show" :save="true" :store="store" :back="toList" :fields="listCreate" />
     </template>
     <template v-if="uRoutes && uRoutes[show]">
-      <slot
-        :name="show"
-        :save="true"
-        :load="true"
-        :back="toList"
-        :store="store"
-        :record_id="selected_id"
-        :fields="listUpdate"
-      />
+      <slot :name="show" :save="true" :load="true" :back="toList" :store="store" :record_id="selected_id"
+        :fields="listUpdate" />
     </template>
 
-    <Detail
-      v-if="show == 'details'"
-      :store="store"
-      :fields="listDetails"
-      :record_id="selected_id"
-      :uRoutes="uRoutes"
-      :title="titleDetaile || title"
-    >
+    <Detail v-if="show == 'details'" :store="store" :fields="listDetails" :record_id="selected_id" :uRoutes="uRoutes"
+      :title="titleDetaile || title">
       <template v-slot:default="d">
         <slot v-bind="d" name="details" />
       </template>
@@ -132,12 +59,7 @@
       </template>
     </Detail>
 
-    <Panel
-      v-if="show == 'import'"
-      :title="importBtnName ? importBtnName : 'Importálás'"
-      border
-      h
-    >
+    <Panel v-if="show == 'import'" :title="importBtnName ? importBtnName : 'Importálás'" border h>
       <ImportCmp :store="store" />
     </Panel>
 
@@ -148,62 +70,31 @@
             <Field type="entity" />
           </div>
           <div class="toolbar cflex">
-            <Button
-              v-if="canCreate()"
-              @click="goTo('create')"
-              title="Felvitel"
-            />
+            <Button v-if="canCreate()" @click="goTo('create')" title="Felvitel" />
             <template v-if="cRoutes">
               <template v-for="(route, index) in cRoutes">
-                <Button
-                  v-if="ifroute(null, route)"
-                  :class="index"
-                  :key="index"
-                  :icon="route.icon"
-                  :title="route.title"
-                  :quequeDisable="route.quequeDisable"
-                  @click="
-                    route.click ? route.click($event, _self) : goTo(index)
-                  "
-                />
+                <Button v-if="ifroute(null, route)" :class="index" :key="index" :icon="route.icon" :title="route.title"
+                  :quequeDisable="route.quequeDisable" @click="
+      route.click ? route.click($event, _self) : goTo(index)
+      " />
               </template>
             </template>
-            <Button
-              v-if="checkboxDelete"
-              @click="onCheckboxDelete"
-              icon="delete"
-              title="Kijelölt sorok törlése"
-            />
-            <Button
-              v-if="isExport"
-              quequeDisable
-              @click="onExport"
-              icon="export"
-              title="Export"
-            />
-            <Button
-              v-if="isImport"
-              @click="onImport"
-              quequeDisable
-              icon="import"
-              :title="importBtnName ? importBtnName : 'Import'"
-            />
+            <Button v-if="checkboxDelete" @click="onCheckboxDelete" icon="delete" title="Kijelölt sorok törlése" />
+            <Button v-if="isExport" quequeDisable @click="onExport" icon="export" title="Export" />
+            <Button v-if="isImport" @click="onImport" quequeDisable icon="import"
+              :title="importBtnName ? importBtnName : 'Import'" />
             <slot name="bottomToolbar" />
             <div v-if="checkbox" class="cflex">
               Kijelölt sorok száma: {{ chboxSelectedNumber }} db
             </div>
+            <Queque />
           </div>
           <div class="Grid_title fit cflex" v-if="title">{{ title }}</div>
         </div>
       </Pager>
 
-      <FastFilterCmp
-        ref="fastFilter"
-        :data="fastFilter"
-        :fastFilterValue="fastFilterValue"
-        v-if="fastFilter && showGrid"
-        v-show="!MajaxManager.loading"
-      />
+      <FastFilterCmp ref="fastFilter" :data="fastFilter" :fastFilterValue="fastFilterValue"
+        v-if="fastFilter && showGrid" v-show="!MajaxManager.loading" />
       <slot name="infobox" />
 
       <div v-if="MajaxManager.loading" class="vflex fit GridMask">
@@ -217,196 +108,106 @@
       </div>
 
       <div v-show="!MajaxManager.loading" class="gridBodySpacer"></div>
-      <div
-        v-if="showGrid"
-        v-show="!MajaxManager.loading"
-        class="GridBodyParent Body fit vflex"
-      >
+      <div v-if="showGrid" v-show="!MajaxManager.loading" class="GridBodyParent Body fit vflex">
         <div class="GridBody fit">
           <table ref="table">
-            <thead
-              class="headerRow noselect"
-              @contextmenu="onHeaderContextmenu"
-            >
+            <thead class="headerRow noselect" @contextmenu="onHeaderContextmenu">
               <tr>
                 <th v-if="checkbox">
-                  <div
-                    class="GridHeader titleBorder gridCheckbox cflex"
-                    v-if="!MajaxManager.loading"
-                  >
-                    <Field
-                      type="checkbox"
-                      ref="checkboxAll"
-                      @change="checkboxAll"
-                      center
-                      :title="onCheckboxTitle()"
-                    />
+                  <div class="GridHeader titleBorder gridCheckbox cflex" v-if="!MajaxManager.loading">
+                    <Field type="checkbox" ref="checkboxAll" @change="checkboxAll" center :title="onCheckboxTitle()" />
                   </div>
                 </th>
-                <th
-                  v-if="
-                    hasTools ||
-                    uRoutes ||
-                    isUpdate ||
-                    isDelete ||
-                    lock ||
-                    isDownload
-                  "
-                >
+                <th v-if="hasTools ||
+      uRoutes ||
+      isUpdate ||
+      isDelete ||
+      lock ||
+      isDownload
+      ">
                   <div class="GridHeader titleBorder">
                     <span v-if="operationsText">{{ operationsText }}</span>
                     <span v-else>Műveletek</span>
                   </div>
                 </th>
                 <template v-for="colData in listableHeaders">
-                  <th
-                    v-bind:key="'header_' + colData.name"
-                    @click="doSort(colData)"
-                    :class="[
-                      colData.name,
-                      colData.sortable != false ? 'pointer' : '',
-                      sortData.property == colData.name ? 'sorted' : '',
-                    ]"
-                    v-if="!hiddenHeaders.includes(colData.name)"
-                  >
+                  <th v-bind:key="'header_' + colData.name" @click="doSort(colData)" :class="[
+      colData.name,
+      colData.sortable != false ? 'pointer' : '',
+      sortData.property == colData.name ? 'sorted' : '',
+    ]" v-if="!hiddenHeaders.includes(colData.name)">
                     <div class="GridHeader titleBorder" v-tooltip>
                       <div class="GridHeaderText">
                         {{ colData.title || colData.name }}
                       </div>
-                      <div
-                        v-if="sortData.property == colData.name"
-                        class="icon sort GridHeadericon cflex"
-                        :class="{ asc: sortData.asc, desc: !sortData.asc }"
-                      ></div>
+                      <div v-if="sortData.property == colData.name" class="icon sort GridHeadericon cflex"
+                        :class="{ asc: sortData.asc, desc: !sortData.asc }"></div>
                     </div>
                   </th>
                 </template>
               </tr>
             </thead>
             <tbody>
-              <template
-                v-for="(item, index) in listData"
-                v-bind:key="'row_' + index"
-              >
+              <template v-for="(item, index) in listData" v-bind:key="'row_' + index">
                 <tr class="GridRow" :class="onRowClass(item, index)">
                   <td v-if="checkbox">
-                    <div
-                      class="gridCheckbox cflex"
-                      v-if="!MajaxManager.loading"
-                    >
-                      <Field
-                        type="checkbox"
-                        :name="'ch_' + item.id"
-                        gchbox
-                        @change="checkedChange(item.id, $event)"
-                        v-if="onCheckboxIf(item)"
-                        :title="onCheckboxTitle(item)"
-                        :startValue="CheckboxSelected[item.id] ? 'I' : 'N'"
-                      />
+                    <div class="gridCheckbox cflex" v-if="!MajaxManager.loading">
+                      <Field type="checkbox" :name="'ch_' + item.id" gchbox @change="checkedChange(item.id, $event)"
+                        v-if="onCheckboxIf(item)" :title="onCheckboxTitle(item)"
+                        :startValue="CheckboxSelected[item.id] ? 'I' : 'N'" />
                     </div>
                   </td>
-                  <td
-                    v-if="
-                      hasTools ||
-                      uRoutes ||
-                      isUpdate ||
-                      isDelete ||
-                      lock ||
-                      isDownload
-                    "
-                    :class="{
-                      pointer: smallDetaile,
-                      selected: row_selected_index == index,
-                    }"
-                  >
+                  <td v-if="hasTools ||
+      uRoutes ||
+      isUpdate ||
+      isDelete ||
+      lock ||
+      isDownload
+      " :class="{
+      pointer: smallDetaile,
+      selected: row_selected_index == index,
+    }">
                     <div class="GridTools toolbar">
-                      <Button
-                        v-if="canDetaile(item)"
-                        icon="details"
-                        title="Részletek megtekintése"
-                        @click="goTo('details', item)"
-                      />
-                      <Button
-                        v-if="canUpdate(item)"
-                        icon="edit"
-                        title="Módosítás"
-                        @click="goTo('update', item)"
-                      />
-                      <Button
-                        v-if="isDownload"
-                        title="Letöltés"
-                        icon="f019"
-                        @click="download(item)"
-                      />
+                      <Button v-if="canDetaile(item)" icon="details" title="Részletek megtekintése"
+                        @click="goTo('details', item)" />
+                      <Button v-if="canUpdate(item)" icon="edit" title="Módosítás" @click="goTo('update', item)" />
+                      <Button v-if="isDownload" title="Letöltés" icon="f019" @click="download(item)" />
                       <template v-if="uRoutes">
                         <template v-for="(route, index) in uRoutes">
-                          <Button
-                            v-if="ifroute(item, route)"
-                            :class="index"
-                            :key="index"
-                            :quequeDisable="route.quequeDisable"
-                            :icon="route.icon"
-                            :title="route.title"
-                            @click="
-                              route.click
-                                ? route.click($event, _self, item)
-                                : goTo(index, item)
-                            "
-                          />
+                          <Button v-if="ifroute(item, route)" :class="index" :key="index"
+                            :quequeDisable="route.quequeDisable" :icon="route.icon" :title="route.title" @click="
+      route.click
+        ? route.click($event, _self, item)
+        : goTo(index, item)
+      " />
                         </template>
                       </template>
                       <slot v-bind="item" name="rowBtn" />
-                      <Button
-                        v-if="canRowDel ? canRowDel(item) : isDelete"
-                        icon="delete"
-                        title="Törlés"
-                        conf
-                        @click="onDelete(item)"
-                      />
-                      <Button
-                        class="DetaileDownButton cflex"
-                        v-if="smallDetaile && !smallDetailsOpen"
-                        :key="'dsBtn' + row_selected_index + '_' + index"
-                        :icon="
-                          row_selected_index == index
-                            ? 'sDetailRight'
-                            : 'sDetailDown'
-                        "
-                        @click="rowClick(index)"
-                      />
-                      <div
-                        v-if="lock && item.LockData"
-                        class="cflex LockButton pointer"
-                        :title="'Rekord zárolva: ' + item.LockData"
-                      >
+                      <Button v-if="canRowDel ? canRowDel(item) : isDelete" icon="delete" title="Törlés" conf
+                        @click="onDelete(item)" />
+                      <Button class="DetaileDownButton cflex" v-if="smallDetaile && !smallDetailsOpen"
+                        :key="'dsBtn' + row_selected_index + '_' + index" :icon="row_selected_index == index
+        ? 'sDetailRight'
+        : 'sDetailDown'
+      " @click="rowClick(index)" />
+                      <div v-if="lock && item.LockData" class="cflex LockButton pointer"
+                        :title="'Rekord zárolva: ' + item.LockData">
                         <Icon>f071</Icon>
                       </div>
                       <slot v-bind="item" name="rowBtnEnd" />
                     </div>
                   </td>
                   <template v-for="colData in listableHeaders">
-                    <td
-                      v-bind:key="'row_' + index + 'col_' + colData.name"
-                      :style="{ textAlign: colData.align || 'left' }"
-                      :class="[
-                        colData.name,
-                        smallDetaile && !smallDetailsOpen ? 'pointer' : null,
-                        row_selected_index == index ? 'selected' : null,
-                      ]"
-                      v-if="!hiddenHeaders.includes(colData.name)"
-                      @click="rowClick(index)"
-                    >
-                      <div
-                        class="GridCelContent"
-                        :class="{ maxCellWidth: !noMaxCellWidth }"
-                        v-tooltip
-                      >
+                    <td v-bind:key="'row_' + index + 'col_' + colData.name"
+                      :style="{ textAlign: colData.align || 'left' }" :class="[
+      colData.name,
+      smallDetaile && !smallDetailsOpen ? 'pointer' : null,
+      row_selected_index == index ? 'selected' : null,
+    ]" v-if="!hiddenHeaders.includes(colData.name)" @click="rowClick(index)">
+                      <div class="GridCelContent" :class="{ maxCellWidth: !noMaxCellWidth }" v-tooltip>
                         <slot v-bind="item" :name="colData.name">
-                          <span
-                            v-html="
-                              renderColValue(colData, item[colData.name], item)
-                            "
-                          >
+                          <span v-html="renderColValue(colData, item[colData.name], item)
+      ">
                           </span>
                         </slot>
                       </div>
@@ -414,22 +215,12 @@
                   </template>
                 </tr>
                 <template v-if="smallDetaile">
-                  <tr
-                    class="GridSmallDetail"
-                    :class="onRowClass(item, index)"
-                    :key="'rowdetaile_' + index"
-                    v-if="row_selected_index == index || smallDetailsOpen"
-                  >
+                  <tr class="GridSmallDetail" :class="onRowClass(item, index)" :key="'rowdetaile_' + index"
+                    v-if="row_selected_index == index || smallDetailsOpen">
                     <td colspan="100%">
                       <div class="GridSmallDetailCt">
-                        <Form
-                          class="SmallDetailForm"
-                          v-if="listSmallDetails.length"
-                          :fields="listSmallDetails"
-                          :data="item"
-                          :colsLayout="!smallDetailsNocols"
-                          noFixWidth
-                        />
+                        <Form class="SmallDetailForm" v-if="listSmallDetails.length" :fields="listSmallDetails"
+                          :data="item" :colsLayout="!smallDetailsNocols" noFixWidth />
                         <slot name="smallDetaile" v-bind="item" />
                       </div>
                     </td>
@@ -441,26 +232,15 @@
         </div>
       </div>
     </div>
-    <SearchPanel
-      v-if="!noSearch && showGrid"
-      v-show="show == 'list'"
-      :store="store"
-      :fields="listSearch"
-      :defaultSearch="defaultSearchValue"
-      ref="SearchPanel"
-      :collapsed="!searchOpen"
-    />
+    <SearchPanel v-if="!noSearch && showGrid" v-show="show == 'list'" :store="store" :fields="listSearch"
+      :defaultSearch="defaultSearchValue" ref="SearchPanel" :collapsed="!searchOpen" />
     <Teleport to="body" v-if="showHeaderContextmenu">
       <div class="gridHeadContextMenu frame" ref="HeaderContextmenu">
         <div v-for="colData in listableHeaders" :key="colData.name">
           <div class="toolbar" v-if="colData.hideable != false">
-            <Field
-              type="checkbox"
-              :name="colData.name"
-              :ref="'ContextHeaderField_' + colData.name"
+            <Field type="checkbox" :name="colData.name" :ref="'ContextHeaderField_' + colData.name"
               :startValue="hiddenHeaders.includes(colData.name) ? 'N' : 'I'"
-              @change="(v) => ongridHeadContextMenuChange(v, colData.name)"
-            />
+              @change="(v) => ongridHeadContextMenuChange(v, colData.name)" />
             <div class="cflex">{{ colData.title }}</div>
           </div>
         </div>
@@ -474,6 +254,7 @@ import SearchPanel from "./SearchPanel.vue";
 import FastFilterCmp from "./FastFilter.vue";
 import Detail from "./Detail.vue";
 import ImportCmp from "./Import.vue";
+import Queque from "./../Queque.vue";
 export default {
   name: "Grid",
   props: {
@@ -921,10 +702,10 @@ export default {
             a.sort > b.sort
               ? 1
               : a.sort === b.sort
-              ? a.sort2 > b.sort2
-                ? 1
+                ? a.sort2 > b.sort2
+                  ? 1
+                  : -1
                 : -1
-              : -1
           )
       );
     },
@@ -1152,16 +933,7 @@ export default {
           "Egymillió rekord szám fölött nem lehet exportálni!",
           "warn"
         );
-      store.export(
-        {
-          majax_type: "export",
-          majax_store: me.store,
-          hiddenHeaders: me.hiddenHeaders,
-        },
-        function (s, d) {
-          if (d.hasOwnProperty("ready")) setQueque("export", me.store, d);
-        }
-      );
+      store.export({ hiddenHeaders: me.hiddenHeaders });
     },
     onImport: function () {
       this.show = "import";
@@ -1286,12 +1058,12 @@ export default {
       if (tmp[0] != "list" && isManualHashChange) {
         //ha link segítségével jutunk el a részletek abba vagy módosításba (stb), akkor bezárással az előző képernyőre térjen vissza
         let parenthCount = this.$getParentHashCount() + 1;
-        let W_newhash = this.$getHash().splice(0,parenthCount).join('/').replace(/(details\|)[0-9]*$/, 'details');
+        let W_newhash = this.$getHash().splice(0, parenthCount).join('/').replace(/(details\|)[0-9]*$/, 'details');
         //join('/').split('/') azért kell, mert az isManualHashChange -ne írjuk felül a splice-al mert akkor rossz lesz a végeredmény
-        let W_oldhash = isManualHashChange.join('/').split('/').splice(0,parenthCount).join('/').replace(/(details\|)[0-9]*$/, 'details');
+        let W_oldhash = isManualHashChange.join('/').split('/').splice(0, parenthCount).join('/').replace(/(details\|)[0-9]*$/, 'details');
         // dd('gridOldhash',isManualHashChange,W_oldhash,W_newhash,W_newhash != W_oldhash);
         //ha a régi és új megegyezik (pl worklfow link egyik részletekről a másikra, akkor be leherssen zárni az ablakot)
-        if(W_newhash != W_oldhash)this.halndleOldhash = isManualHashChange;
+        if (W_newhash != W_oldhash) this.halndleOldhash = isManualHashChange;
       }
       switch (tmp[0]) {
         case "list":
@@ -1450,6 +1222,7 @@ export default {
     FastFilterCmp,
     Detail,
     ImportCmp,
+    Queque
   },
 
   directives: {
@@ -1467,25 +1240,25 @@ export default {
 </script>
 
 <style>
-.GridSearchPanel.notCollapsed > .Body {
+.GridSearchPanel.notCollapsed>.Body {
   border-left: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
 }
 
-.GridBody > table {
+.GridBody>table {
   min-width: 100%;
 }
 
-.GridRow.inactive > td {
+.GridRow.inactive>td {
   color: #ccc;
 }
 
-.GridRow > td {
+.GridRow>td {
   padding: 0;
 }
 
-.GridRow > td:last-child,
-.headerRow > tr > th:last-child {
+.GridRow>td:last-child,
+.headerRow>tr>th:last-child {
   width: 100%;
 }
 
@@ -1509,8 +1282,8 @@ export default {
   white-space: nowrap;
 }
 
-.GridRow > td:last-child .GridCelContent,
-.headerRow > tr > th:last-child .GridCelContent {
+.GridRow>td:last-child .GridCelContent,
+.headerRow>tr>th:last-child .GridCelContent {
   max-width: initial;
 }
 
@@ -1519,6 +1292,7 @@ export default {
   flex-direction: row;
   gap: 10px;
 }
+
 .GridTools.toolbar {
   flex-wrap: nowrap;
 }
@@ -1552,7 +1326,7 @@ export default {
   padding: 0 10px;
 }
 
-.GridBody > table {
+.GridBody>table {
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -1563,14 +1337,14 @@ export default {
   border-right: 1px solid #ddd;
 }
 
-.GridBody > table > thead th {
+.GridBody>table>thead th {
   font-weight: initial;
   background-color: #515e6f;
   color: #fff;
   padding: 12px 12px 8px 12px;
 }
 
-.GridBody > table > thead th {
+.GridBody>table>thead th {
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -1581,20 +1355,20 @@ export default {
   font-weight: bold;
 }
 
-th.sorted > .GridHeader {
+th.sorted>.GridHeader {
   color: #ff8200;
 }
 
-.headerRow > tr > th {
+.headerRow>tr>th {
   border-bottom: 4px solid #515e6f;
 }
 
-.headerRow > tr > th.sorted {
+.headerRow>tr>th.sorted {
   border-bottom: 4px solid #ff8200;
 }
 
-.GridSmallDetail > td,
-.GridRow > td {
+.GridSmallDetail>td,
+.GridRow>td {
   border-bottom: 1px solid #ddd;
 }
 
@@ -1629,17 +1403,18 @@ tr.GridRow:last-child td {
   min-width: 25px;
 }
 
-.GridBodyPanel > .Pager .pbtn > .icon {
+.GridBodyPanel>.Pager .pbtn>.icon {
   color: var(--title-color);
 }
-.GridBodyPanel > .Pager {
+
+.GridBodyPanel>.Pager {
   background-color: var(--title-background-color);
   color: var(--title-color);
   height: 50px;
   padding: 0 10px;
 }
 
-.GridBodyPanel > .Pager > .pagingBody > .Button {
+.GridBodyPanel>.Pager>.pagingBody>.Button {
   color: #fff;
 }
 
@@ -1685,9 +1460,11 @@ tr.GridRow:last-child td {
   color: #333;
   display: inline-block;
 }
+
 .SmallDetailForm .formBody .fieldLabel {
   width: 160px;
 }
+
 .SmallDetailForm .formBody .FieldInner {
   width: 250px;
 }

@@ -41,6 +41,7 @@ use Illuminate\Http\Response;
 use hws\xlsx\XlsxWriter;
 use PDOException;
 use Exception;
+use hws\xlsx\XlsxReader;
 use Illuminate\Http\JsonResponse;
 
 class Controller3
@@ -274,6 +275,25 @@ class Controller3
         return $xlsx->download($file_name);
     }
 
+    public function defaultImport($rowEdit = null, $validator = null, $headers = [])
+    {
+        
+        if (empty($headers)) {
+            $q = call_user_func_array([$this, 'list'], [request()]);
+            $headers = $this->getExportHeadersFromCols($q);
+        }
+
+        $model = $this->model;
+
+        if(!$rowEdit && $model) $rowEdit = function($rowdata) use ($model){
+            $model::create($rowdata);
+        };
+
+        $xlsx = new XlsxReader();
+        $xlsx->import($rowEdit, $headers, $validator);
+        return ['import'=>true];
+    }
+
     public function defaultUpload(Model $model)
     {
         if (!request()->filled('file_upload')) return;
@@ -348,7 +368,7 @@ class Controller3
             report($th);
             if ($th instanceof ValidationException) $this->sendNaplo('Validációs hiba történt');
             elseif ($th instanceof PDOException) $this->sendNaplo('Adatbázis hiba történt');
-            elseif ($th instanceof SendErrorException) $this->sendNaplo(($th->getTitle()) ? $th->getTitle().', '. $th->getMessage() : $th->getMessage());
+            elseif ($th instanceof SendErrorException) $this->sendNaplo(($th->getTitle()) ? $th->getTitle() . ', ' . $th->getMessage() : $th->getMessage());
             elseif (get_class($th) == 'Laravel\Passport\Exceptions\OAuthServerException') $this->sendNaplo('Sikertelen authentikáció');
             else  $this->sendNaplo('Szerver oldali hiba történt');
             throw $th;
