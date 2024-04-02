@@ -91,6 +91,7 @@ function getMenu()
 {
     $route = explode('/', request()->route()->getPrefix());
     if (count($route) < 2) return false;
+    if($route[1] == 'interfaces') return false;
     return $route[1];
 }
 
