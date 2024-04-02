@@ -91,7 +91,7 @@ function getMenu()
 {
     $route = explode('/', request()->route()->getPrefix());
     if (count($route) < 2) return false;
-    if($route[1] == 'interfaces') return false;
+    if ($route[1] == 'interfaces') return false;
     return $route[1];
 }
 
@@ -134,6 +134,7 @@ function hasEntity($user_id = null, $entity_id = null)
 
 function hasPerm($jog)
 {
+    if ($jog === true) return true;
     if ($jog === false || !call_user_func_array([Border3::class, 'getJog'], func_get_args())) return false;
     return true;
 }
