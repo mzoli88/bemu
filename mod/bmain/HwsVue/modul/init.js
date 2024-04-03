@@ -20,6 +20,9 @@ import Pager from "./../components/Pager.vue";
 const Grid = defineAsyncComponent(() =>
   import('./../components/grid/Grid.vue')
 )
+const Detail = defineAsyncComponent(() =>
+  import('./../components/grid/Detail.vue')
+)
 import Dropdown from "./../components/Dropdown.vue";
 import Field from "./../components/Field.vue";
 import Globals from "../helpers/globals";
@@ -46,6 +49,7 @@ App.component("Icon", Icon);
 App.component("Button", Button);
 App.component("Pager", Pager);
 App.component("Grid", Grid);
+App.component("Detail", Detail);
 App.component("Dropdown", Dropdown);
 App.component("Field", Field);
 App.component("Accordion", Accordion);

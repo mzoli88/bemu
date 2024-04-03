@@ -25,6 +25,7 @@ import Tab from "./HwsVue/components/Tab.vue"
 import Icon from "./HwsVue/components/Icon.vue"
 import Button from "./HwsVue/components/Button.vue"
 import Pager from "./HwsVue/components/Pager.vue"
+import Detail from "./HwsVue/components/grid/Detail.vue"
 import Grid from "./HwsVue/components/grid/Grid.vue"
 import Dropdown from "./HwsVue/components/Dropdown.vue"
 import Field from "./HwsVue/components/Field.vue"
@@ -51,6 +52,7 @@ App.component("Tab", Tab);
 App.component("Icon", Icon);
 App.component("Button", Button);
 App.component("Pager", Pager);
+App.component("Detail", Detail);
 App.component("Grid", Grid);
 App.component("Dropdown", Dropdown);
 App.component("Field", Field);

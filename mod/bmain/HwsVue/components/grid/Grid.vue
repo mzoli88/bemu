@@ -252,7 +252,6 @@
 <script>
 import SearchPanel from "./SearchPanel.vue";
 import FastFilterCmp from "./FastFilter.vue";
-import Detail from "./Detail.vue";
 import ImportCmp from "./Import.vue";
 import Queque from "./../Queque.vue";
 export default {
@@ -1220,7 +1219,6 @@ export default {
   components: {
     SearchPanel,
     FastFilterCmp,
-    Detail,
     ImportCmp,
     Queque
   },
