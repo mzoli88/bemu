@@ -16,10 +16,10 @@ class CacheQueue
 
     static function import(callable $job)
     {
-        return self::handle($job, "Importálás");
+        return self::handle($job, "Importálás", true);
     }
 
-    static function handle(callable $job, $eventName = "Exportálás")
+    static function handle(callable $job, $eventName = "Exportálás", $stop_if_ready = false)
     {
 
         if (app()->runningInConsole()) {
@@ -36,6 +36,7 @@ class CacheQueue
                 "Queque" => true,
                 "ready" => false,
                 "name" => $eventName,
+                "stop_if_ready" => $stop_if_ready,
             ]);
 
             $file_path = '';
@@ -47,7 +48,7 @@ class CacheQueue
                 $file_name = $_FILES['import_file']['name'];
             }
 
-            self::bexec('callq ' . $_SERVER['REQUEST_METHOD'] . ' "' . preg_replace('/^.*\/remote\//', '/', $_SERVER['REQUEST_URI']) . '" ' . getUserId() . ' ' . getEntity() . ' "' . $file_path . '"' . ' "' . $file_name . '"');
+            self::bexec('callq ' . $_SERVER['REQUEST_METHOD'] . ' "' . urldecode(preg_replace('/^.*\/remote\//', '/', $_SERVER['REQUEST_URI'])) . '" ' . getUserId() . ' ' . getEntity() . ' "' . $file_path . '"' . ' "' . $file_name . '"');
 
             return [
                 "Queque" => true,
@@ -126,7 +127,10 @@ class CacheQueue
 
         if (!$cache) return ["Queque" => true, "ready" => true];
 
+        if ( $cache['ready'] == true && ( ( array_key_exists('stop_if_ready',$cache) && $cache['stop_if_ready'] == true)  || !array_key_exists('download', $cache['content'] ))) CacheQueue::delCache();
+
         $cache['signal'] = Cache::get('workQuequeSignal_u_' . getUserId());
+
 
         return $cache;
     }

@@ -20,10 +20,11 @@ class Callq extends Command
 
     public function handle(): void
     {
+
         Config::set('callq', true);
 
         $method = $this->argument('method');
-        $route = $this->argument('route');
+        $route = urldecode($this->argument('route'));
         $user_id = $this->argument('user_id');
         $entity_id = $this->argument('entity_id');
         $import_file_path = $this->argument('import_file_path');
@@ -63,6 +64,8 @@ class Callq extends Command
                 ]
             ];
         }
+        
+        logger()->info($_FILES);
         $content = null;
         $request = Request::create($route, $method,$_GET);
         app()->instance('request',$request);
@@ -76,8 +79,9 @@ class Callq extends Command
             $content = $th->getMessage();
             report($th);
         }
-        logger()->debug("workQuequeRun stop: " . getmypid() . print_r($content, true));
 
+        logger()->debug("workQuequeRun stop: " . getmypid() . print_r($content, true));
+        
         if (!empty($import_file_path)) {
             unlink($import_file_path);
         }
@@ -91,7 +95,6 @@ class Callq extends Command
         $cache["content"] = $content;
         CacheQueue::setCache($cache);
         
-        // logger()->debug('CacheQueque End');
     }
 
     static function stop($ct){

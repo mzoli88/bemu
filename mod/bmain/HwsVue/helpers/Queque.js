@@ -19,11 +19,11 @@ global.doQueque = function (responseData) {
     Queque.signal = responseData.signal;
 
     if (responseData.ready) {
-
-        if(responseData.content){
-            if(responseData.content.download){
-                Queque.download = true;
-            }
+        
+        tMsg.s(Queque.name + ' befejeződött');
+        
+        if(responseData.content && responseData.content.download){
+            Queque.download = true;
         }else{
             Queque.run = false;
             Queque.name = '';

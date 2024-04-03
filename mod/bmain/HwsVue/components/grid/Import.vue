@@ -71,7 +71,7 @@ export default {
             if (d.success == false || this.status != 200) {
               msg("Sikertelen importálás!", "error", null, d.message);
             } else {
-              // if (d.hasOwnProperty("ready")) setQueque("import", me.store, d);
+              if (d.hasOwnProperty("Queque")) doQueque(d);
               me.onBack();
             }
           } else {
