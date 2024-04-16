@@ -430,7 +430,7 @@ class Controller3
 
         return collect($cols)->filter(function ($r) {
             if ($r == false) return false;
-            if (array_key_exists('list', $r) && $r['list'] == false) return false;
+            if (is_array($r) && array_key_exists('list', $r) && $r['list'] == false) return false;
             return true;
         })->map(function ($v, $k) use ($meta) {
             $title2 = array_key_exists($k, $meta['meta']) && array_key_exists('title', $meta['meta'][$k]) ? $meta['meta'][$k]['title'] : 'Title hiányzik';
