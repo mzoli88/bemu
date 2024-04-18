@@ -12,7 +12,7 @@
         "doctrine/dbal": "^3.5",
         "intervention/image": "^2.7",
         "laravel/framework": "^10.0",
-        "mpdf/mpdf": "*",
+        "mpdf/mpdf": "^6.1",
         "phpmailer/phpmailer": "^6.8"
     },
     "autoload": {

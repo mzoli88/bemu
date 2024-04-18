@@ -226,7 +226,7 @@ class XlsxReader
             default:
                 if (!isset($c->f)) {
                     if (property_exists($c, 'v')) {
-                        $value = (int)$c->v;
+                        $value = (string)$c->v;
                     } else {
                         $value = '';
                     }
@@ -314,7 +314,7 @@ class XlsxReader
         if (!file_exists($rels)) sendError("A fájlt nem lehet beolvasni");
 
         $this->baseName = $this->tmpPathName . DIRECTORY_SEPARATOR . 'xl' . DIRECTORY_SEPARATOR . 'worksheets' . DIRECTORY_SEPARATOR . 'sheet1.xml';
-        if (!file_exists($this->baseName))sendError("A fájlt nem lehet beolvasni", 1);
+        if (!file_exists($this->baseName)) sendError("A fájlt nem lehet beolvasni", 1);
     }
 
     public function readJsonFile($file_path, callable $callback)
