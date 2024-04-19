@@ -45,7 +45,7 @@ export default {
       var xhttp = new XMLHttpRequest();
       xhttp.open(
         "POST",
-        url,
+        url + "?majax_type=import&" + store.$getQParams(store.$fix_query),
         true
       );
 
