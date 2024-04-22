@@ -1119,15 +1119,11 @@ class Model extends Emodel
         }
     }
 
-    public function fileDelete()
+    public function fileDelete($id = null, $folder = null)
     {
-        $id = $this->getKey();
-        $dir = preg_replace('/.*\\\\/', '', static::class) . '/' . $id;
-        //régi fájl kitörése, ha volt ilyen
-        collect(Storage::files($dir))->each(function ($file) {
-            Storage::delete($file);
-        });
-        Storage::deleteDirectory($dir);
+        $id = $id ?: request()->route('id');
+        $file = (function_exists('getModulAzon') ? call_user_func('getModulAzon') . '/' : '') . preg_replace('/.*\\\\/', '', ($folder ? $folder : static::class)) . '/' . $id;
+        Storage::delete($file);
     }
 
     public function beforeCreate()
