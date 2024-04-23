@@ -95,6 +95,9 @@ export default {
       comp_id_count++;
       this.cmp_id = comp_id_count;
     },
+    created: function () {
+      this.$doLoad();
+    },
     mounted: function () {
       this.$emit('onMounted', this);
       this.$doCmpHash();
@@ -122,7 +125,7 @@ export default {
           this.$parent.children.push(this);
         }
       }
-
+      this.$doLoad();
     },
     data: function () {
       if (this.$parent) {
@@ -139,6 +142,18 @@ export default {
         return this;
       }
     },
+
+    methods: {
+
+      tabPanelChange: function () {
+        this.$doLoad();
+      },
+
+      $doLoad: function () {
+        if (isFunction(this.$load)) this.$load();
+      }
+    },
+
     deactivated: function () {
       this.isActivated = false;
       // dd ('deactivated');
