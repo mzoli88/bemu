@@ -1,16 +1,12 @@
 <template>
-  <div
-    class="Field Ftext"
-    v-if="!hidden && !hiddenBecauseRowData"
-    :class="[
-      errors.length ? 'hasError' : null,
-      validators.required ? 'required' : null,
-      name,
-      'type_' + input,
-    ]"
-  >
+  <div class="Field Ftext" v-if="!hidden && !hiddenBecauseRowData" :class="[
+    errors.length ? 'hasError' : null,
+    validators.required ? 'required' : null,
+    name,
+    'type_' + input,
+  ]">
     <div class="fieldLabel noselect vflex" v-if="!noLabel">
-      <span :class="{FieldList:list}" v-if="label">{{ label }}:</span>
+      <span :class="{ FieldList: list }" v-if="label">{{ label }}:</span>
       <span class="WarningButton icon pointer" v-if="warning" :title="warning">
         &#xf06a;
       </span>
@@ -18,36 +14,17 @@
         &#xf05a;
       </span>
     </div>
-    <div
-      class="FieldInner hflex"
-      @keypress.enter="$emit('onEnter', $event, _self)"
-      :class="{ disabled: isDisabled }"
-    >
-      <component
-        :is="input"
-        :name="name"
-        :disabled="isDisabled"
-        :noEdit="noEdit"
-        :required="validators.required"
-        v-bind="{ ...fattrs, ...$attrs }"
-        v-if="input"
-        :boxes="paramboxes"
-        @change="onChange"
-        @blur="onBlur"
-        @recordChange="onRecordChange"
-        ref="input"
-      >
+    <div class="FieldInner hflex" @keypress.enter="$emit('onEnter', $event, _self)" :class="{ disabled: isDisabled }">
+      <component :is="input" :name="name" :disabled="isDisabled" :noEdit="noEdit" :required="validators.required"
+        v-bind="{ ...fattrs, ...$attrs }" v-if="input" :boxes="paramboxes" @change="onChange" @blur="onBlur"
+        @recordChange="onRecordChange" ref="input">
         <slot />
         <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
           <slot :name="name" v-bind="slotData" />
         </template>
       </component>
       <slot v-else />
-      <div
-        class="Err fieldbody"
-        :class="{ floatErr: floatErr }"
-        v-if="errors.length"
-      >
+      <div class="Err fieldbody" :class="{ floatErr: floatErr }" v-if="errors.length">
         <ul>
           <li v-for="(txt, i) in errors" :key="'error_' + i">{{ txt }}</li>
         </ul>
@@ -140,7 +117,8 @@ export default {
     info: String,
     vReg: String,
     vRegText: String,
-    if: String,
+    if: String, // if="parent_id=1|search_id=2,3"   VAGY COMBO esetén rekord property-re if="parent_id.masik_mezo=1" (ahol combbo name=parent_id ott a rekordban van-e masik_mezo=1 )  
+    requiredIf: String,
     evalIf: String,
     hasRowData: String,
     clearAfterChange: Boolean,
@@ -264,11 +242,10 @@ export default {
   },
   mounted: function () {
     if (this.startValue) this.setValue(this.startValue);
-    this.checkifrequired();
+    this.checkrequiredIf();
     this.checkChildren();
     this.checkChildren2();
     this.checkChildren3();
-    this.checkChildren4();
     this.doEvalIf();
     this.doHasRowData();
   },
@@ -413,8 +390,8 @@ export default {
         let rowDataProp = rowData[prop];
         if (isObject(rowDataProp) || isArray(rowDataProp)) {
           rowDataProp = JSON.parse(JSON.stringify(rowDataProp));
-          const found = rowDataProp.some(r=> values.includes(r))
-          if(!found)return this.hide();        
+          const found = rowDataProp.some(r => values.includes(r))
+          if (!found) return this.hide();
         } else {
           if (rowDataProp && !values.includes("" + rowDataProp)) return this.hide();
         }
@@ -429,22 +406,26 @@ export default {
         this.hide();
       }
     },
-    checkChildren4: function (record) {
+    checkPropertyIf: function (record) {
+      
       var form = this.up("Form");
       if (!form) return;
 
+      //ha van olyan field amiben. al választjuk el a property-t az IF-ben
       var fields = form.getComps({
-        if: new RegExp("^" + this.name + "..*="),
+        propertyIf: new RegExp("^" + this.name + "\\..*="),
         hide: Function,
         show: Function,
       });
+      // dd (fields);
 
       fields.forEach((field) => {
-        field.hide();
-        if (!record) return;
+        if (!record) return field.hide();
+        
         var explode = field.if.split("=");
         var property = explode.shift().replace(/^.*\./, "");
         var value = explode.shift();
+        // dd (value,property);
         // dd(record[property]);
         if (empty(record[property])) return;
         if (isString(record[property])) {
@@ -483,8 +464,8 @@ export default {
         //figyelmeztetés
         msg(
           '"' +
-            field.label +
-            '" - mező tartalma nem üres. Biztosan szeretné bővíteni?',
+          field.label +
+          '" - mező tartalma nem üres. Biztosan szeretné bővíteni?',
           "i/n",
           (s) => {
             if (s) field.setValue(field.getValue() + "\n\n" + record[tmp[1]]);
@@ -530,6 +511,7 @@ export default {
           hide: Function,
           show: Function,
         });
+
       if (isNumber(val)) val += "";
       if (empty(val)) val = "";
       if (isArray(val)) {
@@ -554,23 +536,32 @@ export default {
         } else {
           r.hideCount[this.name] = false;
         }
+      });
+
+      // this.$nextTick(() => {
+
+      fields.forEach((r) => {
+
         if (
           Object.keys(r.hideCount).filter((key) => r.hideCount[key] == false)
             .length
         ) {
+          // dd('hide', r, r.hideCount);
           r.hide();
         } else {
+          // dd('show', r, r.hideCount);
           r.show();
         }
       });
+      // });
     },
-    checkifrequired: function () {
-      // ifrequired
+    checkrequiredIf: function () {
+      // requiredIf
       var form = this.up("Form");
       if (!form) return;
       var val = this.getValue(),
         fields = form.getComps({
-          ifrequired: new RegExp(this.name + "="),
+          requiredIf: new RegExp(this.name + "="),
           hide: Function,
           show: Function,
         });
@@ -583,24 +574,24 @@ export default {
       }
       if (fields.length == 0) return;
       fields.forEach((r) => {
-        let rif = r.ifrequired
+        let rif = r.requiredIf
           .split("|")
           .filter((rif) => rif.includes(this.name))
           .shift();
-        if (!r.ifrequiredhideCount) r.ifrequiredhideCount = {};
+        if (!r.requiredIfhideCount) r.requiredIfhideCount = {};
         if (
           rif
             .replace(this.name + "=", "")
             .split(",")
             .some((r) => val.includes(r))
         ) {
-          r.ifrequiredhideCount[this.name] = true;
+          r.requiredIfhideCount[this.name] = true;
         } else {
-          r.ifrequiredhideCount[this.name] = false;
+          r.requiredIfhideCount[this.name] = false;
         }
         if (
-          Object.keys(r.ifrequiredhideCount).filter(
-            (key) => r.ifrequiredhideCount[key] == false
+          Object.keys(r.requiredIfhideCount).filter(
+            (key) => r.requiredIfhideCount[key] == false
           ).length
         ) {
           r.validators.required = false;
@@ -615,11 +606,11 @@ export default {
       this.$emit("change", val, this, record);
       if (this.change) this.change(val, this, record);
       this.validate();
-      this.checkifrequired();
+      this.checkrequiredIf();
       this.checkChildren();
       this.checkChildren2();
       this.checkChildren3();
-      if (record) this.checkChildren4(record);
+      this.checkPropertyIf(record);
       if (this.clearAfterChange) this.setValue();
     },
     onRecordChange: function (record) {
@@ -766,20 +757,20 @@ textarea {
   border-color: #ff7979;
 }
 
-.FieldInner > .Err,
+.FieldInner>.Err,
 .InnerErrScreen,
 .hasError .fieldButton,
 .hasError .fieldButtonFront {
   color: #ff7979;
 }
 
-.FieldInner > .Err {
+.FieldInner>.Err {
   font-weight: bold;
   border-radius: 4px;
   background-color: #ff797924;
 }
 
-.FieldInner > .Err > ul {
+.FieldInner>.Err>ul {
   margin-block-start: 4px;
   margin-block-end: 4px;
   margin-inline-start: 4px;
@@ -787,11 +778,11 @@ textarea {
   padding-inline-start: 20px;
 }
 
-.FieldInner > .Err > ul > li {
+.FieldInner>.Err>ul>li {
   padding: 4px 0;
 }
 
-.Field .FieldList{
+.Field .FieldList {
   display: list-item;
   margin-left: 40px;
 }

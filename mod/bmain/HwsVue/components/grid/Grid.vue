@@ -1198,7 +1198,9 @@ export default {
         if (!getJog(this.createJog)) return false;
       }
       return (
-        this.isCreate || this.hasSlot("create", "pureCreate", "formCreate")
+        this.isCreate || this.hasSlot("create"/*, "pureCreate" , "formCreate"*/) 
+        // formcreate,pureCreate -nem kell, hogy manuálisan lehessen a create-et ki be kapcsolni <Grid :create="false" />
+        // nem tünne el a create gomb
       );
     },
     canUpdate: function (item) {

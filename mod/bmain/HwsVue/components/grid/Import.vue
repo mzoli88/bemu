@@ -38,7 +38,8 @@ export default {
 
     FileUpload: function (file_field, url) {
       const file = file_field.files[0];
-      var me = this;
+      var me = this,
+        store = getStore(this.store);
 
       var formData = new FormData();
       formData.append("import_file", file);
