@@ -6,7 +6,7 @@ use Mpdf\Mpdf;
 
 class Hpdf
 {
-    static function create($html, $header = null, $footer = null,$download = false, Array $options = [
+    static function create($html, $header = null, $footer = null, $download = false, array $options = [
         'format' => 'A4',
         // 'orientation' => 'L' //vagy 'P'
         // 'margin_left' => 20,
@@ -57,15 +57,15 @@ class Hpdf
         $mpdf->WriteHTML($html);
         // $mpdf->showImageErrors = true;
 
-        if($download){
-            if(is_string($download)){
+        if ($download) {
+            if (is_string($download)) {
                 $download = preg_replace('/\s+/', '_', $download);
                 $download = preg_replace("/[^a-zA-Z0-9\_íÍéÉáÁűŰőŐúÚöÖüÜóÓ]+/", "", $download);
-                $mpdf->Output($download.'.pdf', 'D');
-            }else{
-                $mpdf->Output();
+                $mpdf->Output($download . '.pdf', 'D');
+            } else {
+                return $mpdf->OutputHttpInline();
             }
-        }else{
+        } else {
             return $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN);
         }
     }

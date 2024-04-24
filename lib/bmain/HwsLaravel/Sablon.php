@@ -25,7 +25,7 @@ class Sablon
 		$tmp = [];
 		$level = 0;
 		foreach ($template as $i => $line) {
-			$line = str_replace("\r", '', $line);
+			$line = trim(str_replace("\r", '', $line));
 			if (preg_match('/^\@each/', $line)) {
 				$tmp[] = [
 					'level' => $level,
@@ -47,6 +47,13 @@ class Sablon
 					'cm' => 'if'
 				];
 				$level++;
+			} else if (preg_match('/^\@elseif/', $line)) {
+				$tmp[] = [
+					'level' => $level,
+					'ct' => $line,
+					'cm' => 'elseif'
+				];
+				// $level++;
 			} else if (preg_match('/^\@endif/', $line)) {
 				$level--;
 				$tmp[] = [
@@ -67,6 +74,8 @@ class Sablon
 		}
 
 		$template = self::eachline($tmp);
+
+		// dd ($template);
 		unset($tmp);
 		return preg_replace("/^\n/", "", self::inserAll($template, $data));
 	}
@@ -164,6 +173,25 @@ class Sablon
 			if (array_key_exists('cm', $line)) {
 				if ($line['cm'] == 'if') {
 					$prop = trim(preg_replace(['/^@if/'], '', $line['ct']));
+
+					$in_if = [];
+					$is_else = false;
+					$in_else = [];
+
+					foreach ($line['ch'] as $value) {
+						if(array_key_exists('cm',$value) && $value['cm'] == 'elseif'){
+							$is_else = true;
+							continue;
+						}
+						if($is_else){
+							$in_else[] = $value;
+						}else{
+							$in_if[] = $value;
+						}
+					}
+
+					// dump('###########',$in_if,$in_else);
+
 					if (
 						preg_match('/\{.*\}/', $prop)
 					) {
@@ -175,12 +203,26 @@ class Sablon
 						} catch (\Throwable $th) {
 						}
 						if ($is_true) {
-							$out .= self::inserAll($line['ch'], $data);
+							$out .= self::inserAll($in_if, $data);
+						}else{
+							$out .= self::inserAll($in_else, $data);
 						}
 					} else {
 						$prop = trim(preg_replace(['/\{/', '/\}/', '/\(/', '/\)/'], '', $prop));
+						$is_negal = preg_match('#^\!#',$prop);
+
 						if (array_key_exists($prop, $data) && !empty($data[$prop]) && $data[$prop] != false && $data[$prop] !== 0) {
-							$out .= self::inserAll($line['ch'], $data);
+							if($is_negal){
+								$out .= self::inserAll($in_else, $data);
+							}else{
+								$out .= self::inserAll($in_if, $data);
+							}
+						}else{
+							if($is_negal){
+								$out .= self::inserAll($in_if, $data);
+							}else{
+								$out .= self::inserAll($in_else, $data);
+							}
 						}
 					}
 				} else if ($line['cm'] == 'each') {
