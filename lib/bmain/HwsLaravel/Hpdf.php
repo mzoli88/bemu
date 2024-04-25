@@ -16,7 +16,12 @@ class Hpdf
         return array_key_exists(1, $matches) ? $matches[1] : '';
     }
 
-    static function create($html, $download = false, $header = null, $footer = null, array $options = [
+    static function create2($html, $download)
+    {
+        return self::create($html, null, null, $download);
+    }
+
+    static function create($html, $header = null, $footer = null, $download = false, array $options = [
         'format' => 'A4',
         // 'orientation' => 'L' //vagy 'P'
         // 'margin_left' => 20,
@@ -94,7 +99,7 @@ class Hpdf
             $mpdf->SetHTMLHeader($header);
         }
 
-        if (empty($footer)) $header = self::getTag($html, 'pdfFooter');
+        if (empty($footer)) $footer = self::getTag($html, 'pdfFooter');
 
         if (!empty($footer)) {
             preg_match_all('/src="[^"]+"/', $footer, $match);
