@@ -70,7 +70,7 @@
             <Field type="entity" />
           </div>
           <div class="toolbar cflex">
-            <Button v-if="canCreate()" @click="goTo('create')" title="Felvitel" />
+            <Button v-if="doCanCreate()" @click="goTo('create')" title="Felvitel" />
             <template v-if="cRoutes">
               <template v-for="(route, index) in cRoutes">
                 <Button v-if="ifroute(null, route)" :class="index" :key="index" :icon="route.icon" :title="route.title"
@@ -187,8 +187,8 @@
                         @click="onDelete(item)" />
                       <Button class="DetaileDownButton cflex" v-if="smallDetaile && !smallDetailsOpen"
                         :key="'dsBtn' + row_selected_index + '_' + index" :icon="row_selected_index == index
-        ? 'sDetailRight'
-        : 'sDetailDown'
+      ? 'sDetailRight'
+      : 'sDetailDown'
       " @click="rowClick(index)" />
                       <div v-if="lock && item.LockData" class="cflex LockButton pointer"
                         :title="'Rekord zárolva: ' + item.LockData">
@@ -279,6 +279,7 @@ export default {
     createJog: Array,
     update: Boolean,
     updateJog: Array,
+    canCreate: Function,
     canRowUpdate: Function,
     canRowDetaile: Function,
     setRowClass: Function,
@@ -1193,12 +1194,13 @@ export default {
     download: function (rowData) {
       getStore(this.store).download(rowData.id);
     },
-    canCreate: function () {
+    doCanCreate: function () {
+      if (!empty(this.canCreate)) return this.canCreate();
       if (this.createJog) {
         if (!getJog(this.createJog)) return false;
       }
       return (
-        this.isCreate || this.hasSlot("create"/*, "pureCreate" , "formCreate"*/) 
+        this.isCreate || this.hasSlot("create"/*, "pureCreate" , "formCreate"*/)
         // formcreate,pureCreate -nem kell, hogy manuálisan lehessen a create-et ki be kapcsolni <Grid :create="false" />
         // nem tünne el a create gomb
       );
