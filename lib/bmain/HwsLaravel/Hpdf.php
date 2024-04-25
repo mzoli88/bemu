@@ -6,6 +6,21 @@ use Mpdf\Mpdf;
 
 class Hpdf
 {
+
+
+    static function getTag(&$string, $tagname)
+    {
+        $pattern = "#<\s*?$tagname\b[^>]*>(.*?)</$tagname\b[^>]*>#s";
+        preg_match($pattern, $string, $matches);
+        $string = preg_replace($pattern, '', $string);
+        return array_key_exists(1, $matches) ? $matches[1] : '';
+    }
+
+    static function create2($html, $download)
+    {
+        return self::create($html, null, null, $download);
+    }
+
     static function create($html, $header = null, $footer = null, $download = false, array $options = [
         'format' => 'A4',
         // 'orientation' => 'L' //vagy 'P'
@@ -25,9 +40,51 @@ class Hpdf
         //     $op['margin_right'] = $model->margin_content;
         // }
 
+        // <pdfFormat>A5</pdfFormat>
+
+        $format = self::getTag($html, 'pdfFormat');
+        if (!empty($format)) $options['format'] = $format;
+
+        if (empty($options['orientation'] ?? null)) {
+            $tmp = self::getTag($html, 'pdfOrientation');
+            if (!empty($tmp)) $options['orientation'] = $tmp;
+        }
+
+        if (empty($options['margin_left'] ?? null)) {
+            $tmp = self::getTag($html, 'pdfMarginLeft');
+            if (!empty($tmp) || $tmp === '0') $options['margin_left'] = $tmp;
+        }
+
+        if (empty($options['margin_right'] ?? null)) {
+            $tmp = self::getTag($html, 'pdfMarginRight');
+            if (!empty($tmp) || $tmp === '0') $options['margin_right'] = $tmp;
+        }
+
+        if (empty($options['margin_top'] ?? null)) {
+            $tmp = self::getTag($html, 'pdfMarginTop');
+            if (!empty($tmp) || $tmp === '0') $options['margin_top'] = $tmp;
+        }
+
+        if (empty($options['margin_bottom'] ?? null)) {
+            $tmp = self::getTag($html, 'pdfMarginBottom');
+            if (!empty($tmp) || $tmp === '0') $options['margin_bottom'] = $tmp;
+        }
+
+        if (empty($options['margin_header'] ?? null)) {
+            $tmp = self::getTag($html, 'pdfMarginHeader');
+            if (!empty($tmp) || $tmp === '0') $options['margin_header'] = $tmp;
+        }
+
+        if (empty($options['margin_footer'] ?? null)) {
+            $tmp = self::getTag($html, 'pdfMarginFooter');
+            if (!empty($tmp) || $tmp === '0') $options['margin_footer'] = $tmp;
+        }
+
         $mpdf = new Mpdf($options);
 
         $image_index = 0;
+
+        if (empty($header)) $header = self::getTag($html, 'pdfHeader');
 
         //{PAGENO}/{nbpg}
         if (!empty($header)) {
@@ -41,6 +98,8 @@ class Hpdf
             });
             $mpdf->SetHTMLHeader($header);
         }
+
+        if (empty($footer)) $footer = self::getTag($html, 'pdfFooter');
 
         if (!empty($footer)) {
             preg_match_all('/src="[^"]+"/', $footer, $match);

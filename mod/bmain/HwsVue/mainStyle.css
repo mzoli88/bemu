@@ -196,3 +196,17 @@ a {
     background-color: #fff;
     padding: 10px;
 }
+
+pdfFormat,
+pdfOrientation,
+pdfMarginLeft,
+pdfMarginRight,
+pdfMarginTop,
+pdfMarginBottom,
+pdfMarginHeader,
+pdfMarginFooter,
+pdfHeader,
+pdfFooter
+{
+    display: none;
+}
