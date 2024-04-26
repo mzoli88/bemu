@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `b_nagycsoport_nevek` (
   PRIMARY KEY (`b_nagycsoport_nevek_id`),
   KEY `b_nagycsoport_id` (`b_nagycsoport_id`,`nevek_id`),
   KEY `nevek_id` (`nevek_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 //ha nincs jogok tábla akkor létrehzza
 $conn->execute_query("
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `nevek_csoport` (
 	KEY `modul_azon` (`modul_azon`),
 	KEY `nev` (`nev`),
 	KEY `ugyfeladmin` (`ugyfeladmin`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 PACK_KEYS=0;");
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=0;");
 
 $ct = $conn->query("select count(*) from nevek_csoport")->fetch_row()[0];
 if($ct == 0)$conn->execute_query("INSERT INTO `nevek_csoport` (`csoport_id`, `nev`)VALUES (2, 'Border admin');");
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `b_nagycsoport` (
 	`b_nagycsoport_tipus_id` int(11) DEFAULT NULL,
 	PRIMARY KEY (`b_nagycsoport_id`),
 	KEY `nev` (`nev`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 //ha nincs b_nagycsoport_modul tábla akkor létrehzza
 $conn->execute_query("
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `b_nagycsoport_modul` (
 	PRIMARY KEY (`b_nagycsoport_modul_id`),
 	KEY `b_nagycsoport_id` (`b_nagycsoport_id`,`modul_azon`),
 	KEY `modul_azon` (`modul_azon`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 //ha nincs nevek tábla létrehzza
 $conn->execute_query("
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `nevek` (
 	KEY `partner_id` (`partner_id`),
 	KEY `internetrol` (`internetrol`),
 	KEY `email` (`email`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 PACK_KEYS=0;");
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=0;");
 
 $ct = $conn->query("select count(*) from nevek")->fetch_row()[0];
 if($ct == 0)$conn->execute_query("
@@ -127,7 +127,7 @@ $conn->execute_query("
 	  PRIMARY KEY (`nevek_csoportosit_id`),
 	  KEY `csoport_id` (`csoport_id`),
 	  KEY `nevek_id` (`nevek_id`)
-	) ENGINE=MyISAM DEFAULT CHARSET=latin1 PACK_KEYS=0;");
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=0;");
 
 $ct = $conn->query("select count(*) from nevek_csoportosit")->fetch_row()[0];
 if($ct == 0)$conn->execute_query("INSERT INTO `nevek_csoportosit` (`csoport_id`, `nevek_id`) VALUES (2, 2);");
@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `b_nagycsoport_tipus` (
 	`tipusnev` varchar(50) DEFAULT NULL,
 	PRIMARY KEY (`b_nagycsoport_tipus_id`),
 	KEY `tipusnev` (`tipusnev`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 $ct = $conn->query("select count(*) from b_nagycsoport_tipus")->fetch_row()[0];
 if($ct == 0)$conn->execute_query("
@@ -160,7 +160,7 @@ $conn->execute_query("
 	  KEY `menu` (`menu`),
 	  KEY `link` (`link`),
 	  KEY `item` (`item`)
-	) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 	
 $conn->execute_query("
 	CREATE TABLE IF NOT EXISTS `b_menucsop` (
@@ -172,7 +172,7 @@ $conn->execute_query("
 	  PRIMARY KEY (`b_menucsop_id`),
 	  KEY `menu_id` (`menu_id`),
 	  KEY `csoport_id` (`csoport_id`)
-	) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 $conn->close();
 header("Location: ../");
