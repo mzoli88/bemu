@@ -118,9 +118,13 @@ class Hpdf
 
         if ($download) {
             if (is_string($download)) {
+                $download = str_replace(['   ', ' ', '_'], ' ', trim($download));
                 $download = preg_replace('/\s+/', '_', $download);
-                $download = preg_replace("/[^a-zA-Z0-9\_íÍéÉáÁűŰőŐúÚöÖüÜóÓ]+/", "", $download);
-                $mpdf->Output($download . '.pdf', 'D');
+                $download = str_replace(['í', 'é', 'á', 'ű', 'ú', 'ó', 'ő'], ['i', 'e', 'a', 'u', 'u', 'o', 'o'], trim(mb_strtolower($download)));
+                $download = preg_replace("/[^a-zA-Z0-9\_]/", '',trim($download));
+                $download = preg_replace('/\_+/', '_', $download);
+                // dd ($download);
+                $mpdf->Output(toUtf($download) . '.pdf', 'D');
             } else {
                 return $mpdf->OutputHttpInline();
             }
