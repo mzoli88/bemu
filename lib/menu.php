@@ -7,11 +7,13 @@ header('Content-Type: text/html; charset=UTF-8');
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<style>
-		body {
+		body{
+			background-color: #2a6d9e29;
+		}
+		body>div {
 			display: flex;
 			justify-content: flex-start;
 			flex-wrap: wrap;
-			background-color: #2a6d9e29;
 		}
 
 		.box {
@@ -68,55 +70,66 @@ header('Content-Type: text/html; charset=UTF-8');
 </head>
 
 <body>
+	<div>
+		<a target="_blank" href="bmain/install.php">Install</a>
+	</div>
+	<br>
+	<div>
 	<?php
 
-use App\Border3;
-use Illuminate\Support\Facades\DB;
+	use App\Border3;
+	use Illuminate\Support\Facades\DB;
 
-	function refreshModulData()
-	{
-		$badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
-		if (!$badmin) {
-			DB::table('nevek_csoport')->insert([
-				'csoport_id' => 2,
-				'nev' => 'Rendszer - Admin',
-				'modul_azon' => 'admin',
-			]);
+	try {
+		//code...
+
+		function refreshModulData()
+		{
+			$badmin = DB::table('nevek_csoport')->where('csoport_id', 2)->first();
+			if (!$badmin) {
+				DB::table('nevek_csoport')->insert([
+					'csoport_id' => 2,
+					'nev' => 'Rendszer - Admin',
+					'modul_azon' => 'admin',
+				]);
+			}
+
+			Border3::update_border(true);
+
+			$result = DB::table('nevek_csoportosit')->where('nevek_id', 2)->where('csoport_id', 2)->first();
+			if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => 2, 'csoport_id' => 2]);
 		}
 
-		Border3::update_border(true);
+		if (isset($_SERVER['REQUEST_URI'])) {
+			$tmp = preg_split('/(lib\/)|(mod\/)/', $_SERVER['REQUEST_URI']);
+			define('BORDER_PATH_URL', array_shift($tmp));
+			unset($tmp);
+		}
 
-		$result = DB::table('nevek_csoportosit')->where('nevek_id', 2)->where('csoport_id', 2)->first();
-		if (!$result) DB::table('nevek_csoportosit')->insert(['nevek_id' => 2, 'csoport_id' => 2]);
+		define('LARAVEL_START', microtime(true));
+		date_default_timezone_set('Europe/Budapest');
+		require 'bmain/vendor/autoload.php';
+		require_once('config.class.php');
+		// emu_user_init();
+		$app = require_once 'bmain/bootstrap/app.php';
+		$kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+		$response = $kernel->handle(
+			$request = \Illuminate\Http\Request::capture()
+		);
 
+		refreshModulData();
+
+		collect(config('mods'))->each(function ($mod, $azon) {
+			echo '<div class="box" tabindex="0"><div class="box_title"><h3><a target="_BLANK" href="';
+			echo BORDER_PATH_URL . 'mod/bmain/public/#' . $azon . '/index.php">';
+			echo $mod['name'] . ' (v' . $mod['version'] . ")";
+			echo '</a></h3></div></div>';
+		});
+	} catch (\Throwable $th) {
+		//throw $th;
 	}
-
-	if (isset($_SERVER['REQUEST_URI'])) {
-		$tmp = preg_split('/(lib\/)|(mod\/)/', $_SERVER['REQUEST_URI']);
-		define('BORDER_PATH_URL', array_shift($tmp));
-		unset($tmp);
-	}
-
-	define('LARAVEL_START', microtime(true));
-	date_default_timezone_set('Europe/Budapest');
-	require 'bmain/vendor/autoload.php';
-	require_once('config.class.php');
-	// emu_user_init();
-	$app = require_once 'bmain/bootstrap/app.php';
-	$kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
-	$response = $kernel->handle(
-		$request = \Illuminate\Http\Request::capture()
-	);
-
-	refreshModulData();
-
-	collect(config('mods'))->each(function ($mod, $azon) {
-		echo '<div class="box" tabindex="0"><div class="box_title"><h3><a target="_BLANK" href="';
-		echo BORDER_PATH_URL . 'mod/bmain/public/#' . $azon . '/index.php">';
-		echo $mod['name'] . ' (v' . $mod['version'] . ")";
-		echo '</a></h3></div></div>';
-	});
 	?>
+	</div>
 </body>
 
 </html>

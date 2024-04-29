@@ -175,4 +175,4 @@ $conn->execute_query("
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 $conn->close();
-header("Location: ../");
+header("Location: bmain/install.php");
