@@ -29,16 +29,21 @@ class RouteServiceProvider extends ServiceProvider
     {
         // $this->configureRateLimiting();
 
-        
+
         $this->routes(function () {
             //controllers
             collect(config('mods'))->each(function ($data, $modul_azon) {
-                Route::middleware(['api','auth'])->prefix($modul_azon)->group(function () use ($data) {
+                Route::middleware(['api', 'auth'])->prefix($modul_azon)->group(function () use ($data) {
                     ApiRouter::route($data['dir'] . '/controllers');
                 });
                 Route::prefix($modul_azon . '/interfaces')->group(function () use ($data) {
-                    ApiRouter::route($data['dir'] . '/interfaces','IF');
+                    ApiRouter::route($data['dir'] . '/interfaces', 'IF');
                 });
+                if($r = realpath($data['dir'] . 'routes.php')){
+                    Route::prefix($modul_azon)->group(function () use ($r) {
+                        include($r);
+                    });
+                }
             });
         });
     }
@@ -50,9 +55,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     // protected function configureRateLimiting()
     // {
-        // RateLimiter::for('api', function (Request $request) {
-        //     $user = getUser();
-        //     return Limit::perMinute(60)->by(($user ? $user->id : $request->ip()) . '|' . $request->route()->uri());
-        // });
+    // RateLimiter::for('api', function (Request $request) {
+    //     $user = getUser();
+    //     return Limit::perMinute(60)->by(($user ? $user->id : $request->ip()) . '|' . $request->route()->uri());
+    // });
     // }
 }
