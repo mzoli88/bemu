@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use \Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -36,6 +38,14 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
+        if ($exception instanceof ValidationException) {
+            logger()->debug('ValidationException: ' . print_r($exception->errors(), true));
+            return;
+        }
+        if ($exception instanceof SendErrorException) {
+            logger()->debug('SendErrorException: ' . $exception->getTitle() . "\n" . $exception->getMessage());
+            return;
+        }
         parent::report($exception);
     }
 
@@ -53,12 +63,23 @@ class Handler extends ExceptionHandler
             return response()->json($exception->errors(), 422);
         }
 
+        if ($exception instanceof SendErrorException) {
+            return response()->json($exception->getErrorMessage(), $exception->getCode());
+        }
+
+        if ($exception instanceof AuthenticationException) {
+            return sendError('Helytelen authentikáció', 401);
+        }
+
+        if ($exception instanceof ThrottleRequestsException) {
+            return sendError('Túl sok kérés.', 429);
+        }
+
         //Szabványos hibakezelés ha debug mód be van kapcsolva
+        if (defined('BORDER_EMU')) config(['app.debug' => true]);
         if (config('app.debug')) return parent::render($request, $exception);
+
         //Alapértelmezett hibaüzenet
-        // Json adat visszadása
-        return response()->json([
-            'message' => $exception->getMessage(),
-        ], 400);
+        return sendError('Szerver oldalon hiba történt', 500);
     }
 }
