@@ -75,6 +75,7 @@ class Border3
 
     static function getUserData($modul_azon = null)
     {
+        Cache::forget('entities');
         $modul_azon = $modul_azon ?: getModulAzon();
         $jogok = self::setJogok($modul_azon);
 
@@ -145,7 +146,6 @@ class Border3
 
     static function getEntities()
     {
-        // Cache::forget('entities');
         return Cache::remember('entities', now()->addMinutes(10), function () {
             return DB::table('b_nagycsoport')
                 ->select('b_nagycsoport_id as value', 'nev as name')

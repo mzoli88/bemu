@@ -881,6 +881,9 @@ class Model extends Emodel
     public function scopeEntity($query)
     {
         if (!hasJustOneEntity()) {
+            
+            if (empty(getEntity())) sendError("Felhasználó nincsen entitáshoz kötve! Keressen fel egy rendszer adminisztrátort!");
+            
             $model = $query->getModel();
 
             $tmp = explode('.', $model::$entity_property);
