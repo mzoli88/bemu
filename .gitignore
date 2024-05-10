@@ -20,4 +20,5 @@
 /lib/bmain/mod/*
 !/lib/bmain/mod/admin
 !/lib/bmain/mod/naplo
+!/lib/bmain/mod/elknaplo
 /lib/bmain/HwsLaravel/.git
