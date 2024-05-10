@@ -2,8 +2,6 @@
 
 namespace hws;
 
-use Exception;
-
 class Chttp
 {
     public $url;
@@ -21,6 +19,7 @@ class Chttp
     public $noContentLog = false;
     public $noResponseLog = false;
     public $log_event_id;
+    public $CURLOPT_USERPWD;
 
     public $proxyParams = false;
 
@@ -134,6 +133,9 @@ class Chttp
         curl_setopt_array($curl, $options);
         $this->outHeaders = [];
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, [$this, 'getOutHeaders']);
+        
+        if($this->CURLOPT_USERPWD) curl_setopt($curl, CURLOPT_USERPWD, $this->CURLOPT_USERPWD);
+
         $this->response = curl_exec($curl);
         $error = curl_error($curl);
         $curl_info = curl_getinfo($curl);
