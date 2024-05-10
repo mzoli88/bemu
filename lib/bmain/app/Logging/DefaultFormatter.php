@@ -22,7 +22,7 @@ class DefaultFormatter extends BaseJsonFormatter
 
     public function formatChanel(LogRecord $record)
     {
-        if(!config('request_id',false)){
+        if (!config('request_id', false)) {
             if (request()->headers->get('request-id')) {
                 config(['request_id' => request()->headers->get('request-id')]);
             } else {
@@ -44,12 +44,13 @@ class DefaultFormatter extends BaseJsonFormatter
                     if ($routeArray[1] == 'interfaces') {
                         $userName = 'Technikai felhasználó';
                     }
-                }                                 
+                }
             }
         }
-        
+
         $out = [
             'datetime' => $record['datetime']->format('Y-m-d H:i:s'),
+            'channel' => $record['context']['channel'] ?? 'audit',
             'software_id' => getModulName() . ' v' . getModulVersion(),
             'request_id' => config('request_id'),
             'user_login' => $user ? $user->login : '-',
@@ -110,6 +111,7 @@ class DefaultFormatter extends BaseJsonFormatter
         $user = getUser();
         $out = [
             'datetime' => $record['datetime']->format('Y-m-d H:i:s'),
+            'channel' => 'debug',
             'level' => $level,
             'software_id' => getModulName() . ' ' . getModulVersion(),
             'request_id' => config('request_id'),
@@ -142,10 +144,10 @@ class DefaultFormatter extends BaseJsonFormatter
     static function truncate($string, $length = 30000, $dots = " ... (túl hosszú a bejegyzés)")
     {
         $string = preg_replace('/"file_content":"([^"]*?)"/', '"file_content":"file_replaced",', $string);
-        foreach(config('hiddenfields',['password']) as $prop){
-            $string = preg_replace('#(\s*[\"\']'.$prop.'[\"\']\s*:\s*)[^\,\}]*#', '$1"***"', $string);
-            $string = preg_replace('#(\s*[\[\"\']'.$prop.'[\]\"\']\s*\=\>\s*).*#', '$1***', $string);
-        } 
+        foreach (config('hiddenfields', ['password']) as $prop) {
+            $string = preg_replace('#(\s*[\"\']' . $prop . '[\"\']\s*:\s*)[^\,\}]*#', '$1"***"', $string);
+            $string = preg_replace('#(\s*[\[\"\']' . $prop . '[\]\"\']\s*\=\>\s*).*#', '$1***', $string);
+        }
         return (strlen($string) > $length) ? substr($string, 0, $length - strlen($dots)) . $dots : $string;
     }
 }
