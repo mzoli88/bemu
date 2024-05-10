@@ -121,7 +121,7 @@ class DefaultFormatter extends BaseJsonFormatter
             'uuid' => $user ? config('request_id') : '-',
             'entity_id' => getEntity(),
             'entity_name' => getEntityName(),
-            // 'modul_azon' => getModulAzon(),
+            'modul_azon' => getModulAzon(),
             'uri' => urldecode(isset($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : implode(' ', $_SERVER['argv'])),
             'method' => (isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'CMD'),
             'ip' => (isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '-'),
