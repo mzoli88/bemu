@@ -12,6 +12,7 @@
 !/lib/createtables.php
 !/lib/belepve.php
 !/lib/menu.php
+!/lib/sql_backup.php
 !/lib/sh.css
 !/lib/jquery-1.12.4.min.js
 !/lib/bmain/
@@ -19,4 +20,5 @@
 /lib/bmain/mod/*
 !/lib/bmain/mod/admin
 !/lib/bmain/mod/naplo
+!/lib/bmain/mod/elknaplo
 /lib/bmain/HwsLaravel/.git

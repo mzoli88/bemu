@@ -117,17 +117,19 @@ class CacheQueue
     {
         $cache = self::getCache();
 
+        if (!is_array($cache)) $cache = [];
+
         if (!array_key_exists("Queque", $cache)) $cache['Queque'] = true;
 
         if (request()->query('stopQueque') == true) {
             if (array_key_exists('pid', $cache)) CacheQueue::killp($cache['pid'], 0);
             CacheQueue::delCache();
-            return ["Queque" => true, "ready" => true, 'info' => 'manual stop finish'];
+            return ["Queque" => true, "ready" => true, "name" => "Háttérfolyamat leállítása", 'info' => 'manual stop finish'];
         }
 
         if (!$cache) return ["Queque" => true, "ready" => true];
 
-        if ( $cache['ready'] == true && ( ( array_key_exists('stop_if_ready',$cache) && $cache['stop_if_ready'] == true)  || !array_key_exists('download', $cache['content'] ))) CacheQueue::delCache();
+        if ($cache['ready'] == true && ((array_key_exists('stop_if_ready', $cache) && $cache['stop_if_ready'] == true)  || !array_key_exists('download', $cache['content']))) CacheQueue::delCache();
 
         $cache['signal'] = Cache::get('workQuequeSignal_u_' . getUserId());
 

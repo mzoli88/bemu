@@ -429,7 +429,7 @@ export default {
 
   mounted: function () {
     if (this.store) {
-      var st = getStore(this.store).onLoad(this.onStoreLoad, this);
+      var st = getStore(this.store).onBeforeLoad(this.onBeforeStoreLoad, this).onLoad(this.onStoreLoad, this);
       this.getFastFilterActive();
       this.$nextTick(function () {
         if (this.defaultSearchValue) st.search(this.defaultSearchValue);
@@ -777,7 +777,15 @@ export default {
 
       return h;
     },
+    onBeforeStoreLoad:function(){
+      if (this.firstLoaded && this.show == 'details') {
+        var detail = this.down('Detail');
+        if (detail) detail.refreshAll();
+        return true;
+      }
+    },
     onStoreLoad: function (s, r) {
+
       if (this.checkbox) {
         this.findFields({
           gchbox: isString,

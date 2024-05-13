@@ -303,13 +303,22 @@ class ModelCls
         return substr($string, $ini, $len);
     }
 
-    public function replace_between($str, $needle_start, $needle_end, $replacement)
+    public function replace_between($str, $needle_start, $needle_end, $replacement, &$update_file)
     {
         $pos = strpos($str, $needle_start);
         $start = $pos === false ? 0 : $pos + strlen($needle_start);
 
         $pos = strpos($str, $needle_end, $start);
         $end = $pos === false ? strlen($str) : $pos;
+
+        $tmp = substr_replace($str, '', 0, $start);
+        $tmp = substr_replace($tmp, '', $end - $start);
+
+        if(trim(preg_replace('/\s\s+/', ' ', $tmp)) == trim(preg_replace('/\s\s+/', ' ', $replacement))){
+            return $str;
+        }
+
+        $update_file = true;
 
         return substr_replace($str, $replacement, $start, $end - $start);
     }
@@ -338,13 +347,14 @@ class ModelCls
         }
         if (file_exists($file)) {
             $ct = file_get_contents($file);
+            $update_file = false;
 
             //label módosítás
             $labels = view()->file(realpath(__DIR__ . "/../temp/labels.blade.php"))
                 ->with([
                     "labels" => $this->labels,
                 ])->render();
-            $ct = $this->replace_between($ct, 'protected $labels = [', '];', "\n\t\t" . $labels);
+            $ct = $this->replace_between($ct, 'protected $labels = [', '];', "\n\t\t" . $labels, $update_file);
 
             // dd($ct);
 
@@ -353,14 +363,14 @@ class ModelCls
                 ->with([
                     "validation" => $this->validation,
                 ])->render();
-            $ct = $this->replace_between($ct, 'protected $validation = [', '];', "\n\t\t" . $validation);
+            $ct = $this->replace_between($ct, 'protected $validation = [', '];', "\n\t\t" . $validation, $update_file);
 
             //casts
             $casts = view()->file(realpath(__DIR__ . "/../temp/casts.blade.php"))
                 ->with([
                     "casts" => $this->casts,
                 ])->render();
-            $ct = $this->replace_between($ct, 'protected $casts = [', '];', "\n\t\t" . $casts);
+            $ct = $this->replace_between($ct, 'protected $casts = [', '];', "\n\t\t" . $casts, $update_file);
 
             //fillable
             $old = $this->get_string_between($ct, 'protected $fillable = [', '];');
@@ -374,7 +384,7 @@ class ModelCls
                     "fillable" => $this->fillable,
                     "commented" => $commented,
                 ])->render();
-            $ct = $this->replace_between($ct, 'protected $fillable = [', '];', "\n\t\t" . $fillable);
+            $ct = $this->replace_between($ct, 'protected $fillable = [', '];', "\n\t\t" . $fillable, $update_file);
 
 
             if (!empty($this->relations)) {
@@ -388,12 +398,15 @@ class ModelCls
                         // dd($relation);
                         // $ct = $this->replace_between($ct, 'protected $fillable = [', '];', "\n\t\t" . $fillable);
                         $ct = preg_replace('/\}\s+$/', "\n\t" . $relation . "\n}\n", $ct);
+                        $update_file = true;
                     }
                 }
             }
 
-            file_put_contents($file, $ct);
-            echo " - updated - " . $this->getModelName($this->table) . "\n";
+            if ($update_file) {
+                file_put_contents($file, $ct);
+                echo " - updated - " . $this->getModelName($this->table) . "\n";
+            }
         } else {
 
             $template = realpath(__DIR__ . "/../temp/model.blade.php");

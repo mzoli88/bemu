@@ -569,7 +569,7 @@ global.Majax = class Majax {
       } else {
         callbacks = me.$on_load;
         for (var i in me.$on_before_load) {
-          me.$on_before_load[i].call(me);
+          if(me.$on_before_load[i].call(me) === true) return;
         }
       }
 
