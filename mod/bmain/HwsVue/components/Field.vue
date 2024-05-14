@@ -117,7 +117,7 @@ export default {
     info: String,
     vReg: String,
     vRegText: String,
-    if: String, // if="parent_id=1|search_id=2,3"   VAGY COMBO esetén rekord property-re if="parent_id.masik_mezo=1" (ahol combbo name=parent_id ott a rekordban van-e masik_mezo=1 )  
+    if: [String, Array], // if="parent_id=1|search_id=2,3"   VAGY COMBO esetén rekord property-re if="parent_id.masik_mezo=1" (ahol combbo name=parent_id ott a rekordban van-e masik_mezo=1 )  
     requiredIf: String,
     evalIf: String,
     hasRowData: String,
@@ -407,7 +407,7 @@ export default {
       }
     },
     checkPropertyIf: function (record) {
-      
+
       var form = this.up("Form");
       if (!form) return;
 
@@ -421,7 +421,7 @@ export default {
 
       fields.forEach((field) => {
         if (!record) return field.hide();
-        
+
         var explode = field.if.split("=");
         var property = explode.shift().replace(/^.*\./, "");
         var value = explode.shift();
@@ -520,40 +520,47 @@ export default {
         val = [val];
       }
       if (fields.length == 0) return;
+
       fields.forEach((r) => {
-        let rif = r.if
-          .split("|")
-          .filter((rif) => rif.includes(this.name))
-          .shift();
-        if (!r.hideCount) r.hideCount = {};
-        if (
-          rif
+        var tmpif = r.if;
+        if (!isArray(tmpif)) tmpif = [tmpif];
+        if (!r.hideCount) r.hideCount = [];
+
+        for (let index = 0; index < tmpif.length; index++) {
+          var rif = tmpif[index].split("|")
+            .filter((rif) => rif.includes(this.name))
+            .shift();
+          if (empty(rif)) continue;
+          if (!r.hideCount[index]) r.hideCount[index] = {};
+          if (rif
             .replace(this.name + "=", "")
             .split(",")
             .some((r) => val.includes(r))
-        ) {
-          r.hideCount[this.name] = true;
-        } else {
-          r.hideCount[this.name] = false;
+          ) {
+            r.hideCount[index][this.name] = true;
+          } else {
+            r.hideCount[index][this.name] = false;
+          }
         }
       });
-
-      // this.$nextTick(() => {
 
       fields.forEach((r) => {
 
-        if (
-          Object.keys(r.hideCount).filter((key) => r.hideCount[key] == false)
-            .length
-        ) {
-          // dd('hide', r, r.hideCount);
-          r.hide();
-        } else {
-          // dd('show', r, r.hideCount);
+        var is_ok = false;
+        for (let index = 0; index < r.hideCount.length; index++) {
+          const e = r.hideCount[index];
+          if (Object.keys(e).filter((key) => e[key] == false).length == 0){
+            is_ok = true;
+            break;
+          }
+        }
+
+        if (is_ok) {
           r.show();
+        } else {
+          r.hide();
         }
       });
-      // });
     },
     checkrequiredIf: function () {
       // requiredIf
