@@ -23,5 +23,13 @@ return [
             'icon' => 'e4e5',
             'name' => 'System',
         ],
+        'dbdocument' => [
+            'icon' => 'f1c0',
+            'name' => 'System',
+        ],
+        'filedocument' => [
+            'icon' => 'f15b',
+            'name' => 'System',
+        ],
     ]
 ];
