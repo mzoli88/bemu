@@ -11,8 +11,6 @@ class GenerateRMC extends Controller3
     public function create(Request $request)
     {
 
-        // $dirs = $this->argument('dirs');
-
         $dirs = explode(' ', $request->dirs);
         return response()->streamDownload(function () use ($dirs) {
 

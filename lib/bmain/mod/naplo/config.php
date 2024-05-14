@@ -25,11 +25,11 @@ return [
         ],
         'dbdocument' => [
             'icon' => 'f1c0',
-            'name' => 'System',
+            'name' => 'Adatbázis dokumentálás',
         ],
         'filedocument' => [
             'icon' => 'f15b',
-            'name' => 'System',
+            'name' => 'Fájlrendszer dokumentálás',
         ],
     ]
 ];
