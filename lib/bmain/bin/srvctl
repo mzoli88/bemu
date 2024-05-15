@@ -1,0 +1,141 @@
+#!/bin/bash
+cmd="$1"
+svc="$2"
+
+if [[ $cmd == '' ]]; then
+    echo "usage: $0 ..." >&2
+    echo "  find            - finds all service files" >&2
+    echo "  ls|list         - list current service states" >&2
+    echo "  install         - (only as root) install all services to /etc/systemd" >&2
+    echo "  enable [svc]    - (only as root) enable service (or all)" >&2
+    echo "  disable [svc]   - (only as root) disable service (or all)" >&2
+    echo "  start [svc]     - start service (or all)" >&2
+    echo "  restart [svc]   - restart service (or all)" >&2
+    echo "  stop [svc]      - stop service (or all)" >&2
+    echo "  status <svc>    - show service status" >&2
+    echo "  is-active <svc> - check if service is active (running)" >&2
+    exit 1
+fi
+
+basedir=$(dirname $(realpath $0) | sed -e 's/\/bin$//')
+instance=$(basename $basedir)
+if [[ $instance == '' ]]; then
+        echo "could not determine instance name" >&2
+        exit 1
+fi
+
+#echo  $basedir  $instance
+
+function find_services() {
+    find $basedir -path '*/etc/services/*.service'
+}
+
+function get_instuser() {
+    if [[ -r $basedir/etc/user ]]; then
+        instuser=$(cat $basedir/etc/user)
+    else
+        instuser=$(stat -c %U $basedir)
+    fi
+    if [[ $instuser == '' || $instuser == root ]]; then
+        echo "could not determine instance user" >&2
+        exit 1
+    fi
+    echo $instuser
+}
+
+case "$cmd" in
+    find)
+        find_services
+        ;;
+    ls|list)
+        for f in $(find_services); do
+            s=${instance}_$(basename $f)
+            echo -n "$s  "
+            ss=/etc/systemd/system/${instance}_$(basename $f)
+            if [[ ! -e $ss ]]; then
+                echo "(not installed)"
+            else
+                enabled=$(systemctl is-enabled $s)
+                active=$(systemctl is-active $s)
+                echo "$active; $enabled"
+            fi
+        done | column -t
+        ;;
+    install)
+        if [[ $(id -u) != 0 ]]; then
+            echo "error: not started as root user" >&2
+            exit 1
+        fi
+        instuser=$(get_instuser)
+        change=0
+        sudotmp=$(mktemp /tmp/border_${instance}_XXXXXX)
+        for f in $(find_services); do
+            s=${instance}_$(basename $f)
+            ss=/etc/systemd/system/$s
+            cp $f ${ss}.tmp
+            sed -i -e "/^WorkingDirectory=/s!=.*!=$basedir!i" ${ss}.tmp
+            sed -i -e "/^User=/s!=.*!=$instuser!i" ${ss}.tmp
+            sed -i -e "s!PATH=/!PATH=$basedir/bin:/!" ${ss}.tmp
+            sed -i -e "s!=\\s*php!=$basedir/bin/php!" ${ss}.tmp
+            if cmp -s ${ss} ${ss}.tmp; then
+                echo "$f -> $ss unchanged"
+                rm ${ss}.tmp
+            else
+                echo "$f -> $ss"
+                mv ${ss}.tmp ${ss}
+                change=1
+            fi
+            name=${s/.service/}
+            echo "$instuser ALL=(ALL:ALL) NOPASSWD: /usr/bin/systemctl start $name" >> $sudotmp
+            echo "$instuser ALL=(ALL:ALL) NOPASSWD: /usr/bin/systemctl restart $name" >> $sudotmp
+            echo "$instuser ALL=(ALL:ALL) NOPASSWD: /usr/bin/systemctl stop $name" >> $sudotmp
+            echo >> $sudotmp
+        done
+        if [[ $change > 0 ]]; then
+            echo "updating: /etc/sudoers.d/border_$instance"
+            mv $sudotmp /etc/sudoers.d/border_$instance
+            echo "systemctl daemon-reload"
+            systemctl daemon-reload
+        else
+            rm $sudotmp
+        fi
+        ;;
+    enable|disable)
+        if [[ $(id -u) != 0 ]]; then
+            echo "error: not started as root user" >&2
+            exit 1
+        fi
+        if [[ $svc != "" ]]; then
+            systemctl $cmd "${instance}_$svc"
+        else
+            for f in $(find_services); do
+                s=${instance}_$(basename $f)
+                systemctl $cmd $s
+            done
+        fi
+        ;;
+    start|stop|restart)
+        if [[ $svc != "" ]]; then
+            sudo -n systemctl $cmd "${instance}_$svc"
+        else
+            for f in $(find_services); do
+                s=${instance}_$(basename $f)
+                systemctl $cmd $s
+            done
+        fi
+        ;;
+    is-active|status)
+        if [[ $svc == "" ]]; then
+            echo "no service given"
+            exit 1
+        fi
+        systemctl $cmd "${instance}_$svc"
+        exit 0
+        ;;
+    *)
+        echo "invalid command: $cmd" >&2
+        exit 1
+        ;;
+esac
+
+# vim: set tabstop=4 shiftwidth=4 expandtab smarttab:

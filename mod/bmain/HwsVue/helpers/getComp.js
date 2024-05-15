@@ -125,7 +125,7 @@ export default {
           this.$parent.children.push(this);
         }
       }
-      this.$doLoad();
+      if (this.$first_loaded) this.$doLoad();
     },
     data: function () {
       if (this.$parent) {
@@ -150,7 +150,10 @@ export default {
       },
 
       $doLoad: function () {
-        if (isFunction(this.$load)) this.$load();
+        if (isFunction(this.$load)) {
+          this.$load();
+          this.$nextTick(() => this.$first_loaded = true); //ne fusson le eső betöltéskor az activated load
+        }
       }
     },
 
