@@ -82,7 +82,6 @@ class Ghttp
 			$this->response = (string)$response->getBody();
 			$this->status = $response->getStatusCode();
 		} catch (Exception $e) {
-			report($e);
 			$this->doLog(true,"GHttp Error: ".$e->getMessage(),array_merge($options,$params,['method'=>$this->method],['url'=>$this->getUrl($id,$get_params)]));
 			if($this->ignore_errors == false){
 				if(config('app.debug'))	throw $e;

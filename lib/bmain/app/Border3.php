@@ -209,7 +209,7 @@ class Border3
                 $has_jog = true;
                 break;
             }
-            if (array_key_exists($value, $jogok) && $jogok[$value] === true) {
+            if (($jogok[$value] ?? false) === true) {
                 $has_jog = true;
                 break;
             }

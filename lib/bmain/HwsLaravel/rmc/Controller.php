@@ -115,7 +115,6 @@ class Controller
         try {
             $return = call_user_func_array([$this, $method], $parameters);
         } catch (\Throwable $th) {
-            report($th);
             if ($th instanceof ValidationException) $this->sendNaplo('Validációs hiba történt');
             elseif ($th instanceof PDOException) $this->sendNaplo('Adatbázis hiba történt');
             elseif (get_class($th) == 'Laravel\Passport\Exceptions\OAuthServerException') $this->sendNaplo('Sikertelen authentikáció');

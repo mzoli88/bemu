@@ -355,7 +355,6 @@ class Controller2
             if ($this->useFileUpload && $return instanceof Model) $this->defaultUpload($return);
             if ($this->useFileUpload && $return instanceof Model && $method == 'delete') $this->defaultDeleteUpload($return);
         } catch (\Throwable $th) {
-            report($th);
             if ($th instanceof ValidationException) $this->sendNaplo('Validációs hiba történt');
             elseif ($th instanceof PDOException) $this->sendNaplo('Adatbázis hiba történt');
             elseif (get_class($th) == 'Laravel\Passport\Exceptions\OAuthServerException') $this->sendNaplo('Sikertelen authentikáció');

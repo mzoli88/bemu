@@ -149,7 +149,6 @@ class Excel
 			$reader->setReadDataOnly(true);
 			$spreadsheet = $reader->load($file_path);
 		} catch (\Throwable $th) {
-			report($th);
 			unlink($file_path);
 			return response()->json(['message' => 'A fájlt nem sikerült beolvasni.'], 500);
 		}
