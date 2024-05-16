@@ -24,7 +24,7 @@ class Callq extends Command
         Config::set('callq', true);
 
         $method = $this->argument('method');
-        $route = urldecode($this->argument('route'));
+        $route = urldecode(base64_decode($this->argument('route')));
         $user_id = $this->argument('user_id');
         $entity_id = $this->argument('entity_id');
         $import_file_path = $this->argument('import_file_path');
@@ -32,9 +32,6 @@ class Callq extends Command
 
         global $global_modul_azon;
         $global_modul_azon = preg_replace(['#^\/#', '/\/.*$/'], '', $route);
-        $path = BORDER_PATH_BORDERDOC . getModulAzon();
-        Config::set('filesystems.disks.local.root', $path);
-        Config::set('path.storage', $path);
 
         parse_str(preg_replace('/.*\?/', '', $route), $_GET);
 

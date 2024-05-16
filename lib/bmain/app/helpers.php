@@ -8,7 +8,6 @@ use mod\admin\models\Params;
 //globális változók cache miatt
 $global_modul_azon = null;
 $global_active_user = null;
-$global_active_entity = null;
 
 function getUser()
 {

@@ -48,7 +48,7 @@ class CacheQueue
                 $file_name = $_FILES['import_file']['name'];
             }
 
-            self::bexec('callq ' . $_SERVER['REQUEST_METHOD'] . ' "' . urldecode(preg_replace('/^.*\/remote\//', '/', $_SERVER['REQUEST_URI'])) . '" ' . getUserId() . ' ' . getEntity() . ' "' . $file_path . '"' . ' "' . $file_name . '"');
+            self::bexec('callq ' . $_SERVER['REQUEST_METHOD'] . ' "' . base64_encode(urldecode(preg_replace('/^.*\/remote\//', '/', $_SERVER['REQUEST_URI']))) . '" ' . getUserId() . ' ' . getEntity() . ' "' . $file_path . '"' . ' "' . $file_name . '"');
 
             return [
                 "Queque" => true,
@@ -77,6 +77,7 @@ class CacheQueue
         if (shell_exec($php . ' -v') == null) $php = "php";
 
         $cmd = $php . " " . base_path() . DIRECTORY_SEPARATOR . "artisan " . $cmd;
+
         if (substr(php_uname(), 0, 7) == "Windows") {
             if ($do_in_background) {
                 pclose(popen("start /B " . $cmd, "r"));
@@ -97,10 +98,6 @@ class CacheQueue
     {
         $cache = self::getCache();
         if (!$cache) return ["Queque" => true, "ready" => true, "content" => null];
-
-        $path = BORDER_PATH_BORDERDOC . request()->get('modul_azon');
-        Config::set('filesystems.disks.local.root', $path);
-        Config::set('path.storage', $path);
 
         if (array_key_exists('content', $cache) && array_key_exists('file', $cache['content']) && Storage::exists($cache['content']['file'])) {
             self::delCache();
@@ -129,10 +126,9 @@ class CacheQueue
 
         if (!$cache) return ["Queque" => true, "ready" => true];
 
-        if ($cache['ready'] == true && ((array_key_exists('stop_if_ready', $cache) && $cache['stop_if_ready'] == true)  || !array_key_exists('download', $cache['content']))) CacheQueue::delCache();
+        if (($cache['ready'] ?? false) == true && ((($cache['stop_if_ready'] ?? false) == true)  || !array_key_exists('download', $cache['content']))) CacheQueue::delCache();
 
         $cache['signal'] = Cache::get('workQuequeSignal_u_' . getUserId());
-
 
         return $cache;
     }
