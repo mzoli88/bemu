@@ -33,6 +33,32 @@ class Border3
         ]);
     }
 
+    static function artisan($command, $run_in_background = false)
+    {
+        $php = 'php' . preg_replace('#^([1-9]*)\.([1-9]*)\..*#', '$1.$2', phpversion());
+        if (shell_exec($php . ' -v') == null) $php = "php";
+        $cmd = $php . ' ' . base_path() . DIRECTORY_SEPARATOR . 'artisan ' . $command;
+
+        //háttérben futtatott console command
+        if (substr(php_uname(), 0, 7) == "Windows") {
+            if ($run_in_background) {
+                pclose(popen("start /B " . $cmd, "r"));
+            } else {
+                $output = shell_exec($cmd);
+                $output = preg_replace('#\\x1b[[][^A-Za-z]*[A-Za-z]#', '', $output);
+                return $output;
+            }
+        } else {
+            if ($run_in_background) {
+                exec($cmd . " > /dev/null &");
+            } else {
+                $output = shell_exec($cmd);
+                $output = preg_replace('#\\x1b[[][^A-Za-z]*[A-Za-z]#', '', $output);
+                return $output;
+            }
+        }
+    }
+
     static function send_error($txt, $code = 500, $title = false)
     {
         $out = ["message" => $txt];
