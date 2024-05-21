@@ -50,12 +50,8 @@ class CacheQueue
 
             self::bexec('callq ' . $_SERVER['REQUEST_METHOD'] . ' "' . base64_encode(urldecode(preg_replace('/^.*\/remote\//', '/', $_SERVER['REQUEST_URI']))) . '" ' . getUserId() . ' ' . getEntity() . ' "' . $file_path . '"' . ' "' . $file_name . '"');
 
-            return [
-                "Queque" => true,
-                "ready" => false,
-                "signal" => null,
-                "name" => $eventName,
-            ];
+            sleep(1); //ha 1mp nél gyorsabb az exportálás, akkor ne kelljen rá várni többet, ezért késleltetek.
+            return self::isReady();
         }
     }
 

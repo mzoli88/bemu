@@ -13,6 +13,11 @@ global.Queque = reactive({
 
 global.doQueque = function (responseData) {
 
+    
+    if(SWorker){
+        SWorker.QuequeOn(responseData);
+        return;
+    }
     Queque.run = true;
     Queque.name = responseData.name;
     clearTimeout(timequeque);

@@ -24,6 +24,7 @@ export default {
     },
     methods: {
         doStop: function () {
+            if(SWorker) SWorker.QuequeOff();
             getStore('admin.quedownload').list({
                 stopQueque: Queque.stop,
             });
@@ -32,6 +33,7 @@ export default {
             getStore('admin.quedownload').download({
                 modul_azon: getActiveModul(),
             });
+            if(SWorker) SWorker.QuequeOff();
             Queque.run = false;
             Queque.download = false;
             Queque.name = '';

@@ -5,27 +5,27 @@ global.SWorker = {
 
     register: async function () {
         if (!window.SharedWorker) return;
-        this.worker = new SharedWorker("workerv103.js", { name: "HWS_Worker" });
+        this.worker = new SharedWorker("workerv104.js", { name: "HWS_Worker" });
         this.worker.port.start();
         this.worker.port.onmessage = this.onMessage;
         const chanel = new BroadcastChannel("hws_tokenrefresh");
         chanel.onmessage = this.onMessage;
         this.login();
-        if(getConfig().user_inanctive_timeout){
+        if (getConfig().user_inanctive_timeout) {
             // window.onclick = ()=>this.onActive();
             // window.onmousedown = ()=>this.onActive();
-            window.onmousemove = ()=>this.onActive();
-            window.onkeydown = ()=>this.onActive();
+            window.onmousemove = () => this.onActive();
+            window.onkeydown = () => this.onActive();
         }
     },
 
-    onActive: function(){
-        if(this.wait == true)return;
+    onActive: function () {
+        if (this.wait == true) return;
         this.wait = true;
-        this.worker.port.postMessage({ type: 'notinactive'});
-        setTimeout(()=>{
+        this.worker.port.postMessage({ type: 'notinactive' });
+        setTimeout(() => {
             this.wait = false;
-        },10000);
+        }, 10000);
     },
 
     onMessage: function (e) {
@@ -45,8 +45,8 @@ global.SWorker = {
                 location.reload();
                 break;
             case 'ianctivelogout':
-                msg('Inaktivitás miatt a felhasználó ki lett léptetve!','error',()=>{
-                    maskOn ();
+                msg('Inaktivitás miatt a felhasználó ki lett léptetve!', 'error', () => {
+                    maskOn();
                     location.reload()
                 });
                 if (Auth.logged == false) break;
@@ -59,18 +59,43 @@ global.SWorker = {
                 break;
             case 'refresh':
                 if (Auth.logged == false) break;
-                setNotificationCount(e.data.value.notifications,e.data.noRefreshMessage);
+                setNotificationCount(e.data.value.notifications, e.data.noRefreshMessage);
                 break;
             case 'maintanceOn':
                 var title = 'Az oldal jelenleg karbantartás alatt van';
                 var message = 'Köszönjük türelmét!';
                 if (isObject(e.data.value) && e.data.value.title) title = e.data.value.title;
                 if (isObject(e.data.value) && e.data.value.message) message = e.data.value.message;
-      
+
                 msg(title, 'maintenance', null, message);
                 break;
             case 'maintanceOff':
                 location.reload();
+                break;
+            case 'QuequeResponse':
+                var quequeRes = JSON.parse(e.data.value);
+                Queque.run = true;
+                Queque.name = quequeRes.name;
+                Queque.signal = quequeRes.signal;
+
+                if (quequeRes.ready) {
+
+                    tMsg.s(Queque.name + ' befejeződött');
+
+                    if (quequeRes.content && quequeRes.content.download) {
+                        Queque.download = true;
+                    } else {
+                        Queque.run = false;
+                        Queque.name = '';
+                    }
+
+                }
+                break;
+            case 'QuequeOff':
+                dd('QuequeOff');
+                Queque.download = false;
+                Queque.run = false;
+                Queque.name = '';
                 break;
         }
     },
@@ -78,7 +103,7 @@ global.SWorker = {
     login: function () {
         if (!this.worker) return;
         if (empty(Auth.token)) return;
-        this.worker.port.postMessage({ type: 'login', value: Auth.token, config:getConfig().name,user_inanctive_timeout:getConfig().user_inanctive_timeout});
+        this.worker.port.postMessage({ type: 'login', value: Auth.token, config: getConfig().name, user_inanctive_timeout: getConfig().user_inanctive_timeout });
     },
     logout: function () {
         if (!this.worker) return;
@@ -99,6 +124,14 @@ global.SWorker = {
     maintanceOn: function (val) {
         if (!this.worker) return;
         this.worker.port.postMessage({ type: 'maintanceOn', value: val });
+    },
+    QuequeOn: function (val) {
+        if (!this.worker) return;
+        this.worker.port.postMessage({ type: 'QuequeOn', value: JSON.stringify(val), ready: val.ready });
+    },
+    QuequeOff: function () {
+        if (!this.worker) return;
+        this.worker.port.postMessage({ type: 'QuequeOff' });
     },
 
 };

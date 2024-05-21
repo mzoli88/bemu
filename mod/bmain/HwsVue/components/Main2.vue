@@ -47,8 +47,8 @@
       {{ userData.name }}
     </div>
     <div class="cflex NotificationCountParent">
-      <Button :icon="NotificationLastRout ? 'f3e5' : 'f0f3'" title="Rendszerüzenetek" noHighlight @click="toNotifications"
-        :class="{ read: NotificationCount > 0 }">
+      <Button :icon="NotificationLastRout ? 'f3e5' : 'f0f3'" title="Rendszerüzenetek" noHighlight
+        @click="toNotifications" :class="{ read: NotificationCount > 0 }">
         <template #notText>
           <div v-if="NotificationCount > 0" class="NotificationCount cflex">
             {{ NotificationCount }}
@@ -70,17 +70,16 @@
       <div class="menu1" v-if="menuAnimateOn || !canShowMenu()">
         <template v-for="key in Object.keys(buttons)" :key="'mbtn' + key">
           <div ref="menu1btn" class="hflex animate_btn" :title="buttons[key].name" @click="
-            empty(buttons[key].menu) ||
-              Object.keys(buttons[key].menu).length == 1
-              ? onMenuClick(key)
-              : setPressed(key)
-          " :class="{ activeModul: pressed == key }">
-            <div class="library-icon" v-if="
-              !(
-                empty(buttons[key].menu) ||
-                Object.keys(buttons[key].menu).length == 1
-              )
-            ">
+    empty(buttons[key].menu) ||
+      Object.keys(buttons[key].menu).length == 1
+      ? onMenuClick(key)
+      : setPressed(key)
+    " :class="{ activeModul: pressed == key }">
+            <div class="library-icon" v-if="!(
+      empty(buttons[key].menu) ||
+      Object.keys(buttons[key].menu).length == 1
+    )
+    ">
               <Icon>f152</Icon>
             </div>
             <div class="menu_icon cflex fit">
@@ -193,6 +192,9 @@ export default {
       this.active_entity = this.active_entity || x.active_entity;
       this.perms = x.perms;
       Mods = x.mods;
+      if (doQueque && x.CacheQueue && x.CacheQueue.Queque == true) {
+        doQueque(x.CacheQueue);
+      }
       // dd(Mods[this.active_entity]);
       this.buttons = Mods[this.active_entity];
       this.ActiveToMenu(this.active);

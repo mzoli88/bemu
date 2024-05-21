@@ -100,7 +100,7 @@ global.tokenHandler = {
       Auth.token = data.token;
       sessionStorage.setItem("WebToken", data.token);
       Auth.logged = true;
-      SWorker.login();
+      if (SWorker) SWorker.login();
     } else {
       me.logout(true);
     }
@@ -117,7 +117,7 @@ global.tokenHandler = {
     Auth.token = null;
     Auth.logged = false;
     sessionStorage.removeItem("WebToken");
-    SWorker.logout();
+    if (SWorker) SWorker.logout();
     // location.reload();
   },
 
@@ -569,7 +569,7 @@ global.Majax = class Majax {
       } else {
         callbacks = me.$on_load;
         for (var i in me.$on_before_load) {
-          if(me.$on_before_load[i].call(me) === true) return;
+          if (me.$on_before_load[i].call(me) === true) return;
         }
       }
 
