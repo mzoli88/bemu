@@ -51,9 +51,9 @@ class Kernel extends ConsoleKernel
             } else {
                 $global_modul_azon = 'admin';
             }
-            $path = BORDER_PATH_BORDERDOC . getModulAzon();
-            Config::set('filesystems.disks.local.root', $path);
-            Config::set('path.storage', $path);
+            // $path = BORDER_PATH_BORDERDOC . getModulAzon();
+            // Config::set('filesystems.disks.local.root', $path);
+            // Config::set('path.storage', $path);
         });
 
         // $this->load(__DIR__.'/Commands');
