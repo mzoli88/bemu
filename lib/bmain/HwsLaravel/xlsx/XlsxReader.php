@@ -40,13 +40,13 @@ class XlsxReader
         $file_name = array_pop($file_name);
 
         $this->tmpPathName = Storage::path('') . $file_name;
-        mkdir($this->tmpPathName);
-
+        if (!is_dir($this->tmpPathName)) mkdir($this->tmpPathName);
         try {
             $zip = new ZipArchive();
             $zip->open($file_path);
             $zip->extractTo($this->tmpPathName);
         } catch (\Throwable $th) {
+            report($th);
             sendError("A fájlt nem lehet beolvasni");
         }
         $this->checkFormat($zip);
@@ -173,6 +173,7 @@ class XlsxReader
 
             fclose($fhandler);
 
+            
             if ($has_error) {
                 Config::set('error', 'Az import fájl hibás. Az adatok nem megfelelőek.');
                 return $xlsx->download('import_hiba_' . date('YmdHis') . '.xlsx');

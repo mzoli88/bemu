@@ -133,8 +133,8 @@ class Chttp
         curl_setopt_array($curl, $options);
         $this->outHeaders = [];
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, [$this, 'getOutHeaders']);
-        
-        if($this->CURLOPT_USERPWD) curl_setopt($curl, CURLOPT_USERPWD, $this->CURLOPT_USERPWD);
+
+        if ($this->CURLOPT_USERPWD) curl_setopt($curl, CURLOPT_USERPWD, $this->CURLOPT_USERPWD);
 
         $this->response = curl_exec($curl);
         $error = curl_error($curl);
@@ -194,7 +194,7 @@ class Chttp
             'content' => key_exists(CURLOPT_POSTFIELDS, $options) && $this->noContentLog == false ? self::cutFile($options[CURLOPT_POSTFIELDS]) : '',
         ];
 
-        $msg2 = "CHTTP_LOG_" . $this->method . ": " . $msg . "\nStatusCode:" . $this->status . "\n\n" . ($this->noResponseLog == false ? print_r($this->response, true) : '') . "\n\noptions:" . print_r($fOptions, true);
+        $msg2 = "CHTTP_LOG_" . $this->method . ": " . $msg . "\nStatusCode:" . $this->status  . "\n\noptions:" . print_r($fOptions, true) . "\n\n" . ($this->noResponseLog == false ? "Response:\n" . print_r($this->response, true) : '');
 
         if ($error) {
             logger()->error($msg2);

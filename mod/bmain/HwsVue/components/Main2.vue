@@ -43,6 +43,9 @@
         </span>
       </div>
     </div>
+    <div class="cflex">
+      <Queque />
+    </div>
     <div class="cflex user_name top-user-data">
       {{ userData.name }}
     </div>
@@ -76,9 +79,9 @@
       : setPressed(key)
     " :class="{ activeModul: pressed == key }">
             <div class="library-icon" v-if="!(
-      empty(buttons[key].menu) ||
-      Object.keys(buttons[key].menu).length == 1
-    )
+    empty(buttons[key].menu) ||
+    Object.keys(buttons[key].menu).length == 1
+  )
     ">
               <Icon>f152</Icon>
             </div>
@@ -133,6 +136,8 @@
 </template>
 
 <script>
+import Queque from "./Queque.vue";
+
 const Contents = {};
 //hasPerm hívás miatt kell a g_userData, g_active_modul, ne reaktív legyen a változó. ha reaktív akkor is frissít amikor modult változtat. (false -lesz a jog) 
 var g_userData, g_active_modul;
@@ -140,8 +145,13 @@ var g_userData, g_active_modul;
 var Mods;
 export default {
   name: "Main",
+  components: {
+    Queque
+  },
   data: function () {
     document.title = "Kezdőlap";
+
+    global.no_grid_queque = true;
 
     var active = this.getCpHash();
     if (!active) this.setHash("start");
@@ -583,7 +593,7 @@ export default {
   position: absolute;
   right: 0px;
   font-size: 12px;
-  top: 50%;
+  top: 20px;
   transform: translateY(-50%);
   color: var(--higlight-text-color);
 }
@@ -622,7 +632,8 @@ export default {
   position: relative;
 }
 
-.NotificationCountParent .Button.read {
+.NotificationCountParent .Button.read,
+.Button.Alert {
   animation: alert-button-effect 4s infinite;
 }
 

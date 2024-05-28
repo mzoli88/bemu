@@ -4,7 +4,6 @@ namespace hws;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Config;
 
 class CacheQueue
 {
@@ -16,10 +15,10 @@ class CacheQueue
 
     static function import(callable $job)
     {
-        return self::handle($job, "Importálás", true);
+        return self::handle($job, "Importálás");
     }
 
-    static function handle(callable $job, $eventName = "Exportálás", $stop_if_ready = false)
+    static function handle(callable $job, $eventName = "Exportálás")
     {
 
         if (app()->runningInConsole()) {
@@ -36,7 +35,8 @@ class CacheQueue
                 "Queque" => true,
                 "ready" => false,
                 "name" => $eventName,
-                "stop_if_ready" => $stop_if_ready,
+                // "uri" => $_SERVER['REQUEST_URI'],
+                // "method" => $_SERVER['REQUEST_METHOD'],
             ]);
 
             $file_path = '';
@@ -48,7 +48,7 @@ class CacheQueue
                 $file_name = $_FILES['import_file']['name'];
             }
 
-            self::bexec('callq ' . $_SERVER['REQUEST_METHOD'] . ' "' . base64_encode(urldecode(preg_replace('/^.*\/remote\//', '/', $_SERVER['REQUEST_URI']))) . '" ' . getUserId() . ' ' . getEntity() . ' "' . $file_path . '"' . ' "' . $file_name . '"');
+            self::bexec('callq ' . $_SERVER['REQUEST_METHOD'] . ' "' . base64_encode(urldecode(preg_replace('/^.*\/remote\//', '/', $_SERVER['REQUEST_URI']))) . '" ' . getUserId() . ' ' . getEntity() . ' "' . base64_encode($file_path) . '"' . ' "' . base64_encode($file_name) . '"');
 
             sleep(1); //ha 1mp nél gyorsabb az exportálás, akkor ne kelljen rá várni többet, ezért késleltetek.
             return self::isReady();
@@ -73,6 +73,7 @@ class CacheQueue
         if (shell_exec($php . ' -v') == null) $php = "php";
 
         $cmd = $php . " " . base_path() . DIRECTORY_SEPARATOR . "artisan " . $cmd;
+        // dd ($cmd);
 
         if (substr(php_uname(), 0, 7) == "Windows") {
             if ($do_in_background) {
@@ -87,7 +88,7 @@ class CacheQueue
                 exec($cmd, $output);
             }
         }
-        return implode("\n", $output);
+        // dd ($cmd);
     }
 
     static function download()
@@ -120,9 +121,11 @@ class CacheQueue
             return ["Queque" => true, "ready" => true, "name" => "Háttérfolyamat leállítása", 'info' => 'manual stop finish'];
         }
 
-        if (!$cache) return ["Queque" => true, "ready" => true];
+        if (!$cache) return ["Queque" => true, "ready" => true, "name" => "Háttérfolyamat"];
 
-        if (($cache['ready'] ?? false) == true && ((($cache['stop_if_ready'] ?? false) == true)  || !array_key_exists('download', $cache['content']))) CacheQueue::delCache();
+        if (($cache['ready'] ?? false) == true ){
+            if(!(is_array($cache['content'] ?? '') && array_key_exists('download', $cache['content'] ?? []))) CacheQueue::delCache();
+        }
 
         $cache['signal'] = Cache::get('workQuequeSignal_u_' . getUserId());
 

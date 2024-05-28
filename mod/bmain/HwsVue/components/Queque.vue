@@ -9,8 +9,8 @@
 
         <Button v-if="!Queque.download" class="stopExportBtn" icon="Mégsem" @click="doStop"
             :title="Queque.name + ' leállítása'"></Button>
-        <Button v-if="Queque.download" icon="f019" class="downloadReadyButton" @click="doDownloadExport">
-            {{ Queque.name }} letöltése
+        <Button v-if="Queque.download" icon="f019" class="downloadReadyButton Alert" @click="doDownloadExport">
+            {{ Queque.download }}
         </Button>
     </div>
 </template>

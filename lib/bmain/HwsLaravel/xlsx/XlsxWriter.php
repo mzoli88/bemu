@@ -214,11 +214,13 @@ class XlsxWriter
     private function saveToQueque($file_name)
     {
         $this->close();
-        return [
-            "download" => true,
+        global $Callq_file;
+        $Callq_file = [
+            "download" => config('error') ? 'Hibákat tartalmazó import fájl letöltése' : 'Export fájl letöltése',
             "file" => Storage::putFile('export', $this->tmp_output_path . '_ready.xlsx'),
             "name" => $file_name,
         ];
+        return $Callq_file;
     }
 
     public function download($file_name)

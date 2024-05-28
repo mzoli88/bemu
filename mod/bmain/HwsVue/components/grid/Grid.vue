@@ -87,7 +87,7 @@
             <div v-if="checkbox" class="cflex">
               Kijelölt sorok száma: {{ chboxSelectedNumber }} db
             </div>
-            <Queque />
+            <Queque v-if="!no_grid_queque" />
           </div>
           <div class="Grid_title fit cflex" v-if="title">{{ title }}</div>
         </div>
@@ -382,6 +382,8 @@ export default {
 
       showHeaderContextmenu: false,
       hiddenHeaders: [],
+
+      no_grid_queque: global.no_grid_queque,
 
       isCreate: this.create,
       isUpdate: this.update,
@@ -777,7 +779,7 @@ export default {
 
       return h;
     },
-    onBeforeStoreLoad:function(){
+    onBeforeStoreLoad: function () {
       if (this.firstLoaded && this.show == 'details') {
         var detail = this.down('Detail');
         if (detail) detail.refreshAll();

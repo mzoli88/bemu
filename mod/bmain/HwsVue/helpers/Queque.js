@@ -13,11 +13,11 @@ global.Queque = reactive({
 
 global.doQueque = function (responseData) {
 
-    
     if(SWorker){
         SWorker.QuequeOn(responseData);
         return;
     }
+
     Queque.run = true;
     Queque.name = responseData.name;
     clearTimeout(timequeque);
@@ -25,10 +25,14 @@ global.doQueque = function (responseData) {
 
     if (responseData.ready) {
         
-        tMsg.s(Queque.name + ' befejeződött');
+        if(responseData.has_err){
+            msg(Queque.name + ' hiba!', 'error', null, responseData.has_err);
+        }else{
+            tMsg.s(Queque.name + ' befejeződött');
+        }
         
         if(responseData.content && responseData.content.download){
-            Queque.download = true;
+            Queque.download = responseData.content.download;
         }else{
             Queque.run = false;
             Queque.name = '';

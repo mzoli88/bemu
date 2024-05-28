@@ -80,10 +80,15 @@ global.SWorker = {
 
                 if (quequeRes.ready) {
 
-                    tMsg.s(Queque.name + ' befejeződött');
+
+                    if (quequeRes.has_err) {
+                        msg(Queque.name + ' hiba!', 'error', null, quequeRes.has_err);
+                    } else {
+                        tMsg.s(Queque.name + ' befejeződött');
+                    }
 
                     if (quequeRes.content && quequeRes.content.download) {
-                        Queque.download = true;
+                        Queque.download = quequeRes.content.download;
                     } else {
                         Queque.run = false;
                         Queque.name = '';
@@ -92,7 +97,6 @@ global.SWorker = {
                 }
                 break;
             case 'QuequeOff':
-                dd('QuequeOff');
                 Queque.download = false;
                 Queque.run = false;
                 Queque.name = '';

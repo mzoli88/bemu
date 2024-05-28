@@ -49,7 +49,7 @@ class CustomLoggerHandler extends AbstractProcessingHandler
         $modul_azon = getModulAzon();
         if (array_key_exists('modul_azon', $record->context)) $modul_azon = $record->context['modul_azon'];
 
-        if($channel=='debug'){
+        if ($channel == 'debug') {
             switch ($record['level_name']) {
                 case 'EMERGENCY':
                 case 'ALERT':
@@ -68,7 +68,7 @@ class CustomLoggerHandler extends AbstractProcessingHandler
                 break;
             case 'error':
                 if (self::canDebug()) {
-                    $formatted = self::formatDebug($record,'debug');
+                    $formatted = self::formatDebug($record, 'debug');
                     file_put_contents(BORDER_PATH_BORDERDOC . 'bmain_logs' . DIRECTORY_SEPARATOR . $modul_azon . '-debug-' . date('Y-m-d') . '.log', $formatted . "\n", FILE_APPEND | LOCK_EX);
                 }
                 $formatted = self::formatDebug($record, 'error');
@@ -253,7 +253,7 @@ class CustomLoggerHandler extends AbstractProcessingHandler
             'datetime' => $record['datetime']->format('Y-m-d H:i:s'),
             'category' => $channel,
             'level' => $level,
-            'software_id' => getModulName() . ' ' . getModulVersion(),
+            'software_id' => getModulName() . ' v' . getModulVersion(),
             'request_id' => config('request_id'),
             'user_id' => $user ? '' . $user->id : '-',
             'user_login' => $user ? $user->login : '-',
