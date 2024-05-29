@@ -47,11 +47,16 @@ Props:
     warning: String
         - [default]: null
         - mező mellett figyelmeztető jellegű szöveg megjelenítése
-    if: String
+    if: String, Array
         - [default]: null
         - Stringként megfogalmazhatjuk, hogy a mező csak abban az esetben látható, ha egy másik mező értéke egyenlő egy meghatározott értékkel.
-        - pl.: parent_id=12, - ebben az esetben egy másik mező aminek a name tulajdonsága parent_id, kapni fog egy change eseményt mely figyeli, hogy ha a az értéke 12, akkor
+            pl.: parent_id=12, - ebben az esetben egy másik mező aminek a name tulajdonsága parent_id, kapni fog egy change eseményt mely figyeli, hogy ha a az értéke 12, akkor
             a jelenlegi mező láthatóvá váljon.
+        - Array estén vagylagos logikával jelenik meg a field. Pl.: ['field1=2','field2=3'] (akkor jelenik meg a mező, ha field1==2 vagy field2 == 3)
+    evalif: String
+        - [default]: null
+        - String esetén javascript kódot lehet neki átadni. Ha  visszatérés értéke false, akkor nem jelenik meg a mező, ha true, akkor igen.
+            Abban az esetben hasznos, ha a backendben akarunk átadni egy JS kódot. pl. PHP-> 'evalif' => 'hasPerm('admin')'
 
 Events:
     @change:

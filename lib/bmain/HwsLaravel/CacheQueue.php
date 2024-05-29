@@ -15,10 +15,10 @@ class CacheQueue
 
     static function import(callable $job)
     {
-        return self::handle($job, "Importálás");
+        return self::handle($job, "Importálás", false);
     }
 
-    static function handle(callable $job, $eventName = "Exportálás")
+    static function handle(callable $job, $eventName = "Exportálás", $can_cancel = true)
     {
 
         if (app()->runningInConsole()) {
@@ -35,6 +35,7 @@ class CacheQueue
                 "Queque" => true,
                 "ready" => false,
                 "name" => $eventName,
+                "can_cancel" => $can_cancel,
                 // "uri" => $_SERVER['REQUEST_URI'],
                 // "method" => $_SERVER['REQUEST_METHOD'],
             ]);
@@ -116,9 +117,11 @@ class CacheQueue
         if (!array_key_exists("Queque", $cache)) $cache['Queque'] = true;
 
         if (request()->query('stopQueque') == true) {
-            if (array_key_exists('pid', $cache)) CacheQueue::killp($cache['pid'], 0);
-            CacheQueue::delCache();
-            return ["Queque" => true, "ready" => true, "name" => "Háttérfolyamat leállítása", 'info' => 'manual stop finish'];
+            if(($cache['can_cancel'] ?? false ) == true){
+                if (array_key_exists('pid', $cache)) CacheQueue::killp($cache['pid'], 0);
+                CacheQueue::delCache();
+                return ["Queque" => true, "ready" => true, "name" => "Háttérfolyamat leállítása", 'info' => 'manual stop finish'];
+            }
         }
 
         if (!$cache) return ["Queque" => true, "ready" => true, "name" => "Háttérfolyamat"];

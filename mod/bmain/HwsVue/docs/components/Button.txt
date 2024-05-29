@@ -28,6 +28,18 @@ Props:
         - A gomb kinézetét ezzel a tulajdonsággal emelhetjük ki. Pl.: narancs sárga színt kap, hogy jobban ki legyen hangsúlyozva,
         - [default]: null/false - ha egy html tag-en belül nincs kiemelt gomb, akkor automatikusan az első gomb lesz kiemelve
         - [true]: "highlight" css class szabály illesztése, (megváltozik a színe a gombnak)
+    spin: Boolean
+        - A gomb ikonja forogni fog,
+        - [default]: null/false - forgás kikapcsolba
+        - [true]: forgás bekapcsolva
+    conf: Boolean
+        - "conformation" - felhasználói megerősítést igényel, pl.: törléskor vár 3 másodpercet és az úja kattintással véglegesítésre kerül a törlés
+        - [default]: null/false - nem történik semmi
+        - [true]: megerősítés bekapcsolva
+    quequeDisable: Boolean
+        - Ha egy szabványos CacheQueque be van kapcsolva, pl importálás vagy exportálás, akkor ez a gomb inaktív lesz
+        - [default]: null/false - nem történik semmi
+        - [true]: CacheQueque figyelve lesz és inaktíválja a gombot
 
 Events:
     @click:

@@ -77,6 +77,7 @@ global.SWorker = {
                 Queque.run = true;
                 Queque.name = quequeRes.name;
                 Queque.signal = quequeRes.signal;
+                Queque.can_cancel = quequeRes.can_cancel;
 
                 if (quequeRes.ready) {
 
@@ -93,6 +94,7 @@ global.SWorker = {
                         Queque.run = false;
                         Queque.name = '';
                     }
+                    Queque.can_cancel = false;
 
                 }
                 break;

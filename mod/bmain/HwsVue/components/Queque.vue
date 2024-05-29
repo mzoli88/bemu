@@ -7,7 +7,7 @@
             <span style="margin-left:5px" v-if="Queque.signal">{{ Queque.signal }}</span>
         </Button>
 
-        <Button v-if="!Queque.download" class="stopExportBtn" icon="Mégsem" @click="doStop"
+        <Button v-if="!Queque.download && Queque.can_cancel" class="stopExportBtn" icon="Mégsem" @click="doStop"
             :title="Queque.name + ' leállítása'"></Button>
         <Button v-if="Queque.download" icon="f019" class="downloadReadyButton Alert" @click="doDownloadExport">
             {{ Queque.download }}

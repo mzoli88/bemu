@@ -36,7 +36,9 @@ class XlsxWriter
             $this->writeCache('(Előkészítés)');
         }
 
-        $this->sheetXml_paths[1] = tempnam(Storage::path(''), 'export_');
+        \Illuminate\Support\Facades\File::ensureDirectoryExists(Storage::path('tmp'));
+
+        $this->sheetXml_paths[1] = tempnam(Storage::path('tmp'), 'export_');
         $this->sheetXml_filehandlers[1] = fopen($this->sheetXml_paths[1], 'w');
         fwrite($this->sheetXml_filehandlers[1], file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'SheetStart.txt'));
 
@@ -80,7 +82,7 @@ class XlsxWriter
         if (!array_key_exists($activeSheet, $this->SheetNames)) {
             $this->currentRows[$activeSheet] = 0;
             $this->SheetNames[$activeSheet] = 'Munka' . $activeSheet;
-            $this->sheetXml_paths[$activeSheet] = tempnam(Storage::path(''), 'export_');
+            $this->sheetXml_paths[$activeSheet] = tempnam(Storage::path('tmp'), 'export_');
             $this->sheetXml_filehandlers[$activeSheet] = fopen($this->sheetXml_paths[$activeSheet], 'w');
             fwrite($this->sheetXml_filehandlers[$activeSheet], str_replace('tabSelected="1" ', '', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'SheetStart.txt')));
         }
@@ -182,7 +184,7 @@ class XlsxWriter
 
         $zip = new ZipArchive;
 
-        $this->tmp_output_path =  tempnam(Storage::path(''), 'export_');
+        $this->tmp_output_path =  tempnam(Storage::path('tmp'), 'export_');
 
         $res = $zip->open($this->tmp_output_path . '_ready.xlsx', ZipArchive::CREATE);
         if ($res === TRUE) {
@@ -217,7 +219,7 @@ class XlsxWriter
         global $Callq_file;
         $Callq_file = [
             "download" => config('error') ? 'Hibákat tartalmazó import fájl letöltése' : 'Export fájl letöltése',
-            "file" => Storage::putFile('export', $this->tmp_output_path . '_ready.xlsx'),
+            "file" => Storage::putFile('tmp', $this->tmp_output_path . '_ready.xlsx'),
             "name" => $file_name,
         ];
         return $Callq_file;

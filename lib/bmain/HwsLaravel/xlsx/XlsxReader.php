@@ -39,7 +39,9 @@ class XlsxReader
         $file_name = explode(DIRECTORY_SEPARATOR, $file_path);
         $file_name = array_pop($file_name);
 
-        $this->tmpPathName = Storage::path('') . $file_name;
+        \Illuminate\Support\Facades\File::ensureDirectoryExists(Storage::path('tmp'));
+
+        $this->tmpPathName = Storage::path('tmp/') . $file_name;
         if (!is_dir($this->tmpPathName)) mkdir($this->tmpPathName);
         try {
             $zip = new ZipArchive();
