@@ -16,14 +16,7 @@ class ClearCacheVue extends Command
 
     public function handle(): void
     {
-        if (!file_exists(base_path('public/app/config.json'))) {
-            file_put_contents(base_path('public/app/config.json'), json_encode([
-                "name" => 'Border',
-            ]));
-        }
-
-        $dir = realpath(__DIR__ . '/../../storage/vue');
-        if (!$dir) return;
+        $dir = storage_path('vue');
         $files = scandir($dir);
         foreach ($files as $file) {
             if (preg_match('/\.json$/', $file)) unlink($dir . DIRECTORY_SEPARATOR . $file);
