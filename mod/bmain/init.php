@@ -5,6 +5,8 @@ use hws\Cron;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Output\BufferedOutput;
 
+sleep(2);
+
 require_once('belepve.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
