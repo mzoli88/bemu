@@ -19,7 +19,6 @@ class CustomLoggerHandler extends AbstractProcessingHandler
     static $do_response_log = false;
     static $do_request_log = false;
     static $do_sql_log = false;
-    static $sqls = [];
 
     public function __construct()
     {
@@ -102,12 +101,7 @@ class CustomLoggerHandler extends AbstractProcessingHandler
 
             foreach (config('hiddenfields', ['password']) as $prop) $tmpsql = preg_replace("/`" . $prop . "` = '([^']*?)\'/", '`' . $prop . '` = **** ', $tmpsql);
 
-            self::$sqls[] = $tmpsql;
-            if (count(self::$sqls) > 40) {
-                // ne tömje tele a memóriát ha sok adatbázis művelet van
-                logger()->debug("SQL_LOG:\n\n" . implode("\n" . str_repeat('-', 50) . "\n", self::$sqls));
-                self::$sqls = [];
-            }
+            logger()->debug("SQL_LOG:\n\n" . $tmpsql);
         });
     }
 
@@ -144,9 +138,6 @@ class CustomLoggerHandler extends AbstractProcessingHandler
         if (self::$do_response_log == true) return;
         self::$do_response_log = true;
         Event::listen(RequestHandled::class, function ($event) {
-            // dump (self::$sqls);
-
-            if (!empty(self::$sqls)) logger()->debug("SQL_LOG:\n\n" . implode("\n" . str_repeat('-', 50) . "\n", self::$sqls));
 
             if (app()->runningInConsole()) return;
             if ($event->response instanceof JsonResponse) {
