@@ -19,6 +19,7 @@ class CustomLoggerHandler extends AbstractProcessingHandler
     static $do_response_log = false;
     static $do_request_log = false;
     static $do_sql_log = false;
+    static $stop_sql_log = false; //végtelen loggolás elkerülése miatt
 
     public function __construct()
     {
@@ -87,6 +88,9 @@ class CustomLoggerHandler extends AbstractProcessingHandler
         self::$do_sql_log = true;
 
         DB::listen(function ($query) {
+
+            if (self::$stop_sql_log) return;
+
             $bindings = array_map(
                 function ($value) {
                     return is_numeric($value) ? $value : "'{$value}'";
@@ -101,7 +105,9 @@ class CustomLoggerHandler extends AbstractProcessingHandler
 
             foreach (config('hiddenfields', ['password']) as $prop) $tmpsql = preg_replace("/`" . $prop . "` = '([^']*?)\'/", '`' . $prop . '` = **** ', $tmpsql);
 
+            self::$stop_sql_log = true;
             logger()->debug("SQL_LOG:\n\n" . $tmpsql);
+            self::$stop_sql_log = false;
         });
     }
 
