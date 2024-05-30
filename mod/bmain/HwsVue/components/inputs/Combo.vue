@@ -1,23 +1,11 @@
 <template>
-  <div
-    class="fieldbody hflex Select fit Combobox"
-    :class="{ oponedCombo: showDropdown, closedCombo: !showDropdown }"
-  >
+  <div class="fieldbody hflex Select fit Combobox"
+    :class="{ oponedCombo: showDropdown, closedCombo: !showDropdown, noEdit: noEdit }">
     <div class="vflex comboInputBody fit">
-      <input
-        type="text"
-        class="Textfield fit fieldBorder"
-        :class="{ pointer: nosearch, required }"
-        @click="nosearch ? onClick() : null"
-        v-model="searchValue"
-        autocomplete="off"
-        :placeholder="disabled ? null : placeHolder"
-        ref="inputField"
-        @blur="onBlur"
-        @keydown="keySearch"
-        :readonly="disabled || nosearch"
-        :disabled="disabled"
-      />
+      <input type="text" class="Textfield fit fieldBorder" :class="{ pointer: nosearch, required }"
+        @click="nosearch ? onClick() : null" v-model="searchValue" autocomplete="off"
+        :placeholder="disabled ? null : placeHolder" ref="inputField" @blur="onBlur" @keydown="keySearch"
+        :readonly="disabled || nosearch" :disabled="disabled" />
       <div class="fieldButton cflex pointer" @click="onClick">
         <div v-if="isLoading" class="vflex fit">
           <Transition name="maskfade2">
@@ -32,14 +20,8 @@
         </slot>
       </div>
     </div>
-    <Dropdown
-      class="comboDropdown hflex"
-      v-if="showDropdown"
-      ref="comboDropdown"
-      @blur="onBlur"
-      @keydown="keyNavigate"
-      noDfocus
-    >
+    <Dropdown class="comboDropdown hflex" v-if="showDropdown" ref="comboDropdown" @blur="onBlur" @keydown="keyNavigate"
+      noDfocus>
       <div v-if="isLoading" class="vflex fit combomaskInside">
         <Transition name="maskfade2">
           <div class="fit cflex">
@@ -48,21 +30,11 @@
         </Transition>
       </div>
       <div v-else class="comboDropdownBody fit Body">
-        <div
-          v-if="!noBlank"
-          @click="select(null)"
-          class="pointer ComboOption"
-          :class="{ focus: focusPointer === -1 }"
-        >
+        <div v-if="!noBlank" @click="select(null)" class="pointer ComboOption" :class="{ focus: focusPointer === -1 }">
           &#60; Üres &#62;
         </div>
-        <div
-          v-for="(box, index) in dinamicBox"
-          :key="index"
-          @click="select(box.value, box.name)"
-          class="ComboOption"
-          :class="tmpRowClass(box, index)"
-        >
+        <div v-for="(box, index) in dinamicBox" :key="index" @click="select(box.value, box.name)" class="ComboOption"
+          :class="tmpRowClass(box, index)">
           <div :class="box.detail ? 'bold' : null">{{ box.name }}</div>
           <div v-if="box.detail">{{ box.detail }}</div>
         </div>
@@ -102,10 +74,10 @@ export default {
   data: function () {
     if (this.parent) {
       var parent = this.up("Form").down({ name: this.parent });
-      if (parent){
+      if (parent) {
         if (empty(parent.getValue())) {
           this.up("Field").disable();
-        }else{
+        } else {
           this.parent_id = parent.getValue();
         }
       }
@@ -587,7 +559,7 @@ export default {
   background-color: #c6d9fb;
 }
 
-.multicomboselectedrow > .Button {
+.multicomboselectedrow>.Button {
   width: 25px;
   height: 25px;
   flex: 0 0 25px;
@@ -600,7 +572,21 @@ export default {
   min-height: 100px;
   min-width: 100px;
 }
+
 .combomaskInside .icon {
   font-size: 40px;
+}
+
+.Combobox.noEdit .fieldButton {
+  display: none;
+}
+
+.Combobox.noEdit * ,
+.Combobox.noEdit .fieldBorder.required
+{
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+  font-size: calc(12px + var(--main-size));
 }
 </style>

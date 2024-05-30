@@ -1,21 +1,14 @@
 <template>
-  <div class="radioGroup inputgroup">
+  <div class="radioGroup inputgroup" :class="{ noEdit: noEdit }">
     <div class="fieldbody" :class="{ vflex: igennem, gap: igennem }">
       <div class="vflex" v-for="(box, index) in dinamicBox" :key="index">
-        <span class="noselect blankch">&nbsp;</span>
-        <div
-          class="rhbox fieldBorder pointer cflex"
-          :class="{ required }"
-          :tabindex="disabled ? null : 0"
-          @keypress.space="onChange(box.value)"
-          @click="onChange(box.value)"
-        >
+        <span v-if="!noEdit || (box.value == value)" class="noselect blankch">&nbsp;</span>
+        <div v-if="!noEdit" class="rhbox fieldBorder pointer cflex" :class="{ required }"
+          :tabindex="disabled ? null : 0" @keypress.space="onChange(box.value)" @click="onChange(box.value)">
           <span class="icon" :class="{ checked: box.value == value }"> </span>
         </div>
-        <div
-          class="cflex noselect radiotext pointer"
-          @click="onChange(box.value)"
-        >
+        <div class="cflex noselect radiotext pointer" @click="onChange(box.value)"
+          v-if="!noEdit || (box.value == value)">
           {{ box.name }}
         </div>
       </div>
@@ -97,7 +90,16 @@ export default {
   border-radius: 100px !important;
   line-height: initial;
 }
+
 .radiotext {
   margin-left: 5px;
+}
+
+.radioGroup.noEdit {
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+  font-size: calc(12px + var(--main-size));
+  margin-top: 6px;
 }
 </style>
