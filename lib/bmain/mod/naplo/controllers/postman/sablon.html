@@ -1,0 +1,35 @@
+<div>
+    <h1>{name}</h1>
+    <table>
+        <tr>
+            <td>
+                <h2>URL</h2>
+                <div>
+                    {request.method} - {request.url.raw}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h2>Headers</h2>
+                @each (request.header)
+                <div style="margin-left:20px;">{key}: {value}</div>
+                @endeach
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h2>Body</h2>
+                <pre style="margin-left:20px;">
+                    {request.body.raw}
+                </pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h2>Response</h2>
+                <pre style="margin-left:20px;">{response}</pre>
+            </td>
+        </tr>
+    </table>
+</div>

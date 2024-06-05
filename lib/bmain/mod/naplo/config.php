@@ -31,5 +31,9 @@ return [
             'icon' => 'f15b',
             'name' => 'Fájlrendszer dokumentálás',
         ],
+        'postman' => [
+            'icon' => 'f277',
+            'name' => 'Postman collection',
+        ],
     ]
 ];
