@@ -14,15 +14,6 @@ class DebugRMC extends Controller3
     public function list(Request $request)
     {
 
-        $level = ['error', 'info', 'debug'];
-        if ($request->filled('level')) $level = json_decode($request->level, true);
-
-        $shoud = [];
-
-        if (in_array('debug', $level)) $shoud[] = ['term' => ["level" => "debug"]];
-        if (in_array('error', $level)) $shoud[] = ['term' => ["level" => "error"]];
-        if (in_array('info', $level)) $shoud[] = ['term' => ["level" => "info"]];
-
         $url = preg_replace(['#\/$#', '#:[0-9]*$#'], '$1$2', getParam('elk_url'));
 
         $s = Cache::get('elk_sources',[]);
@@ -36,13 +27,15 @@ class DebugRMC extends Controller3
 
         $chttp->CURLOPT_USERPWD = Auth::getUserPasword();
 
-        $must = [['terms' => ['level' => $level]]];
+        $must = [];
 
         if ($request->filled('datetime')) $must[] = ['range' => ['datetime' => [
             "gte" => $request->datetime . ' 00:00:00',
             "lte" => $request->datetime . ' 23:59:59',
         ]]];
 
+        if ($request->filled('category')) $must[] = ['match' => ['category' => $request->category]];
+        if ($request->filled('level')) $must[] = ['match' => ['level' => $request->level]];
         if ($request->filled('request_id')) $must[] = ['match' => ['request_id' => $request->request_id]];
         if ($request->filled('uuid')) $must[] = ['match' => ['uuid' => $request->uuid]];
         if ($request->filled('user_id')) $must[] = ['match' => ['user_id' => $request->user_id]];
