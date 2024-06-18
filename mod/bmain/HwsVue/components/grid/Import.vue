@@ -2,7 +2,7 @@
   <form :action="url" class="padding" method="post" enctype="multipart/form-data">
     <div class="fieldbody FileField fit vflex pointer" @click.self="onClick">
       <input type="file" class="Textfield fakeFileimput fit nopointerevent pointer fieldBorder required" ref="filefield"
-        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        :accept="importAccept" />
       <div class="fieldButton cflex nopointerevent pointer">
         <span class="icon upload"></span>
       </div>
@@ -19,6 +19,10 @@
 export default {
   props: {
     store: String,
+    importAccept: {
+      type: String,
+      default: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    },
   },
   data: function () {
     return {

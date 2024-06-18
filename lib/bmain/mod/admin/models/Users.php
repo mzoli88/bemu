@@ -3,6 +3,7 @@
 namespace mod\admin\models;
 
 use hws\rmc\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class Users extends Model
@@ -15,6 +16,8 @@ class Users extends Model
 
     static $allStates = false;
 
+    static $latin = true;
+
     public function newQuery()
     {
         if (static::$allStates == true) return parent::newQuery();
@@ -25,7 +28,6 @@ class Users extends Model
     {
         $out = $this->toArray();
         if (array_key_exists('sys_admin', $out)) $out['sys_admin'] = $out['sys_admin'] == 'I' ? 'Igen' : 'Nem';
-        $out['inactivation_justification'] = null;
         return $out;
     }
 
@@ -294,20 +296,67 @@ class Users extends Model
         $q->where(function ($q2) use ($modul_azon, $entity_id, $perms) {
             $q2->orWhereHas('Rel_UserPerms_user', function ($q3) use ($modul_azon, $entity_id, $perms) {
                 $q3->where('modul_azon', $modul_azon);
-                $q3->where('entity_id', $entity_id);
+                // $q3->where('entity_id', $entity_id); // régi keretrendszernél nincs
                 $q3->whereIn('perm', $perms);
             });
 
             $q2->orWhereHas('Rel_UserGroups_user', function ($q3) use ($modul_azon, $entity_id, $perms) {
                 $q3->whereHas('Rel_group_perms', function ($q4) use ($modul_azon, $entity_id, $perms) {
                     $q4->where('modul_azon', $modul_azon);
-                    $q4->where('entity_id', $entity_id);
+                    // $q4->where('entity_id', $entity_id); // régi keretrendszernél nincs
                     $q4->whereIn('perm', $perms);
                 });
             });
         });
 
         return $q;
+    }
+
+    /* ->byGroups([1,2]) */
+    /* ->byGroups(1) */
+    public function scopeByGroups($q, $groups, $modul_azon = null, $entity_id = null)
+    {
+        $modul_azon = $modul_azon ?: getModulAzon();
+        $entity_id = $entity_id ?: getEntity();
+
+        if (is_string($groups) && preg_match('/^\[.*\]$/', $groups)) {
+            $groups = json_decode($groups, true);
+        }
+
+        if (!is_array($groups)) {
+            $groups = [$groups];
+        }
+
+        $q->whereHas('Rel_UserGroups_user', function ($q2) use ($groups) {
+            $q2->whereIn('group_id', $groups);
+        });
+
+        return $q;
+    }
+
+    /* ->byEntity([1,2]) */
+    /* ->byEntity(1) */
+    public function scopeByEntity($query, $entity_id = null)
+    {
+        if (!hasJustOneEntity()) {
+            $entity_id = $entity_id ?: getEntity();
+
+            if (is_string($entity_id) && preg_match('/^\[.*\]$/', $entity_id)) {
+                $entity_id = json_decode($entity_id, true);
+            }
+
+            if (!is_array($entity_id)) {
+                $entity_id = [$entity_id];
+            }
+
+            $query->whereExists(function ($query) use ($entity_id) {
+                $query->select(DB::raw(1))
+                    ->from('admin_user_entities')
+                    ->whereColumn('admin_user_entities.user_id', 'users.id')
+                    ->whereIn('admin_user_entities.entity_id', $entity_id);
+            });
+        }
+        return $query;
     }
 
 

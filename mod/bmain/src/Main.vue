@@ -1,5 +1,6 @@
 <template>
   <div class="vflex mainCt fit" v-if="render">
+    <span style="display: none" v-html="getStyles"></span>
     <Panel v-if="buttons" class="Menu" h border collapsible collapsed size="300px">
       <template #titlecollapsed>
         <div class="pictoMenu vflex toolbar">
@@ -48,6 +49,7 @@ export default {
     var tmp = active.split(".");
 
     return {
+      appStyles: {},
       render: false,
       active: active,
       buttons: null,
@@ -73,6 +75,11 @@ export default {
     global.getActiveMenu = this.getActiveMenu;
     global.setEntity = this.setEntity;
 
+    global.addAppStyle = (modul, cmp_url, style) => {
+      if (!this.appStyles[modul]) this.appStyles[modul] = {};
+      this.appStyles[modul][cmp_url] = style;
+    };
+
     this.loadMenu();
 
   },
@@ -81,6 +88,15 @@ export default {
       global.MajaxManager.deleteAll();
       this.setHash(value);
     },
+  },
+
+  computed: {
+    getStyles: function () {
+      if (!this.appStyles[this.active_modul]) return "";
+      return '<style>' + Object.values(this.appStyles[this.active_modul]).sort().filter(function (item, pos, ary) {
+        return !pos || item != ary[pos - 1];
+      }).join(" \n\n") + '</style>';
+    }
   },
 
   methods: {
@@ -100,7 +116,7 @@ export default {
         this.active_entity = this.active_entity || x.active_entity;
         this.perms = x.perms;
 
-        if (doQueque && x.CacheQueue && x.CacheQueue.Queque == true){
+        if (doQueque && x.CacheQueue && x.CacheQueue.Queque == true) {
           doQueque(x.CacheQueue);
         }
 
@@ -206,16 +222,16 @@ export default {
       this.active_entity = val;
       sessionStorage.setItem("active_entity", val);
       if (this.$root.entity) this.$root.entity.active = val;
-      if(fn)fn();
+      if (fn) fn();
     },
 
     $hash: function (hash) {
 
       var b = hash.split("|");
       var a = b.shift().split(".");
-      
+
       var entity_id = b.shift();
-      if (entity_id){
+      if (entity_id) {
         this.setEntity(entity_id);
       }
 

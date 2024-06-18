@@ -1,9 +1,5 @@
 <template>
-  <form
-    class="Form fit hflex border"
-    @keypress.enter="$emit('onEnter', $event)"
-    onsubmit="return false"
-  >
+  <form class="Form fit hflex border" @keypress.enter="$emit('onEnter', $event)" onsubmit="return false">
     <Transition name="maskfade2">
       <div v-if="storeLoading" class="cflex FormSpinner">
         <div class="spin">
@@ -13,35 +9,11 @@
     </Transition>
     <template v-if="showToolbar && topToolbar">
       <div class="noselect toolbar">
-        <Button
-          v-if="hasFields && (save || imp)"
-          @click="onSave"
-          :icon="saveicon"
-          :title="savetext"
-        />
-        <Button
-          v-if="$root.debug && !isSearch"
-          @click="doGenerate"
-          icon="f074"
-          title="Random adat"
-        />
-        <Button
-          v-if="$root.debug && !isSearch"
-          @click="doFormExport"
-          icon="f121"
-          title="Form export"
-        />
-        <Button
-          v-if="$root.debug && !isSearch"
-          @click="doReset"
-          title="Kiürítés"
-        />
-        <Button
-          v-if="$root.debug && !isSearch"
-          @click="doFillAndSave"
-          icon="f7c0"
-          title="Feltöltés és mentés"
-        />
+        <Button v-if="save || imp" @click="onSave" :icon="saveicon" :title="savetext" />
+        <Button v-if="$root.debug && !isSearch" @click="doGenerate" icon="f074" title="Random adat" />
+        <Button v-if="$root.debug && !isSearch" @click="doFormExport" icon="f121" title="Form export" />
+        <Button v-if="$root.debug && !isSearch" @click="doReset" title="Kiürítés" />
+        <Button v-if="$root.debug && !isSearch" @click="doFillAndSave" icon="f7c0" title="Feltöltés és mentés" />
         <Button v-if="back" @click="onBack" noHighlight title="Mégsem" />
         <slot name="toolbar" />
       </div>
@@ -49,61 +21,27 @@
     <slot name="formTop" :rowData="rowData" />
     <div class="Body fit">
       <slot :rowData="rowData" name="body" />
-      <div
-        class="formBody"
-        :class="{
-          labelLeft: !colsLayout && !topLabels,
-          formcols: colsLayout,
-          fixWidth: !noFixWidth,
-          noFixWidth: noFixWidth,
-        }"
-      >
-        <slot
-          v-if="(record_id && rowData && load) || !record_id || !load || !store"
-          :rowData="rowData"
-        >
+      <div class="formBody" :class="{
+    labelLeft: !colsLayout && !topLabels,
+    formcols: colsLayout,
+    fixWidth: !noFixWidth,
+    noFixWidth: noFixWidth,
+  }">
+        <slot v-if="(record_id && rowData && load) || !record_id || !load || !store" :rowData="rowData">
           <template v-for="(field, index) in fields" :key="'field_' + index">
             <Field v-bind="field" />
           </template>
         </slot>
-        <slot
-          v-if="(record_id && rowData && load) || !record_id || !load || !store"
-          name="afterFields"
-          :rowData="rowData"
-        />
+        <slot v-if="(record_id && rowData && load) || !record_id || !load || !store" name="afterFields"
+          :rowData="rowData" />
         <template v-if="showToolbar && !topToolbar">
           <div class="noselect bottomtoolbar">
             <div class="toolbar hflex">
-              <Button
-                v-if="hasFields && (save || imp)"
-                @click="onSave"
-                :icon="saveicon"
-                :title="savetext"
-                highlight
-              />
-              <Button
-                v-if="$root.debug && !isSearch"
-                @click="doGenerate"
-                icon="f074"
-                title="Random adat"
-              />
-              <Button
-                v-if="$root.debug && !isSearch"
-                @click="doReset"
-                title="Kiürítés"
-              />
-              <Button
-                v-if="$root.debug && !isSearch"
-                @click="doFormExport"
-                icon="f121"
-                title="Form export"
-              />
-              <Button
-                v-if="$root.debug && !isSearch"
-                @click="doFillAndSave"
-                icon="f7c0"
-                title="Feltöltés és mentés"
-              />
+              <Button v-if="save || imp" @click="onSave" :icon="saveicon" :title="savetext" highlight />
+              <Button v-if="$root.debug && !isSearch" @click="doGenerate" icon="f074" title="Random adat" />
+              <Button v-if="$root.debug && !isSearch" @click="doReset" title="Kiürítés" />
+              <Button v-if="$root.debug && !isSearch" @click="doFormExport" icon="f121" title="Form export" />
+              <Button v-if="$root.debug && !isSearch" @click="doFillAndSave" icon="f7c0" title="Feltöltés és mentés" />
               <Button v-if="back" @click="onBack" noHighlight title="Mégsem" />
               <slot name="toolbar" />
             </div>
@@ -182,13 +120,14 @@ export default {
     }
     if (this.load) this.doload();
   },
-  updated: function () {
-    if (this.save || this.imp)
-      this.hasFields = this.findFields(null, true).length != 0;
-  },
+  // updated: function () {
+  //   if (this.save || this.imp)
+  //     this.hasFields = this.findFields(null, true).length != 0;
+  // grid purecreate slotban nem jelent meg mindig a mentés gom ezért kiszedtem
+  // },
   data: function () {
     return {
-      hasFields: true,
+      // hasFields: true,
       rowData: null,
       storeLoading: false,
     };
@@ -391,6 +330,7 @@ export default {
 .Form {
   position: relative;
 }
+
 .formBody {
   position: relative;
   min-height: 30px;
@@ -408,24 +348,24 @@ export default {
   margin: 0;
 }
 
-.formBody.formcols > .Field {
+.formBody.formcols>.Field {
   float: left;
   margin-right: 4px;
 }
 
-.Form > .Body {
+.Form>.Body {
   padding: 10px;
 }
 
-.Form > .toolbar {
+.Form>.toolbar {
   padding: 10px 10px 0 10px;
 }
 
-.formBody > .toolbar:first-child {
+.formBody>.toolbar:first-child {
   padding-bottom: 10px;
 }
 
-.formBody > .toolbar:last-child {
+.formBody>.toolbar:last-child {
   padding-bottom: 10px;
 }
 
@@ -435,7 +375,7 @@ export default {
   bottom: 20px;
 }
 
-.bottomtoolbar > .toolbar {
+.bottomtoolbar>.toolbar {
   position: absolute;
   right: 0;
   padding: 4px;
@@ -461,23 +401,23 @@ export default {
   display: initial;
 }
 
-.formBody.labelLeft .Field > .fieldLabel {
+.formBody.labelLeft .Field>.fieldLabel {
   padding-right: 10px;
 }
 
-.formBody.labelLeft .Field > .fieldLabel,
-.formBody.labelLeft .Field > .FieldInner {
+.formBody.labelLeft .Field>.fieldLabel,
+.formBody.labelLeft .Field>.FieldInner {
   display: table-cell;
   min-width: 100px;
 }
 
-.formBody.labelLeft .intervalFieldCt .Field > .fieldLabel,
-.formBody.labelLeft .intervalFieldCt .Field > .FieldInner {
+.formBody.labelLeft .intervalFieldCt .Field>.fieldLabel,
+.formBody.labelLeft .intervalFieldCt .Field>.FieldInner {
   display: initial;
   min-width: initial;
 }
 
-.formBody.labelLeft .Field > .fieldLabel {
+.formBody.labelLeft .Field>.fieldLabel {
   vertical-align: top;
   padding-top: 6px;
   padding-bottom: 6px;
@@ -492,6 +432,7 @@ export default {
   background-color: #f1f1f1;
   z-index: 1;
 }
+
 .FormSpinner .icon {
   font-size: 70px;
   color: var(--higlight-text-color);

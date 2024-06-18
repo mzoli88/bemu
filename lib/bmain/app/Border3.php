@@ -16,7 +16,7 @@ class Border3
         config(['isBorder' => true]);
 
         //storage beállítás
-        $path = BORDER_PATH_BORDERDOC;// . getModulAzon();
+        $path = BORDER_PATH_BORDERDOC; // . getModulAzon();
         // app()->useStoragePath($path);
         Config::set('filesystems.disks.local.root', $path);
         Config::set('path.storage', $path);
@@ -282,18 +282,17 @@ class Border3
         $mods = include base_path('config/mods.php');
         collect($mods)->each(function ($modul, $modul_azon) use ($admin) {
             if ($admin == false && $modul_azon == 'admin') return;
+            //jogok feltöltése   
 
-            //jogok feltöltése       
             $perms = [];
-            if (array_key_exists('perms', $modul)) {
+            if (($modul['perms'] ?? false) && is_array($modul['perms'])) {
                 foreach ($modul['perms'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value;
             }
-            if (array_key_exists('menu', $modul)) {
+            if (($modul['menu'] ?? false) && is_array($modul['menu'])) {
                 foreach ($modul['menu'] as $key => $value) $perms[$key] = $modul['name'] . ' - ' . $value['name'] . ' (menüpont)';
             }
 
             // dump($perms);
-
             collect($perms)->each(function ($perm_name, $menu_azon) use ($modul_azon) {
                 $result = DB::table('nevek_csoport')
                     ->where('modul_azon', $modul_azon)

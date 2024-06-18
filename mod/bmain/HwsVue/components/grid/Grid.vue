@@ -57,10 +57,13 @@
       <template v-slot:detailformSlot="d">
         <slot v-bind="d" name="detailformSlot" />
       </template>
+      <template v-slot:detailunderFormSlot="d">
+        <slot v-bind="d" name="detailunderFormSlot" />
+      </template>
     </Detail>
 
     <Panel v-if="show == 'import'" :title="importBtnName ? importBtnName : 'Importálás'" border h>
-      <ImportCmp :store="store" />
+      <ImportCmp :store="store" :importAccept="importAccept" />
     </Panel>
 
     <div h v-show="show == 'list'" class="GridBodyPanel hflex fit">
@@ -294,6 +297,7 @@ export default {
     smallDetailsOpen: Boolean,
     imp: [Boolean, Function],
     importBtnName: String,
+    importAccept: String,
     exp: Boolean,
     desc: Boolean,
     entity: Boolean,

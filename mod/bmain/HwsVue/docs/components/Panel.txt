@@ -22,6 +22,16 @@ Props:
         - Alap esetben be van-e csukva a panel
     collapsible: Boolean
         - Csukható-e a panel
+    border: Boolean
+        - title kék hátteret kap
+    padding: Boolean
+        - 10px paddingot kap a tartalma
+    frame: Boolean
+        - keretet kap, css: border: 1px solid #ddd
+    gap: String
+        - Benne lévő panelek közötti távolság. pl.: gap="10px"
+    window: Boolean
+        - Felugró ablak lesz belőle
 
 Slots:
     default:

@@ -42,10 +42,20 @@ Props:
         - Mentés után futtatható extra függvény.
     values: Object
         - Ugyan az mint a data paraméter csak reset-futtatásakor ez töltődik be. 
+    saveicon: String
+        - A mentés iconját tudjuk átállítani tetszőleges font-awesome ikonra.
+    extraparams: Object 
+        - store hívásoknak adhatunk át extra paramétert. (Query paraméter) pl.: :extraparams="{search_id:12}"
+    askBeforecreate: String 
+        - Form létrehozás előtt megerősítésre vár. Paraméter a megerősítés szövege. pl.: askBeforecreate="Biztosan?"
+    askBeforeUpdate: String 
+        - Form módosítás előtt megerősítésre vár. Paraméter a megerősítés szövege. pl.: askBeforecreate="Biztosan?"
+    openDetailsAfterCreate: Boolean
+        - létrehozás után azonnal nyissa meg a részletek ablakot.
 
 
-    Formázási beállítások:
 
+Formázási beállítások:
     noFixWidth: Boolean
         - A mezők ne az alapértelmezett fix szélességgel rendelkezzenek, hanem töltsék ki a rendelkezésre álló helyet.
     colsLayout: Boolean

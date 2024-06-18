@@ -77,8 +77,8 @@
         <template #formTop>
           <slot v-if="rowData" :rowData="rowData" name="detailformSlot" />
         </template>
-        <template #underForm>
-          <slot v-if="rowData" :rowData="rowData" name="underFormSlot" />
+        <template #afterFields>
+          <slot v-if="rowData" :rowData="rowData" name="detailunderFormSlot" />
         </template>
       </Form>
     </Panel>

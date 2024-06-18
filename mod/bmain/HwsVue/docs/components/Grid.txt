@@ -61,11 +61,19 @@ Props:
     checkbox: Boolean,
         - jelölő négyzetet tesz a sorok elejére
     heckboxIf: Function,
-        - paraméterül kapott rowData alapján ha a visszatérés false akkor nem látszódik a jelölő négyzet 
+        - paraméterül kapott rowData alapján ha a visszatérés false akkor nem látszódik a jelölő négyzet
+    checkboxTitle: Function
+        - Jelölőnégyzet nevét tudjuk változtatni, rowdata alapján
+    checkboxDelete: Boolean
+        - ha már van checkbox, akkor ezzel lesz egy közös törő gomb amivel csak a kijelölt rekordokat lehet törölni.
+    canCreate: Function,
+        - ha visszatérési érték true akkor a paraméterül kapott rowData alapján megmondhatjuk, hogy legyen vagy ne legyen létrehozás gomb.
     canRowUpdate: Function,
         - ha visszatérési érték true akkor a paraméterül kapott rowData alapján megmondhatjuk, hogy legyen vagy ne legyen módosítás gomb.
     canRowDel: Function,
-        - ha visszatérési érték true akkor a paraméterül kapott rowData alapján megmondhatjuk, hogy legyen vagy ne legyen törlés gomb.
+        - ha visszatérési érték true akkor a paraméterül kapott rowData alapján megmondhatjuk, hogy legyen vagy ne legyen törlés gomb. 
+    canRowDetaile: Function,
+        - ha visszatérési érték true akkor a paraméterül kapott rowData alapján megmondhatjuk, hogy legyen vagy ne legyen részletek gomb.
     searchOpen: Boolean,
         - true akkor alapértelmezetten nyiva lesz a kereső panel
     entity: Boolean,
@@ -88,8 +96,16 @@ Props:
         - létrehozás előtt megerősítés kérése
     parent: String,
         - ha van szülő komponesn mert egy részletek ablakban vagyunk, akkot az azonosítóját fixqery-ben ezen a néven küldje
-
-
+    importBtnName: String
+        - Import gomb megnevezésének módosítása
+    operationsText: String
+        - Műveletek megnevezés helyett lehet másik szöveget megadni
+    openDetailsAfterCreate: String
+        - Létrehozás után egyből a részletek ablakba visz
+    createJog: String
+        - jogosultságot kell szövegesen megadni, amivel megjelenhet a létrehozás gomb
+    updateJog: String
+        - jogosultságot kell szövegesen megadni, amivel megjelenhet a módosítás gomb
 
 Slots:
     default:
@@ -103,11 +119,19 @@ Slots:
     detailToolbar
         - Részletek ablaknál az alap adatok fölötti bezárás gomb mellé tehetünk gombokat
     create 
-        - létrehozó form-ot lehet személyre szabni
+        - létrehozó form-ot lehet bővíteni, generál hozzá mezőket
     update 
         - módosító form-ot lehet személyre szabni
     details
         - részletek ablakot definiál
+    formCreate
+        - teljes létrehozás csere
+    pureCreate
+        - létrehozás csere, nem generál bele mezőket, de form kerül fölé
+    formUpdate
+        - teljes módosítás csere
+    pureUpdate
+        - módosítás csere, nem generál bele mezőket, de form kerül fölé
 
 Oszlopok paraméterezése:
     Paraméterezés alapja egy objektum aminek a kulcs értékei a mező nevét határozzák meg. Ez a adatbázis elnevezésekkel azonos.

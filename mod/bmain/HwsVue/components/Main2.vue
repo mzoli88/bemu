@@ -11,6 +11,7 @@
       </Form>
     </Panel>
   </div>
+  <span style="display: none" v-html="getStyles"></span>
   <div class="MainTopToolbar toolbar noselect">
     <div class="cflex site_name">
       <a href="#start/0">{{ site_name }}</a>
@@ -157,6 +158,7 @@ export default {
     if (!active) this.setHash("start");
 
     return {
+      appStyles: {},
       render: false,
       active: active || "start",
       buttons: null,
@@ -189,6 +191,11 @@ export default {
     global.setNotificationCount = this.setNotificationCount;
     global.resetNotificationLastRout = this.resetNotificationLastRout;
 
+    global.addAppStyle = (modul, cmp_url, style) => {
+      if (!this.appStyles[modul]) this.appStyles[modul] = {};
+      this.appStyles[modul][cmp_url] = style;
+    };
+
     getStore("admin.menu").load((s, x, code) => {
       if (!s) {
         maskOff();
@@ -213,6 +220,7 @@ export default {
       maskOff();
     });
   },
+
   watch: {
     active: function (value) {
       global.MajaxManager.deleteAll();
@@ -221,6 +229,15 @@ export default {
 
       this.setTitle();
     },
+  },
+
+  computed: {
+    getStyles: function () {
+      if (!this.appStyles[this.active_modul]) return "";
+      return '<style>' + Object.values(this.appStyles[this.active_modul]).sort().filter(function (item, pos, ary) {
+        return !pos || item != ary[pos - 1];
+      }).join(" \n\n") + '</style>';
+    }
   },
 
   methods: {

@@ -174,5 +174,17 @@ $conn->execute_query("
 	  KEY `csoport_id` (`csoport_id`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
+
+$conn->execute_query("
+	CREATE TABLE IF NOT EXISTS `b_nagycsoport_nevekcsop` (
+		`b_nagycsoport_nevekcsop_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+		`b_nagycsoport_id` int(10) unsigned DEFAULT NULL,
+		`nevek_csoport_id` int(10) unsigned DEFAULT NULL,
+		PRIMARY KEY (`b_nagycsoport_nevekcsop_id`),
+		KEY `b_nagycsoport_id` (`b_nagycsoport_id`,`nevek_csoport_id`),
+		KEY `nevek_csoport_id` (`nevek_csoport_id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+
+
 $conn->close();
 header("Location: bmain/install.php");

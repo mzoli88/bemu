@@ -412,6 +412,7 @@ class Controller3
         }
 
         if ($data instanceof EloquentModel) {
+            if ($this->action == 'view') return $data->collect('view|default');
             return $data->collect();
         }
 

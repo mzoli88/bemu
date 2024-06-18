@@ -13,6 +13,7 @@ global.getStore = function (name) {
       if (global.getActiveModul) {
         var active_menu = getActiveMenu()
         menu = active_menu ? getActiveModul() + '.' + active_menu : getActiveModul();
+        if(!empty(tmp)) st_name = st_name + '|' + tmp.join('|');
         return getStore(menu + '.' + st_name);
       } else {
         if (!st_name.includes('.')) {
@@ -524,12 +525,14 @@ global.Majax = class Majax {
   export() {
     var op = this.$getOptions(arguments);
     op.extraUrl = "/export";
+    op.no_on_before_load = true;
     return this.send(op);
   }
 
   download() {
     var op = this.$getOptions(arguments);
     op.extraUrl = "/download";
+    op.no_on_before_load = true;
     return this.send(op);
   }
 
@@ -537,6 +540,7 @@ global.Majax = class Majax {
     var op = this.$getOptions(arguments);
     op.extraUrl = "/import";
     op.download = true;
+    op.no_on_before_load = true;
     return this.send(op);
   }
 
@@ -568,8 +572,10 @@ global.Majax = class Majax {
         callbacks = me.$on_View;
       } else {
         callbacks = me.$on_load;
-        for (var i in me.$on_before_load) {
-          if (me.$on_before_load[i].call(me) === true) return;
+        if(!op.no_on_before_load){
+          for (var i in me.$on_before_load) {
+            if (me.$on_before_load[i].call(me) === true) return;
+          }
         }
       }
 

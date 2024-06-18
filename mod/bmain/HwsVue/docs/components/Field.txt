@@ -57,6 +57,13 @@ Props:
         - [default]: null
         - String esetén javascript kódot lehet neki átadni. Ha  visszatérés értéke false, akkor nem jelenik meg a mező, ha true, akkor igen.
             Abban az esetben hasznos, ha a backendben akarunk átadni egy JS kódot. pl. PHP-> 'evalif' => 'hasPerm('admin')'
+    requiredif: String
+        - [default]: null
+        - if el azonos működés, köteleő/nem kötelező tulajdonság változik
+    noEdit: Boolean
+        - [default]: null
+        - ha true, akkor nem lehet módosítani a tartalmat, de az értéket ki lehet olvasni
+    
 
 Events:
     @change:
@@ -107,6 +114,9 @@ Mező típusok, és specifikus paraméterek:
         o store: String, a boxes adatokat store segítségvéel tölti be
         o nosearch: Boolean, (alapértelmezetten false), ha true akkor nincs keresés
         o noBlank: Boolean, (alapértelmezetten false), ha true akkor nincs üresen választható sor, (választás kiürítése)
+    html - html szerkesztő/sblon szerkesztő
+        o height: magasságot lehet megadni pl. height="200px"
+    Iconpicker - fontAwsome ikont lehet választani
 
 Példák:
     <Field label="szöveg" name="property_name" type="text"/>
