@@ -30,7 +30,7 @@ return new class extends Migration
 
         "drop view if exists admin_user_perms",
         "CREATE VIEW admin_user_perms AS
-            SELECT up.nevek_csoportosit_id as id, up.nevek_id as user_id, p.modul_azon as modul_azon, p.menu_azon as perm
+            SELECT up.nevek_csoportosit_id as id, up.nevek_id as user_id, p.modul_azon as modul_azon, p.menu_azon as perm, p.csoport_id as perm_id
             FROM nevek_csoportosit as up
             inner join nevek_csoport as p on p.csoport_id = up.csoport_id
             where p.modul_azon IS NOT NULL",
@@ -42,7 +42,7 @@ return new class extends Migration
 
         "drop view if exists admin_group_perms",
         "CREATE VIEW admin_group_perms AS
-            SELECT b_nagycsoport_nevekcsop_id as id, b_nagycsoport_id as group_id, p.modul_azon as modul_azon, p.menu_azon as perm
+            SELECT b_nagycsoport_nevekcsop_id as id, b_nagycsoport_id as group_id, p.modul_azon as modul_azon, p.menu_azon as perm, p.csoport_id as perm_id
             FROM b_nagycsoport_nevekcsop as up
             inner join nevek_csoport as p on p.csoport_id = up.nevek_csoport_id
             where p.modul_azon = false", //where p.modul_azon IS NOT NULL; //ha nem üres táblát szeretnénk
@@ -52,6 +52,33 @@ return new class extends Migration
             SELECT b_nagycsoport_nevek_id as id, nevek_id as user_id, b_nagycsoport_id as entity_id
             FROM b_nagycsoport_nevek
             where b_nagycsoport_id in ( select id from admin_entities )",
+
+        "drop view if exists admin_perms",
+        "CREATE VIEW admin_perms AS 
+            select csoport_id as id,
+                modul_azon,
+                menu_azon as perm,
+                nev as name
+                from `nevek_csoport`",
+
+        "drop view if exists admin_view_perms",
+        "CREATE VIEW admin_view_perms AS 
+        (
+            select 
+            `admin_group_perms`.`modul_azon`,
+            `admin_group_perms`.`perm`,
+            `Rel_user_group`.`user_id` as `user_id`,
+            `admin_group_perms`.`perm_id`
+            from `admin_group_perms`
+            left join `admin_user_groups` as `Rel_user_group` on `admin_group_perms`.`group_id` = `Rel_user_group`.`group_id`
+        ) union (
+            select 
+            `admin_user_perms`.`modul_azon`,
+            `admin_user_perms`.`perm`,
+            `admin_user_perms`.`user_id`,
+            `admin_user_perms`.`perm_id`
+            from `admin_user_perms`
+        )",
 
     ];
 
