@@ -23,7 +23,7 @@ class Groups extends Model
 
     public function newQuery()
     {
-        if (static::$showAll == true) return parent::newQuery();
+        if (static::$showAll == true || config('isBorder')) return parent::newQuery();
         return parent::newQuery()->where('admin_groups.status', 'I')->entity();
     }
 
