@@ -25,12 +25,9 @@ class ParamsRMC extends Controller3
     public function create(Request $request)
     {
 
+        setParams($request->all());
         Cache::forget('log_debug');
 
-        $params = request()->all();
-
-        setParams($params);
-        
         return [];
     }
 }
