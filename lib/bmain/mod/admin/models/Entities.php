@@ -40,13 +40,13 @@ class Entities extends Model
     ];
 
     /* ->byPerms(['jog1','jog']) */
-    public function scopeByPerms($q, array $perms, $user_id = null, $modul_azon = null)
+    public function scopeByPerms($q, $perms, $user_id = null, $modul_azon = null)
     {
-        if(config('isBorder')) return $q;
+        if (config('isBorder')) return $q;
         $modul_azon = $modul_azon ?: getModulAzon();
         $user_id = $user_id ?: getUserId();
 
-        $q->orWhereIn('admin_entities.id', function ($q) use ($modul_azon, $user_id, $perms) {
+        $q->whereIn('admin_entities.id', function ($q) use ($modul_azon, $user_id, $perms) {
             $q->select('entity_id')
                 ->from('admin_view_perms');
 
@@ -58,7 +58,6 @@ class Entities extends Model
 
             if (is_array($user_id)) $q->whereIn('user_id', $user_id);
             else $q->where('user_id', $user_id);
-
         });
 
         return $q;
