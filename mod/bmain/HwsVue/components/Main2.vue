@@ -154,8 +154,8 @@ export default {
 
     global.no_grid_queque = true;
 
-    var active = this.getCpHash();
-    if (!active) this.setHash("start");
+    var active = (this.getCpHash() || '').split('|').shift();
+    if (empty(active)) this.setHash("start");
 
     return {
       appStyles: {},
@@ -498,6 +498,12 @@ export default {
     },
 
     $hash: function (hash) {
+      var b = (hash || '').split("|");
+      hash = b.shift();
+
+      var entity_id = b.shift();
+      if (entity_id) this.setEntity(entity_id);
+
       this.ActiveToMenu(hash);
     },
   },

@@ -209,7 +209,7 @@ function hwslog($log_chanels = null, String $event = null, String $message = nul
         if (!empty(Model::$searchLog)) {
             $message .= (empty($message) ? '' : "\n\n") . "Keresés:\n";
             $message .= collect(Model::$searchLog)->map(function ($rec) {
-                if (!is_string($rec[2]) && !is_numeric($rec[2]) & !is_double($rec[2])) $rec[2] = preg_replace('/\s+/', ' ', str_replace(["\n", "\t"], ' ', var_export($rec[2], true)));
+                if (!is_string($rec[2]) && !is_numeric($rec[2]) && !is_double($rec[2])) $rec[2] = preg_replace('/\s+/', ' ', str_replace(["\n", "\t"], ' ', var_export($rec[2], true)));
                 return "\t" . $rec[0] . ' ' . $rec[1] . ' ' . $rec[2];
             })->implode("\n");
         }
