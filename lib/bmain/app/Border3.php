@@ -278,15 +278,8 @@ class Border3
     }
 
 
-    /*
-    pl.:
-        Border3::update_border(false,[
-            'WorkFlow - Admin' => ['workflowparam'],
-            'WorkFlow - Feladatkezelő' => ['startpage','tasks','userentry','schedules'],
-            'WorkFlow - Csoportvezető' => ['startpage','tasks','userentry','schedules'],
-        ]);
-     */
-    static function update_border($admin = false, $perm_convert_array = [])
+
+    static function update_border($admin = false)
     {
         $mods = include base_path('config/mods.php');
         collect($mods)->each(function ($modul, $modul_azon) use ($admin) {
@@ -448,16 +441,29 @@ class Border3
                     });
             }
         });
+    }
 
-        collect($perm_convert_array)->map(function ($perms, $old_perm_name) {
-            $oldjog = DB::table("nevek_csoport")->where('nev', toLatin($old_perm_name))->get()->first();
+
+    /*
+    pl.:
+        Border3::migrateperms("workflow",[
+            'WorkFlow - Admin' => ['workflowparam'],
+            'WorkFlow - Feladatkezelő' => ['startpage','tasks','userentry','schedules'],
+            'WorkFlow - Csoportvezető' => ['startpage','tasks','userentry','schedules'],
+        ]);
+    */
+    static function migratePerms($modul_azon, $perm_convert_array = [])
+    {
+        self:: update_border();
+        collect($perm_convert_array)->map(function ($perms, $old_perm_name) use ($modul_azon) {
+            $oldjog = DB::table("nevek_csoport")->where('nev', toLatin($old_perm_name))->whereNull('modul_azon')->get()->first();
             if (!$oldjog || !is_array($perms)) return;
-            $new_jog_ids = DB::table('nevek_csoport')->whereIn('modul_azon', getModulAzon())->whereIn('menu_azon', $perms)->get()->pluck('csoport_id')->toArray();
-            if(empty($new_jog_ids)) return;
+            $new_jog_ids = DB::table('nevek_csoport')->where('modul_azon', $modul_azon)->whereIn('menu_azon', $perms)->get()->pluck('csoport_id')->toArray();
+			if (empty($new_jog_ids)) return;
             $old_jog_id = $oldjog->csoport_id;
             
-            DB::table("nevek_csoportosit")->where('csoport_id', $old_jog_id)->get()->each(function ($csop) use ($new_jog_ids,$old_jog_id) {
-
+            DB::table("nevek_csoportosit")->where('csoport_id', $old_jog_id)->get()->each(function ($csop) use ($new_jog_ids, $old_jog_id) {
+                
                 collect($new_jog_ids)->each(function ($new_jog_id) use ($csop) {
                     $result = DB::table("nevek_csoportosit")->where('nevek_id', $csop->nevek_id)->where('csoport_id', $new_jog_id)->get()->first();
                     if (!$result) {
@@ -467,11 +473,11 @@ class Border3
                         ]);
                     }
                 });
-
-                // DB::table("nevek_csoportosit")->where('nevek_id', $csop->nevek_id)->where('csoport_id', $old_jog_id)->delete();
+                
+                DB::table("nevek_csoportosit")->where('nevek_id', $csop->nevek_id)->where('csoport_id', $old_jog_id)->delete();
             });
-
-            // dd($old_jog_id);
+			
+			DB::table("nevek_csoport")->where('csoport_id', $old_jog_id)->whereNull('modul_azon')->delete();
 
         })->toArray();
     }

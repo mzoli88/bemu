@@ -352,7 +352,7 @@ class Users extends Model
             $query->whereExists(function ($query) use ($entity_id) {
                 $query->select(DB::raw(1))
                     ->from('admin_user_entities')
-                    ->whereColumn('admin_user_entities.user_id', 'users.id')
+                    ->whereColumn('admin_user_entities.user_id', 'admin_users.id')
                     ->whereIn('admin_user_entities.entity_id', $entity_id);
             });
         }
