@@ -25,7 +25,12 @@ class AuditRMC extends Controller3
             $limit = false;
         }
 
-        $naploClass = new NaploLogReader(BORDER_PATH_BORDERDOC . 'bmain_logs/');
+        if(config('isBorder')){
+            $naploClass = new NaploLogReader(BORDER_PATH_BORDERDOC . 'bmain_logs/');
+        }else{
+            $naploClass = new NaploLogReader(storage_path('logs/'));
+        }
+
 
         $file_name = $request->fastFilter . '-audit';
 

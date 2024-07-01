@@ -16,16 +16,20 @@ class SecurityRMC extends Controller3
         $total = 0;
 
         $limit = false;
-        if(isset($_GET['total']) && isset($_GET['page']) && isset($_GET['per-page']) && $_GET['page'] != 1){
-			$limit = (int)$_GET['total'] - (((int)$_GET['page'] - 1) * (int)$_GET['per-page']);
-		}
+        if (isset($_GET['total']) && isset($_GET['page']) && isset($_GET['per-page']) && $_GET['page'] != 1) {
+            $limit = (int)$_GET['total'] - (((int)$_GET['page'] - 1) * (int)$_GET['per-page']);
+        }
         $total = 0;
         $perpage = $request->query('per-page');
-        if($_GET['page'] == 1){
+        if ($_GET['page'] == 1) {
             $limit = false;
         }
 
-        $naploClass = new NaploLogReader(BORDER_PATH_BORDERDOC . 'bmain_logs/');
+        if (config('isBorder')) {
+            $naploClass = new NaploLogReader(BORDER_PATH_BORDERDOC . 'bmain_logs/');
+        } else {
+            $naploClass = new NaploLogReader(storage_path('logs/'));
+        }
 
         $file_name = $request->fastFilter . '-security';
 
