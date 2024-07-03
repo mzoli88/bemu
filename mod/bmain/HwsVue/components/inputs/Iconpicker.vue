@@ -2,7 +2,7 @@
   <div class="IconField fieldbody fit vflex Numberfield">
     <Dropdown
       class="comboDropdown hflex"
-      v-show="showDropdown"
+      v-if="showDropdown"
       ref="comboDropdown"
       @blur="onBlur"
       noDfocus

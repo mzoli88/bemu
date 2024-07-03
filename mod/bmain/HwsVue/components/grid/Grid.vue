@@ -118,7 +118,8 @@
               <tr>
                 <th v-if="checkbox">
                   <div class="GridHeader titleBorder gridCheckbox cflex" v-if="!MajaxManager.loading">
-                    <Field type="checkbox" ref="checkboxAll" @change="checkboxAll" center :title="onCheckboxTitle()" />
+                    <Field type="checkbox" ref="checkboxAll" @change="checkboxAll" center
+                      :title="onCheckboxTitle() || 'Aktuális oldal kijelölése / kijelölés megszüntetése'" />
                   </div>
                 </th>
                 <th v-if="hasTools ||
@@ -985,9 +986,17 @@ export default {
         this.noCheckAll = false;
         return;
       }
-      this.findFields({
+      var fields = this.findFields({
         gchbox: isString,
-      }).setValue(val);
+      });
+      fields.setValue(val);
+      this.$nextTick(() => {
+        if (val == "I") {
+          tMsg.i(fields.length + ' db rekord lett <span style="color:green">kijelölve</span> az aktuális oldalon.<br><div style="font-weight:normal;margin-top:6px;">Kijelölt sorok száma összesen: '+this.chboxSelectedNumber+" db.</div>");
+        } else {
+          tMsg.i(fields.length + ' db kijelölés <span style="color:red">megszüntetve</span>.<br><div style="font-weight:normal;margin-top:6px;">Kijelölt sorok száma összesen: '+this.chboxSelectedNumber+" db.</div>");
+        }
+      });
     },
     clearCheckboxSelected: function () {
       this.CheckboxSelected = {};

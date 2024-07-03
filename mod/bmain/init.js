@@ -8,11 +8,11 @@ global.getConfig = function () {
 };
 
 global.SWorker = false;
+global.defaultToken = false;
 
 import "./HwsVue/helpers/Majax"
 import "./HwsVue/helpers/cLoader"
 import "./HwsVue/helpers/isType"
-global.defaultToken = true;
 import "./HwsVue/helpers/Validators"
 import "./HwsVue/helpers/animations"
 import "./HwsVue/helpers/Queque"
@@ -30,7 +30,8 @@ import Grid from "./HwsVue/components/grid/Grid.vue"
 import Dropdown from "./HwsVue/components/Dropdown.vue"
 import Field from "./HwsVue/components/Field.vue"
 import Globals from "./HwsVue/helpers/globals"
-import Login from "./HwsVue/components/Login.vue"
+// import Login from "./HwsVue/components/Login.vue"
+import BorderLogin from "./HwsVue/components/BorderLogin.vue";
 import Accordion from "./HwsVue/components/Accordion.vue"
 import AppCmp from "./src/App.vue"
 import "vue/dist/vue.esm-bundler"
@@ -56,7 +57,16 @@ App.component("Detail", Detail);
 App.component("Grid", Grid);
 App.component("Dropdown", Dropdown);
 App.component("Field", Field);
-App.component("Login", Login);
+// App.component("Login", Login);
 App.component("Accordion", Accordion);
+
+global.On_401 = function () {
+    App.unmount();
+    const Login = createApp(BorderLogin);
+    Login.use(Globals);
+    Login.component("Button", Button);
+    Login.component("Icon", Icon);
+    Login.mount("#app");
+};
 
 App.mount("#app");

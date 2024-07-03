@@ -207,7 +207,6 @@ export default {
       return out;
     },
     parentChange: function (parent_id) {
-      this.value = null;
       this.$refs.Combo.parentChange(parent_id);
     },
   },

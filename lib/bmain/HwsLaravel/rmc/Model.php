@@ -523,15 +523,15 @@ class Model extends Emodel
                         break;
                     case 'datetime':
                         if (array_key_exists($find, $_GET)) {
-                            $query->whereDate($search_property, '=', $_GET[$find]);
+                            $query->whereBetween($search_property, [$_GET[$find] . ' 00:00:00', $_GET[$find] . ' 23:59:59']);
                             static::$searchLog[] = [$search_name, "=", $_GET[$find]];
                         } else {
                             if (array_key_exists($find . '>', $_GET)) {
-                                $query->whereDate($search_property, '>=', $_GET[$find . '>']);
+                                $query->where($search_property, '>=', $_GET[$find . '>'] . ' 00:00:00');
                                 static::$searchLog[] = [$search_name, '>=', $_GET[$find . '>']];
                             }
                             if (array_key_exists($find . '<', $_GET)) {
-                                $query->whereDate($search_property, '<=', $_GET[$find . '<']);
+                                $query->where($search_property, '<=', $_GET[$find . '<'] . ' 23:59:59');
                                 static::$searchLog[] = [$search_name, '<=', $_GET[$find . '<']];
                             }
                         }
@@ -881,9 +881,9 @@ class Model extends Emodel
     public function scopeEntity($query)
     {
         if (!hasJustOneEntity()) {
-            
+
             if (empty(getEntity())) sendError("Felhasználó nincsen entitáshoz kötve! Keressen fel egy rendszer adminisztrátort!");
-            
+
             $model = $query->getModel();
 
             $tmp = explode('.', $model::$entity_property);
@@ -1169,9 +1169,9 @@ class Model extends Emodel
                     if (is_string($value)) $model->{$key} = toLatin($value);
                 }
             }
-            if($model->useStatus){
-                if($model->status == 'Aktív') $model->status = 'I';
-                if($model->status == 'Inaktív') $model->status = 'N';
+            if ($model->useStatus) {
+                if ($model->status == 'Aktív') $model->status = 'I';
+                if ($model->status == 'Inaktív') $model->status = 'N';
             }
             $model->beforeCreate();
             $model->safeStripAll();

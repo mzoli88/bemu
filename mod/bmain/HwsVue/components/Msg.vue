@@ -90,8 +90,8 @@ export default {
 }
 
 #msg.info {
-  color: var(--higlight-text-color);
-  border-color: var(--higlight-text-color);
+  /* color: green; */
+  border-color: #999;
 }
 
 .move-in-enter-active {

@@ -150,7 +150,10 @@ global.FormFill = {
     },
 
     doSaveLoop: function (cmp, max, index) {
-        if (max < index) return;
+        if (max < index) {
+            if (cmp.back) cmp.back();
+            return;
+        }
         index = index || 1;
         TestData.clearForm(cmp);
         this.fillData(cmp, x => {
@@ -723,9 +726,9 @@ global.TestSearch = {
                     readyFn(d.data[0].value, d.data);
                 }
             });
-        }else{
-            field.paramboxes.forEach(r=>{
-                if(r.name == text)readyFn(r.value, r);
+        } else {
+            field.paramboxes.forEach(r => {
+                if (r.name == text) readyFn(r.value, r);
             });
         }
     },
