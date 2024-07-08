@@ -175,6 +175,15 @@ export default {
     },
     refreshValues: function (valueObj) {
       this.noValueChange = true;
+      //filter out duplicates in valueObj array 
+      var unique = {};
+      valueObj.forEach(function(i) {
+        if(!unique[i.value]) {
+          unique[i.value] = i;
+        }
+      });
+      valueObj = Object.values(unique);
+
       this.valueObj = valueObj;
       var value = [];
       for (var i in this.valueObj) {

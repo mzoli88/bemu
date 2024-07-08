@@ -13,7 +13,7 @@ global.getStore = function (name) {
       if (global.getActiveModul) {
         var active_menu = getActiveMenu()
         menu = active_menu ? getActiveModul() + '.' + active_menu : getActiveModul();
-        if(!empty(tmp)) st_name = st_name + '|' + tmp.join('|');
+        if (!empty(tmp)) st_name = st_name + '|' + tmp.join('|');
         return getStore(menu + '.' + st_name);
       } else {
         if (!st_name.includes('.')) {
@@ -43,7 +43,6 @@ global.isLoading = function () {
 };
 
 global.MajaxManager = reactive({
-  lastTime: null, //queque delay time
   registered: {},
   queue: [],
   queueLoadedFn: [],
@@ -174,92 +173,81 @@ global.Majax = class Majax {
   }
 
   $doXhr(options) {
+    var me = this;
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
 
-    var me = this,
-      xhr = new XMLHttpRequest();
+      xhr.open(options.method, options.url + me.$getQParams(options.query, true), !options.wait);
 
-    xhr.open(options.method, options.url + me.$getQParams(options.query, true), !options.wait);
+      if (global.getActiveEntity) xhr.setRequestHeader("Active-Entity", getActiveEntity());
 
-    if (global.getActiveEntity) xhr.setRequestHeader("Active-Entity", getActiveEntity());
-
-    if (!options.wait) {
-      xhr.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-      xhr.timeout = MajaxManager.timeout;
-      if (options.timeout) xhr.timeout = options.timeout;
-      xhr.responseType = 'blob';
-    }
-
-    // if (document.cookie.indexOf('XSRF-TOKEN=') != -1) xhr.setRequestHeader('X-XSRF-TOKEN', getCookie('XSRF-TOKEN'));
-
-    if (options.useToken && Auth.token) xhr.setRequestHeader('Authorization', 'Bearer ' + Auth.token);
-
-    for (var i in options.headers) {
-      xhr.setRequestHeader(i, options.headers[i]);
-    }
-
-    xhr.onreadystatechange = function (e) {
-      if (this.readyState != 4) return;
-
-      //túl sok kérés
-      if (this.status == 429) {
-        maskOn();
-        tMsg.e("Túl sok kérés miatt a szerver biztonsági okokból letíltotta a műveleteket.<br>Ez egy átmeneti állapot, köszönjük türelmét!", 20);
-        return setTimeout(x => {
-          me.$doXhr(options);
-          maskOff();
-        }, 20000);
+      if (!options.wait) {
+        xhr.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        xhr.timeout = MajaxManager.timeout;
+        if (options.timeout) xhr.timeout = options.timeout;
+        xhr.responseType = 'blob';
       }
 
-      // download
-      var download = false;
+      // if (document.cookie.indexOf('XSRF-TOKEN=') != -1) xhr.setRequestHeader('X-XSRF-TOKEN', getCookie('XSRF-TOKEN'));
 
-      if (this.getResponseHeader('Content-Disposition')) {
-        var contentDispo = this.getResponseHeader('Content-Disposition');
-        if (contentDispo) {
-          var a = document.createElement('a');
-          var url = window.URL.createObjectURL(this.response);
-          a.href = url;
-          a.download = decodeURI(contentDispo.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1].replaceAll('"', ''));
-          a.dispatchEvent(new MouseEvent('click'));
-          window.URL.revokeObjectURL(url);
-          download = true;
+      if (options.useToken && Auth.token) xhr.setRequestHeader('Authorization', 'Bearer ' + Auth.token);
+
+      for (var i in options.headers) {
+        xhr.setRequestHeader(i, options.headers[i]);
+      }
+
+      xhr.onreadystatechange = async function (e) {
+        if (this.readyState != 4) return;
+
+        //túl sok kérés
+        if (this.status == 429) {
+          maskOn();
+          tMsg.e("Túl sok kérés miatt a szerver biztonsági okokból letíltotta a műveleteket.<br>Ez egy átmeneti állapot, köszönjük türelmét!", 20);
+          return setTimeout(async x => {
+            await me.$doXhr(options);
+            maskOff();
+            resolve();
+          }, 20000);
         }
-      }
 
-      // async function delay() {
-      // if (MajaxManager.queue.length == 0) return me.$queueRemove();
-      // var interval = global.MajaxManager.lastTime - performance.now() + 100;
-      // if (interval > 0) await new Promise(resolve => setTimeout(resolve, interval || 100));
-      // me.$queueRemove();
-      // }
+        // download
+        var download = false;
 
-      var status = this.status,
-        success = false;
-      if (status >= 200 && status < 300) success = true;
+        if (this.getResponseHeader('Content-Disposition')) {
+          var contentDispo = this.getResponseHeader('Content-Disposition');
+          if (contentDispo) {
+            var a = document.createElement('a');
+            var url = window.URL.createObjectURL(this.response);
+            a.href = url;
+            a.download = decodeURI(contentDispo.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1].replaceAll('"', ''));
+            a.dispatchEvent(new MouseEvent('click'));
+            window.URL.revokeObjectURL(url);
+            download = true;
+          }
+        }
 
-      if (download) {
-        if (options.on) options.on(success, '{}', status);
-        options.$finished = true;
-        me.$queueRemove()
-      } else if (this.response instanceof Blob) {
-        this.response.text().then(function (response) {
+        var status = this.status,
+          success = false;
+        if (status >= 200 && status < 300) success = true;
+
+        if (download) {
+          if (options.on) options.on(success, '{}', status);
+        } else if (this.response instanceof Blob) {
+          var response = await this.response.text();
           if (options.on) options.on(success, response, status);
-          options.$finished = true;
-          me.$queueRemove()
-        });
-      } else {
-        if (options.on) options.on(success, this.response, status);
-        options.$finished = true;
-        me.$queueRemove()
-      }
-      return true;
-    };
+        } else {
+          if (options.on) options.on(success, this.response, status);
+        }
+        resolve();
+        return true;
+      };
 
-    xhr.send(options.body);
+      xhr.send(options.body);
+    });
   }
 
-  $queueAdd(options) {
-    if (options.hide) return this.$doXhr(options);
+  async $queueAdd(options) {
+    if (options.hide) return await this.$doXhr(options);
     if (options.queueFirst) {
       MajaxManager.queue.unshift(options);
     } else {
@@ -268,24 +256,15 @@ global.Majax = class Majax {
     this.$queueLoad();
   }
 
-  $queueRemove() {
-    for (var i in MajaxManager.queue) {
-      if (MajaxManager.queue[i].$finished) MajaxManager.queue.splice(i, 1);
-    }
-    MajaxManager.loading = false;
-    if (MajaxManager.queue.length > 0) {
-      this.$queueLoad();
-    } else {
-      // maskOff();
-      MajaxManager.flushLoaded();
-    }
-  }
-
-  $queueLoad() {
+  async $queueLoad() {
     if (MajaxManager.loading) return;
     MajaxManager.loading = true;
-    global.MajaxManager.lastTime = performance.now();
-    this.$doXhr(MajaxManager.queue[0]);
+    do {
+      var option = MajaxManager.queue.shift();
+      await this.$doXhr(option);
+    } while (MajaxManager.queue.length > 0);
+    MajaxManager.loading = false;
+    MajaxManager.flushLoaded();
   }
 
   $getOptions(params) {
@@ -572,7 +551,7 @@ global.Majax = class Majax {
         callbacks = me.$on_View;
       } else {
         callbacks = me.$on_load;
-        if(!op.no_on_before_load){
+        if (!op.no_on_before_load) {
           for (var i in me.$on_before_load) {
             if (me.$on_before_load[i].call(me) === true) return;
           }

@@ -4,69 +4,30 @@
       <div>
         <div v-if="!disabled && search" class="hflex">
           <div class="fieldbody fit vflex">
-            <input
-              type="text"
-              class="Textfield fit fieldBorder"
-              autocomplete="off"
-              placeholder="Keresés"
-              v-model="searchText"
-            />
+            <input type="text" class="Textfield fit fieldBorder" autocomplete="off" placeholder="Keresés"
+              v-model="searchText" />
           </div>
-          <Field
-            v-for="(field, i) in extrasearch"
-            :key="'extra' + i"
-            v-bind="field"
-            ref="fields"
-            @change="onfieldChange"
-            nofindFields
-          />
+          <Field v-for="(field, i) in extrasearch" :key="'extra' + i" v-bind="field" ref="fields"
+            @change="onfieldChange" nofindFields />
         </div>
-        <div
-          class="fieldbody vflex fit"
-          v-for="(box, index) in dinamicBox"
-          :key="index"
-        >
+        <div class="fieldbody vflex fit" v-for="(box, index) in dinamicBox" :key="index">
           <span class="noselect blankch">&nbsp;</span>
-          <div
-            class="chbox fieldBorder pointer cflex"
-            :class="{ required }"
-            :tabindex="disabled ? null : 0"
-            @keypress.space="onChange(index)"
-            @click="onChange(index)"
-          >
-            <span
-              class="icon"
-              :class="{ checked: isChecked(box.value) }"
-            ></span>
+          <div class="chbox fieldBorder pointer cflex" :class="{ required }" :tabindex="disabled ? null : 0"
+            @keypress.space="onChange(index)" @click="onChange(index)">
+            <span class="icon" :class="{ checked: isChecked(box.value) }"></span>
           </div>
-          <div
-            class="cflex noselect chboxtext pointer wrap"
-            @click="onChange(index)"
-            v-html="box.name"
-          ></div>
+          <div class="cflex noselect chboxtext pointer wrap" @click="onChange(index)" v-html="box.name"></div>
         </div>
-        <Pager
-          v-if="!disabled && search && store"
-          :store="store"
-          :load="load"
-        />
+        <Pager v-if="!disabled && search && store" :store="store" :load="load" />
       </div>
       <div class="padding chboxSelectedPanel" v-if="showSelected">
         <div class="chboxSelectedPanelTitle" style="margin-bottom: 10px">
           Kiválasztott: {{ value ? value.length : 0 }} db.
         </div>
         <div>
-          <div
-            class="fieldbody vflex fit"
-            v-for="(selected, index) in sortSelectedRecordsByName"
-            :key="'sel_' + index"
-          >
-            <div
-              class="chbox fieldBorder pointer cflex"
-              :tabindex="disabled ? null : 0"
-              @keypress.space="delSelected(selected.value)"
-              @click="delSelected(selected.value)"
-            >
+          <div class="fieldbody vflex fit" v-for="(selected, index) in sortSelectedRecordsByName" :key="'sel_' + index">
+            <div class="chbox fieldBorder pointer cflex" :tabindex="disabled ? null : 0"
+              @keypress.space="delSelected(selected.value)" @click="delSelected(selected.value)">
               <span class="icon cflex">&#xf00d;</span>
             </div>
             <div class="cflex noselect chboxtext pointer wrap">
@@ -201,7 +162,7 @@ export default {
     },
     updateSelectedRecords: function () {
       var me = this,
-      oldselectedRecords = this.selectedRecords,
+        oldselectedRecords = this.selectedRecords,
         notFoundRecordIds = [];
 
       this.selectedRecords = [];
@@ -215,14 +176,18 @@ export default {
           } else {
             me.selectedRecords.push(foundRecord);
           }
-        }else{
+        } else {
           me.selectedRecords.push(foundRecord);
         }
       });
 
       //Get records from store
       if (!empty(notFoundRecordIds) && !empty(this.store)) {
-        var q = { value: notFoundRecordIds.join(",") };
+
+        //ha a value-ban szöveges elem van, akkor azokat csak json-el tudja keresni és nem vesszővel elválasztva
+        var hasText = notFoundRecordIds.filter((id) => !isNumeric(id));
+
+        var q = { value: hasText.length ? notFoundRecordIds : notFoundRecordIds.join(",") };
         var tmp = this.store.split("|"),
           stname = tmp.shift();
 
@@ -232,6 +197,7 @@ export default {
             q[tmp2[0]] = tmp2[1];
           }
         }
+
         getStore(stname).load(q, "noSortPage", "noTotal", function (s, d) {
           if (!s) return;
 
@@ -282,14 +248,14 @@ export default {
       this.value = this.value.filter((val) => val != id);
       if (empty(this.value)) this.value = null;
     },
-    ondblclick:function(e){
-      if(empty(this.value)){
+    ondblclick: function (e) {
+      if (empty(this.value)) {
         var tmp = [];
-        this.dinamicBox.forEach(function(r){
+        this.dinamicBox.forEach(function (r) {
           tmp.push(r.value);
         });
         this.value = tmp;
-      }else{
+      } else {
         this.value = null;
       }
     }
