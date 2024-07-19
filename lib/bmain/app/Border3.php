@@ -441,6 +441,16 @@ class Border3
                         DB::table('b_menu')->where('id', $to_delete->id)->delete();
                     });
             }
+
+            //b_menu_id frissítése, dobozinfo miatt kell
+            $main_menu = DB::table('b_menu')
+                ->where('modul_azon', $modul_azon)
+                ->where('id_csoport', 0)
+                ->whereNull('menu_azon')
+                ->first();
+            $main_modul = DB::table('b_modulok')->where('azon', $modul_azon)->first();
+            if ($main_menu && $main_modul && $main_menu->id != $main_modul->b_menu_id) DB::table('b_modulok')->where('azon', $modul_azon)->update(['b_menu_id' => $main_menu->id]);
+
         });
     }
 
@@ -455,16 +465,16 @@ class Border3
     */
     static function migratePerms($modul_azon, $perm_convert_array = [])
     {
-        self:: update_border();
+        self::update_border();
         collect($perm_convert_array)->map(function ($perms, $old_perm_name) use ($modul_azon) {
             $oldjog = DB::table("nevek_csoport")->where('nev', toLatin($old_perm_name))->whereNull('modul_azon')->get()->first();
             if (!$oldjog || !is_array($perms)) return;
             $new_jog_ids = DB::table('nevek_csoport')->where('modul_azon', $modul_azon)->whereIn('menu_azon', $perms)->get()->pluck('csoport_id')->toArray();
-			if (empty($new_jog_ids)) return;
+            if (empty($new_jog_ids)) return;
             $old_jog_id = $oldjog->csoport_id;
-            
+
             DB::table("nevek_csoportosit")->where('csoport_id', $old_jog_id)->get()->each(function ($csop) use ($new_jog_ids, $old_jog_id) {
-                
+
                 collect($new_jog_ids)->each(function ($new_jog_id) use ($csop) {
                     $result = DB::table("nevek_csoportosit")->where('nevek_id', $csop->nevek_id)->where('csoport_id', $new_jog_id)->get()->first();
                     if (!$result) {
@@ -474,12 +484,11 @@ class Border3
                         ]);
                     }
                 });
-                
+
                 DB::table("nevek_csoportosit")->where('nevek_id', $csop->nevek_id)->where('csoport_id', $old_jog_id)->delete();
             });
-			
-			DB::table("nevek_csoport")->where('csoport_id', $old_jog_id)->whereNull('modul_azon')->delete();
 
+            DB::table("nevek_csoport")->where('csoport_id', $old_jog_id)->whereNull('modul_azon')->delete();
         })->toArray();
     }
 }
