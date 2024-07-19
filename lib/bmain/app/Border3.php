@@ -137,6 +137,7 @@ class Border3
             'entities' => self::getUserEntitys(),
             'active_entity' => self::getDefaultEntityId(),
             'CacheQueue' => CacheQueue::getCache(),
+            'isBorder' => config('isBorder'),
         ];
     }
 

@@ -180,6 +180,12 @@ export default {
     };
   },
 
+  unmounted: function(){
+    for (var key in Contents) {
+      delete Contents[key];
+    }
+  },
+
   created: function () {
     global.getActiveModul = this.getActiveModul;
     global.getActiveEntity = this.getActiveEntity;
