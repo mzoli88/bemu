@@ -937,6 +937,7 @@ export default {
     },
     toDetails: function (id) {
       this.selected_id = id;
+      this.fromDeatail = false;
       this.goTo("details");
     },
     onExport: function () {
