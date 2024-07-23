@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `b_emu_param` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;");
 
 $ct = $conn->query("select count(*) from b_emu_param")->fetch_row()[0];
-if($ct == 0)$conn->execute_query("INSERT INTO `b_emu_param` (`p`, `v`)VALUES ('active_user', '2');");
+if ($ct == 0) $conn->execute_query("INSERT INTO `b_emu_param` (`p`, `v`)VALUES ('active_user', '2');");
 
 //ha nincs b_nagycsoport_nevek tábla akkor létrehzza
 $conn->execute_query("
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `nevek_csoport` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=0;");
 
 $ct = $conn->query("select count(*) from nevek_csoport")->fetch_row()[0];
-if($ct == 0)$conn->execute_query("INSERT INTO `nevek_csoport` (`csoport_id`, `nev`)VALUES (2, 'Border admin');");
+if ($ct == 0) $conn->execute_query("INSERT INTO `nevek_csoport` (`csoport_id`, `nev`)VALUES (2, 'Border admin');");
 
 //ha nincs b_nagycsoport tábla akkor létrehzza
 $conn->execute_query("
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `nevek` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=0;");
 
 $ct = $conn->query("select count(*) from nevek")->fetch_row()[0];
-if($ct == 0)$conn->execute_query("
+if ($ct == 0) $conn->execute_query("
 INSERT INTO `nevek` (`id`, `nev`, `teljesnev`, `email`, `telefon`)
 VALUES ('2', 'admin', 'Rendszer - Admin', 'Border@Admin.hu', '1234');");
 
@@ -130,7 +130,7 @@ $conn->execute_query("
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=0;");
 
 $ct = $conn->query("select count(*) from nevek_csoportosit")->fetch_row()[0];
-if($ct == 0)$conn->execute_query("INSERT INTO `nevek_csoportosit` (`csoport_id`, `nevek_id`) VALUES (2, 2);");
+if ($ct == 0) $conn->execute_query("INSERT INTO `nevek_csoportosit` (`csoport_id`, `nevek_id`) VALUES (2, 2);");
 
 $conn->execute_query("
 CREATE TABLE IF NOT EXISTS `b_nagycsoport_tipus` (
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `b_nagycsoport_tipus` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 $ct = $conn->query("select count(*) from b_nagycsoport_tipus")->fetch_row()[0];
-if($ct == 0)$conn->execute_query("
+if ($ct == 0) $conn->execute_query("
 INSERT INTO `b_nagycsoport_tipus` (`b_nagycsoport_tipus_id`, `tipusnev`) VALUES
 	(1,	'Szervezeti egység'),
 	(2,	'Jogosultság csoport');");
@@ -161,7 +161,7 @@ $conn->execute_query("
 	  KEY `link` (`link`),
 	  KEY `item` (`item`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
-	
+
 $conn->execute_query("
 	CREATE TABLE IF NOT EXISTS `b_menucsop` (
 	  `b_menucsop_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -185,6 +185,22 @@ $conn->execute_query("
 		KEY `nevek_csoport_id` (`nevek_csoport_id`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
+$conn->execute_query("
+	CREATE TABLE IF NOT EXISTS `b_modulok` (
+	`b_modulok_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`azon` varchar(30) NOT NULL DEFAULT '',
+	`verzio` varchar(20) NOT NULL DEFAULT '',
+	`b_menu_id` int(11) NOT NULL DEFAULT 0,
+	`friss_datum` date DEFAULT NULL,
+	`friss_ido` time DEFAULT NULL,
+	`modulnev` varchar(100) DEFAULT NULL,
+	`rejtve` tinyint(1) NOT NULL DEFAULT 0,
+	`csomag` varchar(100) DEFAULT NULL,
+	`last_changed` datetime DEFAULT NULL,
+	PRIMARY KEY (`b_modulok_id`),
+	KEY `azon` (`azon`),
+	KEY `rejtve` (`rejtve`)
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;");
 
 $conn->close();
 header("Location: bmain/install.php");

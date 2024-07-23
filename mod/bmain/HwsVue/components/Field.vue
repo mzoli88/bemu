@@ -287,7 +287,8 @@ export default {
         form = this.up("Form");
       if (form && form.rowData) {
         me.$nextTick(() => {
-          if (empty(me.getValue()) && !empty(form.rowData[me.name])) {
+          // van olyan eset, hogy a startValue értéket hamarabb kapja meg mint a rowData-t
+          if ((empty(me.getValue()) || (me.startValue == me.getValue() && me.startValue != form.rowData[me.name])) && !empty(form.rowData[me.name]) ) {
             me.$nextTick(() => {
               // dd(form.rowData[me.name], me.getValue(), me.hidden);
               me.setValue(form.rowData[me.name]);

@@ -3,7 +3,14 @@
 use App\Border3;
 use hws\rmc\Model;
 use App\Exceptions\SendErrorException;
+use hws\Sablon;
+use Illuminate\Support\Facades\Cache;
 use mod\admin\models\Params;
+use mod\admin\models\Users;
+use mod\notificationcenter\classes\EmailReception;
+use mod\notificationcenter\classes\PushReception;
+use mod\notificationcenter\models\Notifications;
+use mod\templates\models\Messages;
 
 //globális változók cache miatt
 $global_modul_azon = null;
@@ -300,6 +307,163 @@ function hwslog($log_chanels = null, String $event = null, String $message = nul
             if ($modul_azon) $context['modul_azon'] = $modul_azon;
             logger()->info($message, $context);
         });
+    }
+}
+
+function hasTemplate(String $type, $entity_id = null, $modul_azon = null)
+{
+    $entity_id = $entity_id ?: getEntity();
+    $modul_azon = $modul_azon ?: getModulAzon();
+    $template = Messages::where('type', $type)
+        ->where('entity_id', $entity_id)
+        ->where('modul_azon', $modul_azon)
+        ->one();
+    return $template;
+}
+
+function sendMessage(String $type, $to = null, array $data = [], $entity_id = null, $modul_azon = null, $noUser = false, $attachements = [], $priority = 2, $modulRecordId = null, $deviceToken = null, $callback = null, $sender = [], $cc_emails = null, $bcc_emails = null)
+{
+    $entity_id = $entity_id ?: getEntity();
+    $modul_azon = $modul_azon ?: getModulAzon();
+
+    $data['#date'] = date('Y.m.d.');
+    $data['#time'] = date('H:i:s');
+    if (!$noUser) {
+        $data['#currient_user'] = (array)getUser();
+        $data['#entity'] = getEntityName();
+    }
+    $user_id = false;
+    $email = false;
+    if (!empty($to)) {
+        if (is_object($to)) {
+            $data['#to_user'] = $to->toArray();
+            $user_id = $to->id;
+            $email = $to->email;
+        } else {
+
+            
+            if (is_numeric($to)) {
+                $user_id = $to;
+                $user = Users::findOne($to);
+                if (!$user) return;
+                $email = $user->email;
+            } else {
+                $email = $to;
+            }
+        }
+    }
+
+    if ($user_id && !hasEntity($user_id, $entity_id)) return;
+
+    //típus keresés
+    $messageTypes = config('messageTypes');
+    if (
+        !array_key_exists($modul_azon, $messageTypes) ||
+        !array_key_exists($type, $messageTypes[$modul_azon])
+    ) {
+        hwslog(event: 'Üzenet küldés', message: 'Nem létező sablon! Modul: ' . $modul_azon . ', Sablon: ' . $type, err: 'Üzenetküldés hiba', entity_id: $entity_id);
+        logger()->error('Nem létező sablon! Modul: ' . $modul_azon . ', Sablon: ' . $type);
+        return false;
+    }
+
+    //template lekérdezés:
+    $template = Messages::getTemplate($type, $entity_id, $modul_azon);
+    if (!$template) {
+        hwslog(event: 'Üzenet küldés', message: 'Sablon nincs paraméterezve! Modul: ' . $modul_azon . ', Entitás azonosító: ' . $entity_id . ', Sablon: ' . $type, err: 'Üzenetküldés hiba', entity_id: $entity_id);
+        logger()->error('Sablon nincs paraméterezve! Modul: ' . $modul_azon . ', Entitás azonosító: ' . $entity_id . ', Sablon: ' . $type);
+        return;
+    };
+    //Rendszer üzenet küldés
+    if ($user_id && in_array('notification', $messageTypes[$modul_azon][$type]['chanels'])) {
+
+        $text = $template->notification_text;
+
+        $text = Sablon::create($text, $data, false);
+
+        if (!empty($text)) {
+
+            Cache::forget('userNotifications_' . $user_id);
+
+            $message_search = strip_tags($text);
+            $user = Users::find($user_id);
+            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' rendszerüzenet generálása', "Címzett: \n" . $user->name . " (" . $user->login . ")", null, $entity_id);
+            Notifications::addNotification(
+                $type,
+                $user_id,
+                $text,
+                $entity_id,
+                $modul_azon,
+                $message_search
+            );
+        }
+    }
+
+    //E-mail üzenet küldés
+    if ($email && in_array('email', $messageTypes[$modul_azon][$type]['chanels'])) {
+
+        $text = Sablon::create($template->email_ct, $data, false);
+        $subj = Sablon::create($template->email_subj, $data, false);
+
+        if (!empty($text) && !empty($subj)) {
+            $logMessage = "Címzett: " . $email . "\n";
+            if ($cc_emails) {
+                $logMessage .= "Másolat: " . $cc_emails . "\n";
+            }
+            if ($bcc_emails) {
+                $logMessage .= "Titkos másolat: " . $bcc_emails . "\n";
+            }
+            $logMessage .= "\nE-mail tárgya:\n" . $subj;
+
+            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' e-mail generálása', $logMessage, null, $entity_id);
+
+            if (empty($sender) && !empty(trim($template->email_from))) {
+                $sender = [
+                    'name' => null,
+                    'email' => $template->email_from,
+                ];
+            }
+            return EmailReception::Email(
+                $subj,
+                $text,
+                $email,
+                $modul_azon,
+                $modulRecordId,
+                $priority,
+                $entity_id,
+                $attachements,
+                true,
+                $sender,
+                $callback,
+                $cc_emails,
+                $bcc_emails
+            );
+        } else {
+            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' e-mail generálása', 'E-mail generálása nem történt meg, mert nincs tárgy és/vagy szöveg beállítva a sablonhoz', 'E-mail generálás hiba', $entity_id);
+        }
+    }
+
+    //PUSH üzenet küldés
+    if (!empty($deviceToken) && in_array('push', $messageTypes[$modul_azon][$type]['chanels'])) {
+
+        $text = Sablon::create($template->push_text, $data, false);
+        $subj = Sablon::create($template->push_subj, $data, false);
+
+        if (!empty($text)) {
+
+            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' push üzenet generálása', "Címzett token: \n" . $deviceToken . "\n\Push tárgya:\n" . $subj, null, $entity_id);
+            return PushReception::Push(
+                $deviceToken,
+                $subj,
+                $text,
+                $entity_id,
+                $modul_azon,
+                $modulRecordId,
+                $priority,
+                $callback
+            );
+        } else {
+            hwslog(null, $messageTypes[$modul_azon][$type]['name'] . ' push üzenet generálása', 'Push üzenet generálása nem történt meg, mert nincs szöveg beállítva a sablonhoz', 'Push üzenet generálása hiba', $entity_id);
+        }
     }
 }
 

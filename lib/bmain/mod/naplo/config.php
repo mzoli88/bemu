@@ -35,5 +35,9 @@ return [
             'icon' => 'f277',
             'name' => 'Postman collection',
         ],
+        'logevents' => [
+            'icon' => 'f533',
+            'name' => 'Log events',
+        ],
     ]
 ];
