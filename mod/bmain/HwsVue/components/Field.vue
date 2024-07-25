@@ -241,14 +241,11 @@ export default {
     };
   },
   mounted: function () {
-    
+
     var form = this.up("Form");
     // kezdő betöltésko a formSet nem tölti fel a mezőket, mert a mezők még nem léteznek. Itt a mező megpróbálja feltölteni önmagát.
-    if (form && form.rowData) {
-      if (!empty(form.rowData[this.name])) this.setValue(form.rowData[this.name]);
-    }
+    if (form && form.rowData && !empty(form.rowData[this.name])) this.setValue(form.rowData[this.name]);
     if (empty(this.getValue()) && this.startValue) this.setValue(this.startValue);
-    // dd ('mounted');
     this.checkrequiredIf();
     this.checkChildren();
     this.checkChildren2();
