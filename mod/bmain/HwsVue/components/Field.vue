@@ -241,7 +241,14 @@ export default {
     };
   },
   mounted: function () {
-    if (this.startValue) this.setValue(this.startValue);
+    
+    var form = this.up("Form");
+    // kezdő betöltésko a formSet nem tölti fel a mezőket, mert a mezők még nem léteznek. Itt a mező megpróbálja feltölteni önmagát.
+    if (form && form.rowData) {
+      if (!empty(form.rowData[this.name])) this.setValue(form.rowData[this.name]);
+    }
+    if (empty(this.getValue()) && this.startValue) this.setValue(this.startValue);
+    // dd ('mounted');
     this.checkrequiredIf();
     this.checkChildren();
     this.checkChildren2();
@@ -250,7 +257,6 @@ export default {
     this.doHasRowData();
   },
   created: function () {
-    this.onActivate();
     if (this.type == "entity" && !this.$root.entity) this.hide();
   },
   watch: {
@@ -281,21 +287,6 @@ export default {
     },
     enable: function () {
       this.isDisabled = false;
-    },
-    onActivate: function () {
-      var me = this,
-        form = this.up("Form");
-      if (form && form.rowData) {
-        me.$nextTick(() => {
-          // van olyan eset, hogy a startValue értéket hamarabb kapja meg mint a rowData-t
-          if ((empty(me.getValue()) || (me.startValue == me.getValue() && me.startValue != form.rowData[me.name])) && !empty(form.rowData[me.name]) ) {
-            me.$nextTick(() => {
-              // dd(form.rowData[me.name], me.getValue(), me.hidden);
-              me.setValue(form.rowData[me.name]);
-            });
-          }
-        });
-      }
     },
     reRender: function () {
       if (this.render) {
@@ -550,7 +541,7 @@ export default {
         var is_ok = false;
         for (let index = 0; index < r.hideCount.length; index++) {
           const e = r.hideCount[index];
-          if (Object.keys(e).filter((key) => e[key] == false).length == 0){
+          if (Object.keys(e).filter((key) => e[key] == false).length == 0) {
             is_ok = true;
             break;
           }

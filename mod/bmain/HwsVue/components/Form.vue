@@ -197,6 +197,7 @@ export default {
         }
         this.rowData = rowData;
         this.$nextTick(function () {
+          dd ('formSet', this.rowData);
           this.formSet(this.rowData);
         });
       }
