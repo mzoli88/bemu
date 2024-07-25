@@ -1,0 +1,33 @@
+Csatorna:
+ - email
+ - push
+ - Border üzenet
+
+Paraméterek
+ - entitásonkénti paraméterezési lehetősége
+     - feladó email címe
+     - smtp paraméterek 
+       - host
+       - port
+       - felhasználó
+       - jelszó
+       - titkosítás
+     - push paraméterek
+       - firebase_key
+       - firebase_url
+
+prioritás kezelés
+ - alacsony (várakozási sor kezelés)
+ - magas (azonnali küldés)
+
+értesítések fogadása:
+ - küldendő email
+ - küldendő push
+ - modul értesítések
+
+ felület
+ - paraméterek
+ - küldött üzenetek listája
+   - email
+   - push
+   - modul értesítések
