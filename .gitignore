@@ -21,5 +21,9 @@
 !/lib/bmain/mod/admin
 !/lib/bmain/mod/naplo
 !/lib/bmain/mod/elknaplo
+!/lib/bmain/mod/templates
+/lib/bmain/mod/templates/.git
+!/lib/bmain/mod/notificationcenter
+/lib/bmain/mod/notificationcenter/.git
 /lib/bmain/HwsLaravel/.git
 /lib/bmain/mod/naplo/.git
