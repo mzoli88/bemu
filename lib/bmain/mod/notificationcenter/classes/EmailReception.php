@@ -134,6 +134,12 @@ class EmailReception {
         if (empty( $entityId)){
             $entityId = getEntity();
         }
+
+        $generalParams = getParams('notificationcenter');
+        if (!array_key_exists('notification_email_path', $generalParams)){
+            sendError("Értesítés központban hiányzó paraméterek!");
+        }
+
         $entityParams = self::HasEmailEntityParams($entityId);
 
         if (!Priorities::query()->where('id', $priority)->exists()){
@@ -205,7 +211,7 @@ class EmailReception {
         $email->priority = $priority;
         $email->state = 1;
         $email->subject = $subject;
-        // $email->body = $body;
+        $email->body = '';
         $email->modul_id = $modul;
         $email->is_html = $isHtml;
         $email->addressee = $addressee;

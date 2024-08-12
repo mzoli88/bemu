@@ -20,7 +20,7 @@ return new class extends Migration
         "CREATE VIEW admin_groups AS
             SELECT b_nagycsoport_id as id, nev as name, 'I' as status
             FROM b_nagycsoport
-            where b_nagycsoport_tipus_id in (1,2)",
+            where b_nagycsoport_tipus_id in (select `b_nagycsoport_tipus`.`b_nagycsoport_tipus_id` from `b_nagycsoport_tipus` where `b_nagycsoport_tipus`.`tipusnev` = 'Szervezeti egység')",
 
         "drop view if exists admin_entities",
         "CREATE VIEW admin_entities AS

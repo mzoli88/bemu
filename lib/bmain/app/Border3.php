@@ -72,6 +72,7 @@ class Border3
         $modul_azon = $modul_azon ?: getModulAzon();
         //belépve ellenőrzés
         if (!getUser()) sendError("Nincs belépve!", 401);
+        if (!Cache::has('user_perm_' . getUserId() . '_' . $modul_azon)) self::setJogok($modul_azon);
         return Cache::get('user_perm_' . getUserId() . '_' . $modul_azon);
     }
 
@@ -450,7 +451,6 @@ class Border3
                 ->first();
             $main_modul = DB::table('b_modulok')->where('azon', $modul_azon)->first();
             if ($main_menu && $main_modul && $main_menu->id != $main_modul->b_menu_id) DB::table('b_modulok')->where('azon', $modul_azon)->update(['b_menu_id' => $main_menu->id]);
-
         });
     }
 

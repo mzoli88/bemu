@@ -5,7 +5,6 @@ use hws\Cron;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-sleep(2);
 
 require_once('belepve.php');
 error_reporting(E_ALL);
@@ -26,6 +25,7 @@ define('INIT_RUN', true);
 
 $output = new BufferedOutput;
 Artisan::call('optimize:clear', [], $output);
+sleep(2);
 Artisan::call('migrate --force', [], $output);
 Artisan::call('optimize', [], $output);
 
