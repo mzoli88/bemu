@@ -27,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         Border3::init();
 
         if (CustomLoggerHandler::canDebug()) {
+            \Illuminate\Support\Facades\Config::set('app.debug',true);
             CustomLoggerHandler::request_log();
             CustomLoggerHandler::sql_log();
             CustomLoggerHandler::response_log();

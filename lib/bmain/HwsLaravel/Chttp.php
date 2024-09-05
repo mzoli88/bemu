@@ -20,6 +20,7 @@ class Chttp
     public $noResponseLog = false;
     public $log_event_id;
     public $CURLOPT_USERPWD;
+    public $timeout = 1200;
 
     public $proxyParams = false;
 
@@ -85,7 +86,7 @@ class Chttp
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_URL => $this->getUrl($id, $get_params),
             CURLOPT_CUSTOMREQUEST => $this->method,
-            CURLOPT_TIMEOUT => 1200,
+            CURLOPT_TIMEOUT => $this->timeout,
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
         ];
